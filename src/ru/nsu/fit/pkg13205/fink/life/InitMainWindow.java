@@ -2,6 +2,7 @@ package ru.nsu.fit.pkg13205.fink.life;
 
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
+import ru.nsu.cg.MainFrame;
 
 public class InitMainWindow extends MainFrame {
 	
@@ -18,14 +19,13 @@ public class InitMainWindow extends MainFrame {
 			addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit");
                         
                         addSubMenu("Modify", KeyEvent.VK_H);
-                        addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "New.png", "onNew");
-                        addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "New.png", "onNew");
-                        addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "New.png", "onNew");
+                        addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onNew");
+                        addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "Replace.png", "onNew");
+                        addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onNew");
                         addMenuSeparator("Modify");
-                        addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "New.png", "onNew");
-                        addMenuItem("Modify/Colors", "Colors", KeyEvent.VK_X, "New.png", "onNew");
+                        addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onNew");
                         addMenuSeparator("Modify");
-                        addMenuItem("Modify/Clear", "Clear", KeyEvent.VK_X, "New.png", "onNew");
+                        addMenuItem("Modify/Clear", "Clear", KeyEvent.VK_X, "Clear.png", "onNew");
                         
                         addSubMenu("Action", KeyEvent.VK_H);
                         addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "New.png", "onNew");
@@ -47,7 +47,6 @@ public class InitMainWindow extends MainFrame {
                         addToolBarButton("Modify/Replace");
                         addToolBarButton("Modify/XOR");
                         addToolBarButton("Modify/Impact");
-                        addToolBarButton("Modify/Colors");
                         addToolBarButton("Modify/Clear");
 			addToolBarSeparator();
                         addToolBarButton("Action/Init");

@@ -22,7 +22,6 @@ public class InitView extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawLine(0, 0, getBounds().width - 1, getBounds().height - 1);
-        g.drawLine(0, getBounds().height - 1, getBounds().width - 1, 0);
+        GraphicElements.drawHexagon(g, 100, 100, 20);
     }
 }

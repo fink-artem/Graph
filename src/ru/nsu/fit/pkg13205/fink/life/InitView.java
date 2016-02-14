@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -11,7 +12,6 @@ import javax.swing.JPanel;
 public class InitView extends JPanel {
 
     public InitView() {
-        setBackground(Color.WHITE);
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -24,7 +24,10 @@ public class InitView extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Grid grid = new Grid(g);
+        BufferedImage bufferedImage = new BufferedImage(1200,600,BufferedImage.TYPE_INT_RGB);
+        Grid grid = new Grid(bufferedImage);
+        grid.fill(0, 0, Color.WHITE.getRGB());
         grid.drawGrid(20, 25, 19, 1);
+        g.drawImage(bufferedImage, 0, 0, this);
     }
 }

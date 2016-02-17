@@ -1,13 +1,24 @@
 package ru.nsu.fit.pkg13205.fink.life;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import ru.nsu.cg.MainFrame;
 
 public class InitMainWindow extends MainFrame {
 
+    private final int MIN_WIDTH = 800;
+    private final int MIN_HEIGHT = 600;
+    private InitView initView = new InitView();
+
     public InitMainWindow() {
-        super(600, 400, "Life");
+        super();
+        setTitle("Life");
+        setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - MIN_WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - MIN_HEIGHT / 2, MIN_WIDTH, MIN_HEIGHT);
+        setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         try {
             addSubMenu("File", KeyEvent.VK_F);
             addMenuItem("File/New", "New", KeyEvent.VK_X, "New.png", "onNew");
@@ -17,18 +28,16 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit");
 
             addSubMenu("Modify", KeyEvent.VK_H);
-            addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onNew");
+            addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions");
             addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "Replace.png", "onNew");
             addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onNew");
             addMenuSeparator("Modify");
             addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onNew");
-            addMenuSeparator("Modify");
-            addMenuItem("Modify/Clear", "Clear", KeyEvent.VK_X, "Clear.png", "onNew");
 
             addSubMenu("Action", KeyEvent.VK_H);
-            addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "New.png", "onNew");
-            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "New.png", "onNew");
-            addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "New.png", "onNew");
+            addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit");
+            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNew");
+            addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "Run.png", "onNew");
 
             addSubMenu("View", KeyEvent.VK_H);
             addMenuItem("View/Toolbar", "Init", KeyEvent.VK_X, "New.png", "onNew");
@@ -45,7 +54,6 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Modify/Replace");
             addToolBarButton("Modify/XOR");
             addToolBarButton("Modify/Impact");
-            addToolBarButton("Modify/Clear");
             addToolBarSeparator();
             addToolBarButton("Action/Init");
             addToolBarButton("Action/Next");
@@ -53,7 +61,10 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Help/About");
 
-            add(new InitView());
+            add(initView);
+            //JScrollPane pane = new JScrollPane(initView);        
+            //add(pane);
+
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -71,12 +82,21 @@ public class InitMainWindow extends MainFrame {
 
     }
 
+    public void onOptions() {
+        OptionsDialog optionsDialog = new OptionsDialog();
+        optionsDialog.setVisible(true);
+    }
+
+    public void onInit() {
+        initView.initGrid();
+    }
+
     public void onExit() {
         System.exit(0);
     }
 
     public void onAbout() {
-        JOptionPane.showMessageDialog(this, "Init, version 1.0\nCopyright � 2010 Vasya Pupkin, FF, group 1234", "About Init", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Fink Artem, NSU, FIT, group 13025", "About Author", JOptionPane.INFORMATION_MESSAGE);
     }
 
     public static void main(String[] args) {

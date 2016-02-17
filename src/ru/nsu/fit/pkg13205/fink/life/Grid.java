@@ -1,6 +1,5 @@
 package ru.nsu.fit.pkg13205.fink.life;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
@@ -25,7 +24,7 @@ public class Grid {
                 y2 = swap;
             }
             for (int y = y1; y <= y2; y++) {
-                bufferedImage.setRGB(x1, y, Color.BLACK.getRGB());
+                bufferedImage.setRGB(x1, y, ViewColor.BORDER_COLOR.getRGB());
             }
         } else if (Math.abs(x1 - x2) >= Math.abs(y1 - y2)) {
             if (x1 > x2) {
@@ -35,7 +34,7 @@ public class Grid {
                 y1 = y2;
             }
             for (int x = x1; x <= x2; x++) {
-                bufferedImage.setRGB(x, (int) Math.round(k * (x - x1) + y1), Color.BLACK.getRGB());
+                bufferedImage.setRGB(x, (int) Math.round(k * (x - x1) + y1), ViewColor.BORDER_COLOR.getRGB());
             }
         } else {
             if (y1 > y2) {
@@ -45,7 +44,7 @@ public class Grid {
                 y2 = swap;
             }
             for (int y = y1; y <= y2; y++) {
-                bufferedImage.setRGB((int) Math.round((y - y1 + k * x1) / k), y, Color.BLACK.getRGB());
+                bufferedImage.setRGB((int) Math.round((y - y1 + k * x1) / k), y, ViewColor.BORDER_COLOR.getRGB());
             }
         }
     }
@@ -73,6 +72,9 @@ public class Grid {
 
     void fill(int x, int y, int color) {
         int startColor = bufferedImage.getRGB(x, y);
+        if(startColor == color){
+            return;
+        }
         Queue<Point> queue = new LinkedList<>();
         queue.offer(new Point(x, y));
         bufferedImage.setRGB(x, y, color);
@@ -118,7 +120,7 @@ public class Grid {
                 x = startX1 + j * stepX;
                 y = startY + i * stepY;
                 drawHexagon(x, y, k);
-                fill(x, y, Color.GREEN.getRGB());
+                fill(x, y, ViewColor.HEXAGON_COLOR_OFF.getRGB());
             }
             i++;
             if (i >= n) {
@@ -128,7 +130,7 @@ public class Grid {
                 x = startX2 + j * stepX;
                 y = startY + i * stepY;
                 drawHexagon(x, y, k);
-                fill(x, y, Color.GREEN.getRGB());
+                fill(x, y, ViewColor.HEXAGON_COLOR_OFF.getRGB());
             }
         }
     }

@@ -16,40 +16,52 @@ public class Grid {
     }
 
     private void drawLine(int x1, int y1, int x2, int y2) {
-        double k = (double) (y1 - y2) / (x1 - x2);
-        if (x1 == x2) {
-            if (y1 > y2) {
-                int swap = y1;
-                y1 = y2;
-                y2 = swap;
-            }
-            for (int y = y1; y <= y2; y++) {
-                bufferedImage.setRGB(x1, y, ViewColor.BORDER_COLOR.getRGB());
-            }
-        } else if (Math.abs(x1 - x2) >= Math.abs(y1 - y2)) {
+        int deltaX = Math.abs(x1 - x2);
+        int deltaY = Math.abs(y1 - y2);
+        if (Math.abs(x1 - x2) >= Math.abs(y1 - y2)) {
             if (x1 > x2) {
                 int swap = x1;
                 x1 = x2;
                 x2 = swap;
-                y1 = y2;
-            }
-            for (int x = x1; x <= x2; x++) {
-                bufferedImage.setRGB(x, (int) Math.round(k * (x - x1) + y1), ViewColor.BORDER_COLOR.getRGB());
-            }
-        } else {
-            if (y1 > y2) {
-                x1 = x2;
-                int swap = y1;
+                swap = y1;
                 y1 = y2;
                 y2 = swap;
             }
+            int y = y1;
+            int changeY = (int) Math.signum(y2 - y1);
+            double error = 0;
+            for (int x = x1; x <= x2; x++) {
+                bufferedImage.setRGB(x, y, ViewColor.BORDER_COLOR.getRGB());
+                error += deltaY;
+                if (2 * error >= deltaX) {
+                    y += changeY;
+                    error -= deltaX;
+                }
+            }
+        } else {
+            if (y1 > y2) {
+                int swap = x1;
+                x1 = x2;
+                x2 = swap;
+                swap = y1;
+                y1 = y2;
+                y2 = swap;
+            }
+            int x = x1;
+            int changeX = (int) Math.signum(x2 - x1);
+            double error = 0;
             for (int y = y1; y <= y2; y++) {
-                bufferedImage.setRGB((int) Math.round((y - y1 + k * x1) / k), y, ViewColor.BORDER_COLOR.getRGB());
+                bufferedImage.setRGB(x, y, ViewColor.BORDER_COLOR.getRGB());
+                error += deltaX;
+                if (2 * error >= deltaY) {
+                    x += changeX;
+                    error -= deltaY;
+                }
             }
         }
     }
 
-    private void drawHexagon(int x, int y, int k) {
+    private void drawCell(int x, int y, int k) {
         int xArray[] = new int[ANGLE];
         int yArray[] = new int[ANGLE];
         xArray[0] = (int) (x - k * SQRT_THREE / 2);
@@ -72,7 +84,7 @@ public class Grid {
 
     void fill(int x, int y, int color) {
         int startColor = bufferedImage.getRGB(x, y);
-        if(startColor == color){
+        if (startColor == color) {
             return;
         }
         Queue<Point> queue = new LinkedList<>();
@@ -119,8 +131,8 @@ public class Grid {
             for (int j = 0; j < m; j++) {
                 x = startX1 + j * stepX;
                 y = startY + i * stepY;
-                drawHexagon(x, y, k);
-                fill(x, y, ViewColor.HEXAGON_COLOR_OFF.getRGB());
+                drawCell(x, y, k);
+                fill(x, y, ViewColor.CELL_COLOR_OFF.getRGB());
             }
             i++;
             if (i >= n) {
@@ -129,8 +141,8 @@ public class Grid {
             for (int j = 0; j < m2; j++) {
                 x = startX2 + j * stepX;
                 y = startY + i * stepY;
-                drawHexagon(x, y, k);
-                fill(x, y, ViewColor.HEXAGON_COLOR_OFF.getRGB());
+                drawCell(x, y, k);
+                fill(x, y, ViewColor.CELL_COLOR_OFF.getRGB());
             }
         }
     }

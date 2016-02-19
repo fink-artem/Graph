@@ -18,7 +18,6 @@ public class InitView extends JPanel {
         setBackground(ViewColor.BACKGROUND_COLOR);
         bufferedImage = new BufferedImage(1200, 700, BufferedImage.TYPE_INT_RGB);
         grid = new Grid(bufferedImage);
-        clearGrid();
         initGrid();
         addMouseListener(new MouseAdapter() {
 
@@ -68,11 +67,13 @@ public class InitView extends JPanel {
     }
 
     public final void initGrid() {
+        for (int i = 0; i < 700; i++) {
+            for (int j = 0; j < 1200; j++) {
+               bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
+            }
+        }
         grid.drawGrid(options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
         repaint();
     }
 
-    public final void clearGrid() {
-        grid.fill(0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
-    }
 }

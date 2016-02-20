@@ -1,5 +1,6 @@
 package ru.nsu.fit.pkg13205.fink.life;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -9,29 +10,27 @@ import javax.swing.JPanel;
 
 public class InitView extends JPanel {
 
-    private final BufferedImage bufferedImage;
+    private BufferedImage bufferedImage;
     private final Grid grid;
     private final Options options;
+    private int width;
+    private int height;
 
     public InitView(final Options options) {
         this.options = options;
         setBackground(ViewColor.BACKGROUND_COLOR);
-        bufferedImage = new BufferedImage(1200, 700, BufferedImage.TYPE_INT_RGB);
-        grid = new Grid(bufferedImage);
+        grid = new Grid();
         initGrid();
         addMouseListener(new MouseAdapter() {
-
-            int width = bufferedImage.getWidth() - 1;
-            int height = bufferedImage.getHeight() - 1;
 
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
                 if (e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height) {
                     if (bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_OFF.getRGB()) {
-                        grid.fill(e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
+                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
                     } else if (options.getPaintMode() == Options.PaintMode.XOR && bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_ON.getRGB()) {
-                        grid.fill(e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
+                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
                     }
                 }
                 repaint();
@@ -41,17 +40,14 @@ public class InitView extends JPanel {
 
         addMouseMotionListener(new MouseAdapter() {
 
-            int width = bufferedImage.getWidth() - 1;
-            int height = bufferedImage.getHeight() - 1;
-
             @Override
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
                 if (e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height) {
                     if (bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_OFF.getRGB()) {
-                        grid.fill(e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
+                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
                     } else if (options.getPaintMode() == Options.PaintMode.XOR && bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_ON.getRGB()) {
-                        grid.fill(e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
+                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
                     }
                 }
                 repaint();
@@ -67,12 +63,16 @@ public class InitView extends JPanel {
     }
 
     public final void initGrid() {
-        for (int i = 0; i < 700; i++) {
-            for (int j = 0; j < 1200; j++) {
-               bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
+        width = 2 * Grid.MARGIN_GRID + options.getColumnNumber() * (options.getGridWidth() + (int) Math.round(options.getCellSize() * Math.sqrt(3))) + options.getGridWidth() + 1;
+        height = 2 * Grid.MARGIN_GRID + options.getRowNumber() * ((int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + 3 * options.getCellSize() / 2) + (int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + options.getCellSize() / 2 + 1;
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        setPreferredSize(new Dimension(width, height));
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
             }
         }
-        grid.drawGrid(options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
+        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
         repaint();
     }
 

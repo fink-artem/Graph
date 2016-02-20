@@ -8,7 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -346,6 +347,58 @@ public final class OptionsDialog extends JDialog {
         mainPanel.add(cancelButton);
 
         add(mainPanel);
+        
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent we) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent we) {
+                fstImpactTextField.setText(String.valueOf(options.getFstImpact()));
+                sndImpactTextField.setText(String.valueOf(options.getSndImpact()));
+                rowsTextField.setText(String.valueOf(options.getRowNumber()));
+                columnsTextField.setText(String.valueOf(options.getColumnNumber()));
+                cellSizeTextField.setText(String.valueOf(options.getCellSize()));
+                gridWidthTextField.setText(String.valueOf(options.getGridWidth()));
+                timerTextField.setText(String.valueOf(options.getTimer()));
+                liveBeginTextField.setText(String.valueOf(options.getLiveBegin()));
+                liveEndTextField.setText(String.valueOf(options.getLiveEnd()));
+                birthBeginTextField.setText(String.valueOf(options.getBirthBegin()));
+                birthEndTextField.setText(String.valueOf(options.getBirthEnd()));
+                rowsSlider.setValue(options.getRowNumber());
+                columnsSlider.setValue(options.getColumnNumber());
+                cellSizeSlider.setValue(options.getCellSize());
+                gridWidthSlider.setValue(options.getGridWidth());
+                timerSlider.setValue(options.getTimer());
+                if (options.getPaintMode() == Options.PaintMode.REPLACE) {
+                    radioButtons[0].setSelected(true);
+                } else {
+                    radioButtons[1].setSelected(true);
+                }
+            }
+
+            @Override
+            public void windowClosed(WindowEvent we) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent we) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent we) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent we) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent we) {
+            }
+        });
     }
 
     public Options getOptions() {

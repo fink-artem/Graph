@@ -5,6 +5,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import ru.nsu.cg.MainFrame;
 
 public class InitMainWindow extends MainFrame {
@@ -64,9 +65,8 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Help/About");
 
-            add(initView);
-            //JScrollPane pane = new JScrollPane(initView);        
-            //add(pane);
+            JScrollPane scrollPane = new JScrollPane(initView);
+            add(scrollPane);
 
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);

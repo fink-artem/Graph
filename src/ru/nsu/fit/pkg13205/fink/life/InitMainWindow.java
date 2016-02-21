@@ -35,11 +35,11 @@ public class InitMainWindow extends MainFrame {
             getMenuElement("Modify/Replace").getComponent().setEnabled(false);
             addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onXor");
             addMenuSeparator("Modify");
-            addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onNew");
+            addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onImpact");
 
             addSubMenu("Action", KeyEvent.VK_H);
             addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit");
-            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNew");
+            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNext");
             addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "Run.png", "onNew");
 
             addSubMenu("View", KeyEvent.VK_H);
@@ -55,7 +55,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Modify/Options");
             addToolBarButton("Modify/Replace");
-            ((JButton) getToolBar().getComponentAtIndex(5)).setSelected(true);
+            ((JButton) toolBar.getComponentAtIndex(5)).setSelected(true);
             addToolBarButton("Modify/XOR");
             addToolBarButton("Modify/Impact");
             addToolBarSeparator();
@@ -85,20 +85,34 @@ public class InitMainWindow extends MainFrame {
 
     }
 
+    public void onImpact() {
+        if (initView.isImpactMode()) {
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(false);
+            initView.ImpactOff();
+        } else {
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(true);
+            initView.ImpactOn();
+        }
+    }
+
+    public void onNext() {
+        initView.next();
+    }
+
     public void onXor() {
         getMenuElement("Modify/Replace").getComponent().setEnabled(true);
-        ((JButton) getToolBar().getComponentAtIndex(5)).setSelected(false);
+        ((JButton) toolBar.getComponentAtIndex(5)).setSelected(false);
         getMenuElement("Modify/XOR").getComponent().setEnabled(false);
-        ((JButton) getToolBar().getComponentAtIndex(6)).setSelected(true);
+        ((JButton) toolBar.getComponentAtIndex(6)).setSelected(true);
         options.setPaintMode(Options.PaintMode.XOR);
         optionsDialog.updateMode();
     }
 
     public void onReplace() {
         getMenuElement("Modify/Replace").getComponent().setEnabled(false);
-        ((JButton) getToolBar().getComponentAtIndex(5)).setSelected(true);
+        ((JButton) toolBar.getComponentAtIndex(5)).setSelected(true);
         getMenuElement("Modify/XOR").getComponent().setEnabled(true);
-        ((JButton) getToolBar().getComponentAtIndex(6)).setSelected(false);
+        ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
         options.setPaintMode(Options.PaintMode.REPLACE);
         optionsDialog.updateMode();
     }

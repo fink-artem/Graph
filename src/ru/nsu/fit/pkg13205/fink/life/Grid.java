@@ -2,6 +2,8 @@ package ru.nsu.fit.pkg13205.fink.life;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -12,6 +14,13 @@ public class Grid {
     public static final int MARGIN_GRID = 5;
     private static final int ANGLE = 6;
     private static final double SQRT_THREE = Math.sqrt(3);
+    private int startX1;
+    private int startX2;
+    private int stepX;
+    private int startY;
+    private int stepY;
+    private int w;
+    private int k;
 
     private void drawLine(BufferedImage bufferedImage, int x1, int y1, int x2, int y2) {
         int deltaX = Math.abs(x1 - x2);
@@ -122,12 +131,9 @@ public class Grid {
     }
 
     void drawGrid(BufferedImage bufferedImage, int n, int m, int k, int w) {
+        this.w = w;
+        this.k = k;
         int m2 = m - 1;
-        int startX1;
-        int startX2;
-        int stepX;
-        int startY;
-        int stepY;
         if (w % 2 != 0) {
             startX1 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE / 2 + w - 1);
             startX2 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE + w - 1 + w / 2);
@@ -159,6 +165,77 @@ public class Grid {
                 y = startY + i * stepY;
                 drawCell(bufferedImage, x, y, k, w);
                 fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
+            }
+        }
+    }
+
+    Point getAbsoluteCellCoordinate(int x, int y) {
+        double y1 = y - MARGIN_GRID - w * SQRT_THREE - k / 2;
+        double x1 = x - MARGIN_GRID - w / 2;
+        double x2 = x - MARGIN_GRID - w / 2 - k * SQRT_THREE / 2;
+        y1 /= 3 * k / 2 + 2 * w / SQRT_THREE;
+        x1 /= (k * SQRT_THREE) + w;
+        x2 /= (k * SQRT_THREE) + w;
+        if (((int) y1) % 2 == 0) {
+            Point p1 = getCellCordinate((int) x1, (int) y1);
+            Point p2 = getCellCordinate((int) x2, (int) y1 + 1);
+            if (Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y)) > Math.sqrt((x - p2.x) * (x - p2.x) + (y - p2.y) * (y - p2.y))) {
+                return new Point((int) x2, (int) y1 + 1);
+            } else {
+                return new Point((int) x1, (int) y1);
+            }
+        } else {
+            Point p1 = getCellCordinate((int) x2, (int) y1);
+            Point p2 = getCellCordinate((int) x1, (int) y1 + 1);
+            if (Math.sqrt((x - p1.x) * (x - p1.x) + (y - p1.y) * (y - p1.y)) > Math.sqrt((x - p2.x) * (x - p2.x) + (y - p2.y) * (y - p2.y))) {
+                return new Point((int) x1, (int) y1 + 1);
+            } else {
+                return new Point((int) x2, (int) y1);
+            }
+        }
+    }
+
+    Point getCellCordinate(int x, int y) {
+        if (y % 2 == 0) {
+            x = startX1 + x * stepX;
+        } else {
+            x = startX2 + x * stepX;
+        }
+        y = startY + y * stepY;
+        return new Point(x, y);
+    }
+
+    void drawImpact(BufferedImage bufferedImage, int n, int m, Model model) {
+        int m2 = m - 1;
+        int x;
+        int y;
+        Graphics g = bufferedImage.createGraphics();
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("X", Font.BOLD, 20));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                x = startX1 + j * stepX;
+                y = startY + i * stepY;
+                double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
+                if (impact == (int) impact) {
+                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                } else {
+                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                }
+            }
+            i++;
+            if (i >= n) {
+                break;
+            }
+            for (int j = 0; j < m2; j++) {
+                x = startX2 + j * stepX;
+                y = startY + i * stepY;
+                double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
+                if (impact == (int) impact) {
+                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                } else {
+                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                }
             }
         }
     }

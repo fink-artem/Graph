@@ -59,10 +59,6 @@ public class MainFrame extends JFrame {
         setLocationByPlatform(true);
         setTitle(title);
     }
-
-    public JToolBar getToolBar() {
-        return toolBar;
-    }
     
     /**
      * Shortcut method to create menu item Note that you have to insert it into

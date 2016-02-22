@@ -52,7 +52,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField rowsTextField = new JTextField(String.valueOf(options.getRowNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(rowsTextField, gridBagConstraints);
-        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, 1, 100, options.getRowNumber());
+        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, 1, 50, options.getRowNumber());
         rowsSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -88,7 +88,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField columnsTextField = new JTextField(String.valueOf(options.getColumnNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(columnsTextField, gridBagConstraints);
-        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, 1, 100, options.getColumnNumber());
+        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, 1, 50, options.getColumnNumber());
         columnsSlider.addChangeListener(new ChangeListener() {
 
             @Override

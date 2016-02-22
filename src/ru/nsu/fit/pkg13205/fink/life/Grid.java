@@ -91,7 +91,7 @@ public class Grid {
         } else {
             Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
             g.setStroke(new BasicStroke(w, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-            g.setPaint(Color.BLACK);
+            g.setPaint(ViewColor.BORDER_COLOR);
             for (int i = 1; i < ANGLE; i++) {
                 g.drawLine(xArray[i - 1], yArray[i - 1], xArray[i], yArray[i]);
             }
@@ -130,7 +130,7 @@ public class Grid {
         }
     }
 
-    void drawGrid(BufferedImage bufferedImage, int n, int m, int k, int w) {
+    void drawGrid(BufferedImage bufferedImage, int n, int m, int k, int w, Model model) {
         this.w = w;
         this.k = k;
         int m2 = m - 1;
@@ -154,7 +154,11 @@ public class Grid {
                 x = startX1 + j * stepX;
                 y = startY + i * stepY;
                 drawCell(bufferedImage, x, y, k, w);
-                fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
+                if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
+                    fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
+                } else {
+                    fill(bufferedImage, x, y, ViewColor.CELL_COLOR_ON.getRGB());
+                }
             }
             i++;
             if (i >= n) {
@@ -164,7 +168,11 @@ public class Grid {
                 x = startX2 + j * stepX;
                 y = startY + i * stepY;
                 drawCell(bufferedImage, x, y, k, w);
-                fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
+                if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
+                    fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
+                } else {
+                    fill(bufferedImage, x, y, ViewColor.CELL_COLOR_ON.getRGB());
+                }
             }
         }
     }
@@ -231,6 +239,50 @@ public class Grid {
                 x = startX2 + j * stepX;
                 y = startY + i * stepY;
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
+                if (impact == (int) impact) {
+                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                } else {
+                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                }
+            }
+        }
+    }
+
+    void clearImpact(BufferedImage bufferedImage, int n, int m, Model model) {
+        int m2 = m - 1;
+        int x;
+        int y;
+        Graphics g = bufferedImage.createGraphics();
+        g.setFont(new Font("X", Font.BOLD, 20));
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                x = startX1 + j * stepX;
+                y = startY + i * stepY;
+                double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
+                if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
+                    g.setColor(ViewColor.CELL_COLOR_OFF);
+                } else {
+                    g.setColor(ViewColor.CELL_COLOR_ON);
+                }
+                if (impact == (int) impact) {
+                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                } else {
+                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                }
+            }
+            i++;
+            if (i >= n) {
+                break;
+            }
+            for (int j = 0; j < m2; j++) {
+                x = startX2 + j * stepX;
+                y = startY + i * stepY;
+                double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
+                if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
+                    g.setColor(ViewColor.CELL_COLOR_OFF);
+                } else {
+                    g.setColor(ViewColor.CELL_COLOR_ON);
+                }
                 if (impact == (int) impact) {
                     g.drawString(String.valueOf((int) impact), x - 14, y + 7);
                 } else {

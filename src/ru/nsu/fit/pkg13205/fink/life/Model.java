@@ -4,15 +4,15 @@ public class Model {
 
     public enum Cell {
 
-        LIVE, DEAD
+        DEAD, LIVE
     }
 
     private final int n;
     private final int m;
     private final Cell live[][];
     private final double impact[][];
-    private double fstImpact;
-    private double sndImpact;
+    private final double fstImpact;
+    private final double sndImpact;
 
     public Model(int n, int m, double fstImpact, double sndImpact) {
         this.n = n;
@@ -20,6 +20,11 @@ public class Model {
         this.fstImpact = fstImpact;
         this.sndImpact = sndImpact;
         live = new Cell[n][m];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                live[i][j] = Cell.DEAD;
+            }
+        }
         impact = new double[n][m];
     }
 

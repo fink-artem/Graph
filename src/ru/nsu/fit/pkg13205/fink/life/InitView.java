@@ -92,12 +92,8 @@ public class InitView extends JPanel {
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         setPreferredSize(new Dimension(width, height));
         model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
-            }
-        }
-        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
+        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
+        grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
         repaint();
     }
 
@@ -111,7 +107,7 @@ public class InitView extends JPanel {
                     bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
                 }
             }
-            grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
+            grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
         }
         int n = options.getRowNumber();
         int m = options.getColumnNumber();
@@ -156,20 +152,25 @@ public class InitView extends JPanel {
 
     void ImpactOff() {
         impactMode = false;
-        coordinateNow.x = -1;
-        coordinateNow.y = -1;
-        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
-            }
-        }
-        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth());
+        grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
         repaint();
     }
 
-    public boolean isImpactMode() {
+    boolean isImpactMode() {
         return impactMode;
+    }
+
+    void clear() {
+        coordinateNow.x = -1;
+        coordinateNow.y = -1;
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
+        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
+        grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
+        if (impactMode) {
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+        }
+        repaint();
     }
 
 }

@@ -122,7 +122,7 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onInit() {
-        initView.initGrid();
+        initView.clear();
     }
 
     public void onExit() {

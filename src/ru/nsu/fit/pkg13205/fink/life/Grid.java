@@ -1,7 +1,6 @@
 package ru.nsu.fit.pkg13205.fink.life;
 
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -12,6 +11,7 @@ import java.util.Stack;
 public class Grid {
 
     public static final int MARGIN_GRID = 5;
+    public static final int ERROR = -1;
     private static final int ANGLE = 6;
     private static final double SQRT_THREE = Math.sqrt(3);
     private int startX1;
@@ -177,7 +177,52 @@ public class Grid {
         }
     }
 
-    Point getAbsoluteCellCoordinate(int x, int y) {
+    //номер ячейки
+    Point getAbsoluteCellCoordinate(BufferedImage bufferedImage, int x, int y) {
+        int xRight = x;
+        int xLeft = x;
+        int yUp = y;
+        int yEnd = y;
+        int width = bufferedImage.getWidth() - 1;
+        int height = bufferedImage.getHeight() - 1;
+        while (true) {
+            xLeft--;
+            if (xLeft < MARGIN_GRID) {
+                return new Point(ERROR, ERROR);
+            }
+            if (bufferedImage.getRGB(xLeft, y) == ViewColor.BORDER_COLOR.getRGB()) {
+                break;
+            }
+        }
+        while (true) {
+            yUp--;
+            if (yUp < MARGIN_GRID) {
+                return new Point(ERROR, ERROR);
+            }
+            if (bufferedImage.getRGB(x, yUp) == ViewColor.BORDER_COLOR.getRGB()) {
+                break;
+            }
+        }
+        while (true) {
+            xRight++;
+            if (xRight == width) {
+                return new Point(ERROR, ERROR);
+            }
+            if (bufferedImage.getRGB(xRight, y) == ViewColor.BORDER_COLOR.getRGB()) {
+                break;
+            }
+        }
+        while (true) {
+            yEnd++;
+            if (yEnd == height) {
+                return new Point(ERROR, ERROR);
+            }
+            if (bufferedImage.getRGB(x, yEnd) == ViewColor.BORDER_COLOR.getRGB()) {
+                break;
+            }
+        }
+        x = (xRight + xLeft) / 2;
+        y = (yUp + yEnd) / 2;
         double y1 = y - MARGIN_GRID - w * SQRT_THREE - k / 2;
         double x1 = x - MARGIN_GRID - w / 2;
         double x2 = x - MARGIN_GRID - w / 2 - k * SQRT_THREE / 2;
@@ -203,6 +248,7 @@ public class Grid {
         }
     }
 
+    //Координаты центра
     Point getCellCordinate(int x, int y) {
         if (y % 2 == 0) {
             x = startX1 + x * stepX;
@@ -218,7 +264,7 @@ public class Grid {
         int x;
         int y;
         Graphics g = bufferedImage.createGraphics();
-        g.setColor(Color.BLACK);
+        g.setColor(ViewColor.IMPACT_COLOR);
         g.setFont(new Font("X", Font.BOLD, 20));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {

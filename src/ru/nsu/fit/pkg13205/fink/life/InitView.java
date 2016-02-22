@@ -19,6 +19,7 @@ public class InitView extends JPanel {
     private final Point coordinateNow = new Point(-1, -1);
     private Model model;
     private boolean impactMode = false;
+    private boolean runMode = false;
     private final double exp = Math.pow(0.1, 6);
 
     public InitView(final Options options) {
@@ -26,24 +27,38 @@ public class InitView extends JPanel {
         setBackground(ViewColor.BACKGROUND_COLOR);
         grid = new Grid();
         model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
-        initGrid();
+        initGrid(true);
         addMouseListener(new MouseAdapter() {
 
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                if (e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height) {
-                    Point p = grid.getAbsoluteCellCoordinate(e.getX(), e.getY());
-                    if (bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_OFF.getRGB()) {
-                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
-                        model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
-                        coordinateNow.x = p.x;
-                        coordinateNow.y = p.y;
-                    } else if (options.getPaintMode() == Options.PaintMode.XOR && bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_ON.getRGB()) {
-                        grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
-                        model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
-                        coordinateNow.x = p.x;
-                        coordinateNow.y = p.y;
+                if (!runMode && e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height && bufferedImage.getRGB(e.getX(), e.getY()) != ViewColor.BORDER_COLOR.getRGB()) {
+                    Point p = grid.getAbsoluteCellCoordinate(bufferedImage, e.getX(), e.getY());
+                    if (p.x != Grid.ERROR) {
+                        if (model.getCellStatus(p.x, p.y) == Model.Cell.DEAD) {
+                            if (impactMode) {
+                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                            }
+                            grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
+                            model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
+                            if (impactMode) {
+                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                            }
+                            coordinateNow.x = p.x;
+                            coordinateNow.y = p.y;
+                        } else if (options.getPaintMode() == Options.PaintMode.XOR && model.getCellStatus(p.x, p.y) == Model.Cell.LIVE) {
+                            if (impactMode) {
+                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                            }
+                            grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
+                            model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
+                            if (impactMode) {
+                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                            }
+                            coordinateNow.x = p.x;
+                            coordinateNow.y = p.y;
+                        }
                     }
                 }
                 repaint();
@@ -56,19 +71,33 @@ public class InitView extends JPanel {
             @Override
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
-                if (e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height) {
-                    Point p = grid.getAbsoluteCellCoordinate(e.getX(), e.getY());
-                    if (p.x != coordinateNow.x || p.y != coordinateNow.y) {
-                        if (bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_OFF.getRGB()) {
-                            grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
-                            model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
-                            coordinateNow.x = p.x;
-                            coordinateNow.y = p.y;
-                        } else if (options.getPaintMode() == Options.PaintMode.XOR && bufferedImage.getRGB(e.getX(), e.getY()) == ViewColor.CELL_COLOR_ON.getRGB()) {
-                            grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
-                            model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
-                            coordinateNow.x = p.x;
-                            coordinateNow.y = p.y;
+                if (!runMode && e.getX() > 0 && e.getY() > 0 && e.getX() < width && e.getY() < height && bufferedImage.getRGB(e.getX(), e.getY()) != ViewColor.BORDER_COLOR.getRGB()) {
+                    Point p = grid.getAbsoluteCellCoordinate(bufferedImage, e.getX(), e.getY());
+                    if (p.x != Grid.ERROR) {
+                        if (p.x != coordinateNow.x || p.y != coordinateNow.y) {
+                            if (model.getCellStatus(p.x, p.y) == Model.Cell.DEAD) {
+                                if (impactMode) {
+                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                }
+                                grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
+                                model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
+                                if (impactMode) {
+                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                }
+                                coordinateNow.x = p.x;
+                                coordinateNow.y = p.y;
+                            } else if (options.getPaintMode() == Options.PaintMode.XOR && model.getCellStatus(p.x, p.y) == Model.Cell.LIVE) {
+                                if (impactMode) {
+                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                }
+                                grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
+                                model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
+                                if (impactMode) {
+                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                }
+                                coordinateNow.x = p.x;
+                                coordinateNow.y = p.y;
+                            }
                         }
                     }
                 }
@@ -84,33 +113,30 @@ public class InitView extends JPanel {
         g.drawImage(bufferedImage, 0, 0, this);
     }
 
-    public final void initGrid() {
+    public final void initGrid(boolean newModel) {
         coordinateNow.x = -1;
         coordinateNow.y = -1;
         width = 2 * Grid.MARGIN_GRID + options.getColumnNumber() * (options.getGridWidth() + (int) Math.round(options.getCellSize() * Math.sqrt(3))) + options.getGridWidth() + 1;
         height = 2 * Grid.MARGIN_GRID + options.getRowNumber() * ((int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + 3 * options.getCellSize() / 2) + (int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + options.getCellSize() / 2 + 1;
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         setPreferredSize(new Dimension(width, height));
-        model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
+        if (newModel || options.getRowNumber()!=model.getN() || options.getColumnNumber()!=model.getM()) {
+            model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
+        }
         grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
         grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
+        if (impactMode) {
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+        }
         repaint();
     }
 
     void next() {
-        if (impactMode) {
-            coordinateNow.x = -1;
-            coordinateNow.y = -1;
-            bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    bufferedImage.setRGB(j, i, ViewColor.BACKGROUND_COLOR.getRGB());
-                }
-            }
-            grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
-        }
         int n = options.getRowNumber();
         int m = options.getColumnNumber();
+        if (impactMode) {
+            grid.clearImpact(bufferedImage, n, m, model);
+        }
         double impact[][] = new double[n][m];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
@@ -118,36 +144,43 @@ public class InitView extends JPanel {
             }
         }
         Point p;
+        boolean b = true;
+        int m1 = m;
+        int m2 = m - 1;
         for (int i = 0; i < n; i++) {
+            if (b) {
+                m = m1;
+            } else {
+                m = m2;
+            }
             for (int j = 0; j < m; j++) {
                 p = grid.getCellCordinate(j, i);
                 if (model.getCellStatus(j, i) == Model.Cell.LIVE) {
                     if (impact[i][j] - options.getLiveEnd() > exp || impact[i][j] - options.getLiveBegin() < -exp) {
                         model.setCellStatus(j, i, Model.Cell.DEAD);
                         grid.fill(bufferedImage, p.x, p.y, ViewColor.CELL_COLOR_OFF.getRGB());
-                    } else {
-                        grid.fill(bufferedImage, p.x, p.y, ViewColor.CELL_COLOR_ON.getRGB());
                     }
                 } else {
                     if (impact[i][j] - options.getBirthBegin() >= -exp && impact[i][j] - options.getBirthEnd() <= exp) {
                         model.setCellStatus(j, i, Model.Cell.LIVE);
                         grid.fill(bufferedImage, p.x, p.y, ViewColor.CELL_COLOR_ON.getRGB());
-                    } else {
-                        grid.fill(bufferedImage, p.x, p.y, ViewColor.CELL_COLOR_OFF.getRGB());
                     }
                 }
             }
+            b = !b;
         }
         if (impactMode) {
-            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+            grid.drawImpact(bufferedImage, n, m, model);
         }
         repaint();
     }
 
     void ImpactOn() {
         impactMode = true;
-        grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
-        repaint();
+        if (!runMode) {
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+            repaint();
+        }
     }
 
     void ImpactOff() {
@@ -158,6 +191,14 @@ public class InitView extends JPanel {
 
     boolean isImpactMode() {
         return impactMode;
+    }
+
+    public boolean isRunMode() {
+        return runMode;
+    }
+
+    public void setRunMode(boolean runMode) {
+        this.runMode = runMode;
     }
 
     void clear() {
@@ -171,6 +212,10 @@ public class InitView extends JPanel {
             grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
         }
         repaint();
+    }
+
+    public Model getModel() {
+        return model;
     }
 
 }

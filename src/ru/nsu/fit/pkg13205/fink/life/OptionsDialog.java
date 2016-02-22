@@ -309,7 +309,7 @@ public final class OptionsDialog extends JDialog {
                     JOptionPane.showMessageDialog(OptionsDialog.this, "LIVE_BEGIN ≤ BIRTH_BEGIN ≤ BIRTH_END ≤ LIVE_END", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
-                initMainWindow.onInit();
+                initMainWindow.redraw();
                 setVisible(false);
             }
         });
@@ -399,10 +399,6 @@ public final class OptionsDialog extends JDialog {
             public void windowDeactivated(WindowEvent we) {
             }
         });
-    }
-
-    public Options getOptions() {
-        return options;
     }
 
     public void updateMode() {

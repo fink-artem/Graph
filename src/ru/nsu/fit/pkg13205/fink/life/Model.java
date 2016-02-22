@@ -13,6 +13,7 @@ public class Model {
     private final double impact[][];
     private final double fstImpact;
     private final double sndImpact;
+    private int livingCellsNumber = 0;
 
     public Model(int n, int m, double fstImpact, double sndImpact) {
         this.n = n;
@@ -45,8 +46,10 @@ public class Model {
             int sig;
             if (status == Cell.DEAD) {
                 sig = -1;
+                livingCellsNumber--;
             } else {
                 sig = 1;
+                livingCellsNumber++;
             }
             live[y][x] = status;
             if (y > 0) {
@@ -112,4 +115,9 @@ public class Model {
     double getCellImpact(int x, int y) {
         return impact[y][x];
     }
+
+    public int getLivingCellsNumber() {
+        return livingCellsNumber;
+    }
+
 }

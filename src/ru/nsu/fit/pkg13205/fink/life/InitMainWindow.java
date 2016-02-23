@@ -1,14 +1,17 @@
 package ru.nsu.fit.pkg13205.fink.life;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import ru.nsu.cg.MainFrame;
@@ -22,6 +25,7 @@ public class InitMainWindow extends MainFrame {
     private OptionsDialog optionsDialog = new OptionsDialog(options, this);
     private NewDocumentDialog newDocumentDialog = new NewDocumentDialog(options, this);
     private Timer timer;
+    private JLabel statusBar = new JLabel("Ready");
 
     public InitMainWindow() {
         super();
@@ -30,46 +34,49 @@ public class InitMainWindow extends MainFrame {
         setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         try {
             addSubMenu("File", KeyEvent.VK_F);
-            addMenuItem("File/New", "New", KeyEvent.VK_X, "New.png", "onNew");
-            addMenuItem("File/Open", "Open", KeyEvent.VK_X, "Open.png", "onOpen");
-            addMenuItem("File/Save", "Save", KeyEvent.VK_X, "Save.png", "onSave");
+            addMenuItem("File/New", "New", KeyEvent.VK_X, "New.png", "onNew", statusBar);
+            addMenuItem("File/Open", "Open", KeyEvent.VK_X, "Open.png", "onOpen", statusBar);
+            addMenuItem("File/Save", "Save", KeyEvent.VK_X, "Save.png", "onSave", statusBar);
             addMenuSeparator("File");
-            addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit");
+            addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
 
             addSubMenu("Modify", KeyEvent.VK_H);
-            addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions");
-            addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "Replace.png", "onReplace");
+            addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
+            addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "Replace.png", "onReplace", statusBar);
             getMenuElement("Modify/Replace").getComponent().setEnabled(false);
-            addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onXor");
+            addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onXor", statusBar);
             addMenuSeparator("Modify");
-            addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onImpact");
+            addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onImpact", statusBar);
 
             addSubMenu("Action", KeyEvent.VK_H);
-            addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit");
-            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNext");
-            addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "Run.png", "onRun");
+            addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit", statusBar);
+            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNext", statusBar);
+            addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "Run.png", "onRun", statusBar);
 
             addSubMenu("Help", KeyEvent.VK_H);
-            addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout");
+            addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
-            addToolBarButton("File/New");
-            addToolBarButton("File/Open");
-            addToolBarButton("File/Save");
+            addToolBarButton("File/New", statusBar);
+            addToolBarButton("File/Open", statusBar);
+            addToolBarButton("File/Save", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Modify/Options");
-            addToolBarButton("Modify/Replace");
+            addToolBarButton("Modify/Options", statusBar);
+            addToolBarButton("Modify/Replace", statusBar);
             ((JButton) toolBar.getComponentAtIndex(5)).setSelected(true);
-            addToolBarButton("Modify/XOR");
-            addToolBarButton("Modify/Impact");
+            addToolBarButton("Modify/XOR", statusBar);
+            addToolBarButton("Modify/Impact", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Action/Init");
-            addToolBarButton("Action/Next");
-            addToolBarButton("Action/Run");
+            addToolBarButton("Action/Init", statusBar);
+            addToolBarButton("Action/Next", statusBar);
+            addToolBarButton("Action/Run", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Help/About");
+            addToolBarButton("Help/About", statusBar);
 
+            add(statusBar, BorderLayout.SOUTH);
             JScrollPane scrollPane = new JScrollPane(initView);
             add(scrollPane);
+
+            addWindowListener(new CloseWindowListener(this));
 
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -82,6 +89,52 @@ public class InitMainWindow extends MainFrame {
 
     public void onOpen() {
         File file = getOpenFileName("", "");
+        try (Scanner reader = new Scanner(file)) {
+            String s = reader.nextLine();
+            int search = s.indexOf("//");
+            if (search != - 1) {
+                s = s.substring(0, search).trim();
+            }
+            search = s.indexOf(" ");
+            options.setRowNumber(Integer.parseInt(s.substring(0, search)));
+            s = s.substring(search + 1).trim();
+            options.setColumnNumber(Integer.parseInt(s));
+            s = reader.nextLine();
+            search = s.indexOf("//");
+            if (search != - 1) {
+                s = s.substring(0, search).trim();
+            }
+            options.setGridWidth(Integer.parseInt(s));
+            s = reader.nextLine();
+            search = s.indexOf("//");
+            if (search != - 1) {
+                s = s.substring(0, search).trim();
+            }
+            options.setCellSize(Integer.parseInt(s));
+            s = reader.nextLine();
+            search = s.indexOf("//");
+            if (search != - 1) {
+                s = s.substring(0, search).trim();
+            }
+            int length = Integer.parseInt(s);
+            int x, y;
+            initView.initGrid(true);
+            Model model = initView.getModel();
+            for (int i = 0; i < length; i++) {
+                s = reader.nextLine();
+                search = s.indexOf("//");
+                if (search != - 1) {
+                    s = s.substring(0, search).trim();
+                }
+                search = s.indexOf(" ");
+                x = Integer.parseInt(s.substring(0, search));
+                s = s.substring(search + 1).trim();
+                y = Integer.parseInt(s);
+                model.setCellStatus(y, x, Model.Cell.LIVE);
+            }
+            initView.initGrid(false);
+        } catch (FileNotFoundException | NullPointerException e) {
+        }
     }
 
     public void onSave() {
@@ -97,11 +150,11 @@ public class InitMainWindow extends MainFrame {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < m; j++) {
                     if (model.getCellStatus(j, i) == Model.Cell.LIVE) {
-                        out.println(j + " " + i);
+                        out.println(i + " " + j);
                     }
                 }
             }
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | NullPointerException e) {
         }
     }
 

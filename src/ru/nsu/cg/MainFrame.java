@@ -3,6 +3,7 @@ package ru.nsu.cg;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
@@ -10,6 +11,7 @@ import java.security.InvalidParameterException;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -17,6 +19,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.MenuElement;
 import javax.swing.UIManager;
+import javax.swing.event.MouseInputListener;
 
 /**
  * MainFrame - main application frame Application should subclass it to create
@@ -59,7 +62,7 @@ public class MainFrame extends JFrame {
         setLocationByPlatform(true);
         setTitle(title);
     }
-    
+
     /**
      * Shortcut method to create menu item Note that you have to insert it into
      * proper place by yourself
@@ -75,7 +78,7 @@ public class MainFrame extends JFrame {
      * @throws NoSuchMethodException - when actionMethod method not found
      * @throws SecurityException - when actionMethod method is inaccessible
      */
-    public JMenuItem createMenuItem(String title, String tooltip, int mnemonic, String icon, String actionMethod) throws SecurityException, NoSuchMethodException {
+    public JMenuItem createMenuItem(String title, final String tooltip, int mnemonic, String icon, String actionMethod, final JLabel statusBar) throws SecurityException, NoSuchMethodException {
         JMenuItem item = new JMenuItem(title);
         item.setMnemonic(mnemonic);
         item.setToolTipText(tooltip);
@@ -94,6 +97,10 @@ public class MainFrame extends JFrame {
                 }
             }
         });
+        
+        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, item.getToolTipText());
+        item.addMouseListener(messageStatusBarListener);
+        item.addMouseMotionListener(messageStatusBarListener);
         return item;
     }
 
@@ -110,8 +117,8 @@ public class MainFrame extends JFrame {
      * @throws NoSuchMethodException - when actionMethod method not found
      * @throws SecurityException - when actionMethod method is inaccessible
      */
-    public JMenuItem createMenuItem(String title, String tooltip, int mnemonic, String actionMethod) throws SecurityException, NoSuchMethodException {
-        return createMenuItem(title, tooltip, mnemonic, null, actionMethod);
+    public JMenuItem createMenuItem(String title, String tooltip, int mnemonic, String actionMethod, JLabel statusBar) throws SecurityException, NoSuchMethodException {
+        return createMenuItem(title, tooltip, mnemonic, null, actionMethod, statusBar);
     }
 
     /**
@@ -167,12 +174,12 @@ public class MainFrame extends JFrame {
      * @throws InvalidParameterException - when specified menu location not
      * found
      */
-    public void addMenuItem(String title, String tooltip, int mnemonic, String icon, String actionMethod) throws SecurityException, NoSuchMethodException {
+    public void addMenuItem(String title, String tooltip, int mnemonic, String icon, String actionMethod, JLabel statusBar) throws SecurityException, NoSuchMethodException {
         MenuElement element = getParentMenuElement(title);
         if (element == null) {
             throw new InvalidParameterException("Menu path not found: " + title);
         }
-        JMenuItem item = createMenuItem(getMenuPathName(title), tooltip, mnemonic, icon, actionMethod);
+        JMenuItem item = createMenuItem(getMenuPathName(title), tooltip, mnemonic, icon, actionMethod, statusBar);
         if (element instanceof JMenu) {
             ((JMenu) element).add(item);
         } else if (element instanceof JPopupMenu) {
@@ -196,8 +203,8 @@ public class MainFrame extends JFrame {
      * @throws InvalidParameterException - when specified menu location not
      * found
      */
-    public void addMenuItem(String title, String tooltip, int mnemonic, String actionMethod) throws SecurityException, NoSuchMethodException {
-        addMenuItem(title, tooltip, mnemonic, null, actionMethod);
+    public void addMenuItem(String title, String tooltip, int mnemonic, String actionMethod, JLabel statusBar) throws SecurityException, NoSuchMethodException {
+        addMenuItem(title, tooltip, mnemonic, null, actionMethod, statusBar);
     }
 
     /**
@@ -282,12 +289,15 @@ public class MainFrame extends JFrame {
      * @param item - menuitem to create toolbar button from
      * @return created toolbar button
      */
-    public JButton createToolBarButton(JMenuItem item) {
+    public JButton createToolBarButton(final JMenuItem item, final JLabel statusBar) {
         JButton button = new JButton(item.getIcon());
         for (ActionListener listener : item.getActionListeners()) {
             button.addActionListener(listener);
         }
         button.setToolTipText(item.getToolTipText());
+        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, item.getToolTipText());
+        button.addMouseListener(messageStatusBarListener);
+        button.addMouseMotionListener(messageStatusBarListener);
         return button;
     }
 
@@ -298,12 +308,13 @@ public class MainFrame extends JFrame {
      * @return created toolbar button
      * @see MainFrame.getMenuItem
      */
-    public JButton createToolBarButton(String menuPath) {
-        JMenuItem item = (JMenuItem) getMenuElement(menuPath);
+    public JButton createToolBarButton(String menuPath, final JLabel statusBar) {
+        final JMenuItem item = (JMenuItem) getMenuElement(menuPath);
         if (item == null) {
             throw new InvalidParameterException("Menu path not found: " + menuPath);
         }
-        return createToolBarButton(item);
+
+        return createToolBarButton(item, statusBar);
     }
 
     /**
@@ -312,8 +323,8 @@ public class MainFrame extends JFrame {
      *
      * @param menuPath - path to menu item to create toolbar button from
      */
-    public void addToolBarButton(String menuPath) {
-        toolBar.add(createToolBarButton(menuPath));
+    public void addToolBarButton(String menuPath, JLabel statusBar) {
+        toolBar.add(createToolBarButton(menuPath, statusBar));
     }
 
     /**

@@ -1,4 +1,4 @@
-*.class
+﻿*.class
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -12,4 +12,10 @@
 hs_err_pid*
 /build
 /nbproject
-/dist/
+/Новая папка
+/Life/build.xml
+/Life/nbproject
+/Life/build
+
+/Life/manifest.mf
+/Life/dist

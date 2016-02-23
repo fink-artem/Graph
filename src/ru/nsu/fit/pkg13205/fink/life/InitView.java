@@ -217,5 +217,9 @@ public class InitView extends JPanel {
     public Model getModel() {
         return model;
     }
+    
+    public void createNewModel(){
+        model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
+    }
 
 }

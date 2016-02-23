@@ -118,7 +118,7 @@ public class InitMainWindow extends MainFrame {
             }
             int length = Integer.parseInt(s);
             int x, y;
-            initView.initGrid(true);
+            initView.createNewModel();
             Model model = initView.getModel();
             for (int i = 0; i < length; i++) {
                 s = reader.nextLine();

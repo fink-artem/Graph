@@ -1,5 +1,5 @@
 
-package ru.nsu.fit.pkg13205.fink.life;
+package ru.nsu.fit.g13205.fink.life;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;

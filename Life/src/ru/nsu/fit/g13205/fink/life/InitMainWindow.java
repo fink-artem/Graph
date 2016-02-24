@@ -1,4 +1,4 @@
-package ru.nsu.fit.pkg13205.fink.life;
+package ru.nsu.fit.g13205.fink.life;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

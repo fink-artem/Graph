@@ -21,7 +21,8 @@ public class InitMainWindow extends MainFrame {
     private final int MIN_WIDTH = 800;
     private final int MIN_HEIGHT = 600;
     private Options options = new Options();
-    private InitView initView = new InitView(options);
+    private JScrollPane scrollPane;
+    private InitView initView = new InitView(options, this);
     private OptionsDialog optionsDialog = new OptionsDialog(options, this);
     private NewDocumentDialog newDocumentDialog = new NewDocumentDialog(options, this);
     private Timer timer;
@@ -34,46 +35,46 @@ public class InitMainWindow extends MainFrame {
         setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         try {
             addSubMenu("File", KeyEvent.VK_F);
-            addMenuItem("File/New", "New", KeyEvent.VK_X, "New.png", "onNew", statusBar);
-            addMenuItem("File/Open", "Open", KeyEvent.VK_X, "Open.png", "onOpen", statusBar);
-            addMenuItem("File/Save", "Save", KeyEvent.VK_X, "Save.png", "onSave", statusBar);
+            addMenuItem("File/New", "Create a new document", KeyEvent.VK_X, "New.png", "onNew", statusBar);
+            addMenuItem("File/Open", "Open an existing document", KeyEvent.VK_X, "Open.png", "onOpen", statusBar);
+            addMenuItem("File/Save", "Save the active document", KeyEvent.VK_X, "Save.png", "onSave", statusBar);
             addMenuSeparator("File");
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
 
             addSubMenu("Modify", KeyEvent.VK_H);
-            addMenuItem("Modify/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
-            addMenuItem("Modify/Replace", "Replace", KeyEvent.VK_X, "Replace.png", "onReplace", statusBar);
+            addMenuItem("Modify/Options", "Modify properties", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
+            addMenuItem("Modify/Replace", "Replace mode", KeyEvent.VK_X, "Replace.png", "onReplace", statusBar);
             getMenuElement("Modify/Replace").getComponent().setEnabled(false);
-            addMenuItem("Modify/XOR", "XOR", KeyEvent.VK_X, "XOR.png", "onXor", statusBar);
+            addMenuItem("Modify/XOR", "XOR mode", KeyEvent.VK_X, "XOR.png", "onXor", statusBar);
             addMenuSeparator("Modify");
-            addMenuItem("Modify/Impact", "Impact", KeyEvent.VK_X, "Impact.png", "onImpact", statusBar);
+            addMenuItem("Modify/Impact", "Show impact values", KeyEvent.VK_X, "Impact.png", "onImpact", statusBar);
 
             addSubMenu("Action", KeyEvent.VK_H);
-            addMenuItem("Action/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit", statusBar);
-            addMenuItem("Action/Next", "Next", KeyEvent.VK_X, "Next.png", "onNext", statusBar);
-            addMenuItem("Action/Run", "Run", KeyEvent.VK_X, "Run.png", "onRun", statusBar);
+            addMenuItem("Action/Init", "Clear all field", KeyEvent.VK_X, "Init.png", "onInit", statusBar);
+            addMenuItem("Action/Next", "Show next state", KeyEvent.VK_X, "Next.png", "onNext", statusBar);
+            addMenuItem("Action/Run", "Information about author", KeyEvent.VK_X, "Run.png", "onRun", statusBar);
 
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
-            addToolBarButton("File/New", statusBar);
-            addToolBarButton("File/Open", statusBar);
-            addToolBarButton("File/Save", statusBar);
+            addToolBarButton("File/New", "Create a new document", statusBar);
+            addToolBarButton("File/Open", "Open an existing document", statusBar);
+            addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Modify/Options", statusBar);
-            addToolBarButton("Modify/Replace", statusBar);
+            addToolBarButton("Modify/Options", "Modify properties", statusBar);
+            addToolBarButton("Modify/Replace", "Replace mode", statusBar);
             ((JButton) toolBar.getComponentAtIndex(5)).setSelected(true);
-            addToolBarButton("Modify/XOR", statusBar);
-            addToolBarButton("Modify/Impact", statusBar);
+            addToolBarButton("Modify/XOR", "XOR mode", statusBar);
+            addToolBarButton("Modify/Impact", "Show impact values", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Action/Init", statusBar);
-            addToolBarButton("Action/Next", statusBar);
-            addToolBarButton("Action/Run", statusBar);
+            addToolBarButton("Action/Init", "Clear all field", statusBar);
+            addToolBarButton("Action/Next", "Show next state", statusBar);
+            addToolBarButton("Action/Run", "Start life", statusBar);
             addToolBarSeparator();
-            addToolBarButton("Help/About", statusBar);
+            addToolBarButton("Help/About", "Information about author", statusBar);
 
             add(statusBar, BorderLayout.SOUTH);
-            JScrollPane scrollPane = new JScrollPane(initView);
+            scrollPane = new JScrollPane(initView);
             add(scrollPane);
 
             addWindowListener(new CloseWindowListener(this));
@@ -242,12 +243,17 @@ public class InitMainWindow extends MainFrame {
         JOptionPane.showMessageDialog(this, "Fink Artem, NSU, FIT, group 13025", "About Author", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    void createNewDocument() {
+        initView.initGrid(true);
+    }
+
+    public void rescroll() {
+        scrollPane.updateUI();
+    }
+
     public static void main(String[] args) {
         InitMainWindow mainFrame = new InitMainWindow();
         mainFrame.setVisible(true);
     }
 
-    void createNewDocument() {
-        initView.initGrid(true);
-    }
 }

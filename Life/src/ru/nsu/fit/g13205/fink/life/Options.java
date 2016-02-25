@@ -12,7 +12,7 @@ public class Options {
     private int columnNumber = 25;
     private int cellSize = 20;
     private int gridWidth = 2;
-    private int timer = 500;
+    private int timer = 1000;
     private double liveBegin = 2;
     private double liveEnd = 3.3;
     private double birthBegin = 2.3;

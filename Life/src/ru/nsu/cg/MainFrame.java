@@ -81,7 +81,7 @@ public class MainFrame extends JFrame {
     public JMenuItem createMenuItem(String title, final String tooltip, int mnemonic, String icon, String actionMethod, final JLabel statusBar) throws SecurityException, NoSuchMethodException {
         JMenuItem item = new JMenuItem(title);
         item.setMnemonic(mnemonic);
-        item.setToolTipText(tooltip);
+        item.setToolTipText(title);
         if (icon != null) {
             item.setIcon(new ImageIcon(getClass().getResource("resources/" + icon), title));
         }
@@ -97,8 +97,8 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-        
-        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, item.getToolTipText());
+
+        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, tooltip);
         item.addMouseListener(messageStatusBarListener);
         item.addMouseMotionListener(messageStatusBarListener);
         return item;
@@ -289,13 +289,13 @@ public class MainFrame extends JFrame {
      * @param item - menuitem to create toolbar button from
      * @return created toolbar button
      */
-    public JButton createToolBarButton(final JMenuItem item, final JLabel statusBar) {
+    public JButton createToolBarButton(final JMenuItem item, String text, final JLabel statusBar) {
         JButton button = new JButton(item.getIcon());
         for (ActionListener listener : item.getActionListeners()) {
             button.addActionListener(listener);
         }
         button.setToolTipText(item.getToolTipText());
-        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, item.getToolTipText());
+        MessageStatusBarListener messageStatusBarListener = new MessageStatusBarListener(statusBar, text);
         button.addMouseListener(messageStatusBarListener);
         button.addMouseMotionListener(messageStatusBarListener);
         return button;
@@ -308,13 +308,13 @@ public class MainFrame extends JFrame {
      * @return created toolbar button
      * @see MainFrame.getMenuItem
      */
-    public JButton createToolBarButton(String menuPath, final JLabel statusBar) {
+    public JButton createToolBarButton(String menuPath, String text, final JLabel statusBar) {
         final JMenuItem item = (JMenuItem) getMenuElement(menuPath);
         if (item == null) {
             throw new InvalidParameterException("Menu path not found: " + menuPath);
         }
 
-        return createToolBarButton(item, statusBar);
+        return createToolBarButton(item, text, statusBar);
     }
 
     /**
@@ -323,8 +323,8 @@ public class MainFrame extends JFrame {
      *
      * @param menuPath - path to menu item to create toolbar button from
      */
-    public void addToolBarButton(String menuPath, JLabel statusBar) {
-        toolBar.add(createToolBarButton(menuPath, statusBar));
+    public void addToolBarButton(String menuPath, String text, JLabel statusBar) {
+        toolBar.add(createToolBarButton(menuPath, text, statusBar));
     }
 
     /**

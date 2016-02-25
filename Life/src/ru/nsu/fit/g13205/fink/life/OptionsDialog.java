@@ -27,13 +27,14 @@ import javax.swing.event.ChangeListener;
 public final class OptionsDialog extends JDialog {
 
     private final int WIDTH = 500;
-    private final int HEIGHT = 300;
+    private final int HEIGHT = 380;
     private final int NUMBER_RADIO_BUTTONS = 2;
     private final int TEXT_FIELD_SIZE = 5;
     private final Options options;
     private final String REPLACE_COMMAND = "Replace";
     private final String XOR_COMMAND = "XOR";
     private final JRadioButton[] radioButtons;
+    private boolean error = false;
 
     public OptionsDialog(final Options options, final InitMainWindow initMainWindow) {
         super(new JFrame(), true);
@@ -52,7 +53,12 @@ public final class OptionsDialog extends JDialog {
         final JTextField rowsTextField = new JTextField(String.valueOf(options.getRowNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(rowsTextField, gridBagConstraints);
-        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, 1, 50, options.getRowNumber());
+        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, 1, 41, options.getRowNumber());
+        rowsSlider.setMajorTickSpacing(5);
+        rowsSlider.setMinorTickSpacing(1);
+        rowsSlider.setPaintLabels(true);
+        rowsSlider.setPaintTicks(true);
+        rowsSlider.setSnapToTicks(true);
         rowsSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -68,7 +74,14 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = Integer.parseInt(rowsTextField.getText());
+                int value = options.getRowNumber();
+                try {
+                    value = Integer.parseInt(rowsTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    rowsTextField.setText(String.valueOf(value));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 if (value < rowsSlider.getMinimum()) {
                     value = rowsSlider.getMinimum();
                     rowsTextField.setText(String.valueOf(rowsSlider.getMinimum()));
@@ -88,7 +101,12 @@ public final class OptionsDialog extends JDialog {
         final JTextField columnsTextField = new JTextField(String.valueOf(options.getColumnNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(columnsTextField, gridBagConstraints);
-        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, 1, 50, options.getColumnNumber());
+        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, 1, 41, options.getColumnNumber());
+        columnsSlider.setMajorTickSpacing(5);
+        columnsSlider.setMinorTickSpacing(1);
+        columnsSlider.setPaintLabels(true);
+        columnsSlider.setPaintTicks(true);
+        columnsSlider.setSnapToTicks(true);
         columnsSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -104,7 +122,14 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = Integer.parseInt(columnsTextField.getText());
+                int value = options.getColumnNumber();
+                try {
+                    value = Integer.parseInt(columnsTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    columnsTextField.setText(String.valueOf(value));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 if (value < columnsSlider.getMinimum()) {
                     value = columnsSlider.getMinimum();
                     columnsTextField.setText(String.valueOf(columnsSlider.getMinimum()));
@@ -124,7 +149,12 @@ public final class OptionsDialog extends JDialog {
         final JTextField cellSizeTextField = new JTextField(String.valueOf(options.getCellSize()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(cellSizeTextField, gridBagConstraints);
-        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, 3, 150, options.getCellSize());
+        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, 5, 65, options.getCellSize());
+        cellSizeSlider.setMajorTickSpacing(10);
+        cellSizeSlider.setMinorTickSpacing(1);
+        cellSizeSlider.setPaintLabels(true);
+        cellSizeSlider.setPaintTicks(true);
+        cellSizeSlider.setSnapToTicks(true);
         cellSizeSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -140,7 +170,14 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = Integer.parseInt(cellSizeTextField.getText());
+                int value = options.getCellSize();
+                try {
+                    value = Integer.parseInt(cellSizeTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    cellSizeTextField.setText(String.valueOf(value));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 if (value < cellSizeSlider.getMinimum()) {
                     value = cellSizeSlider.getMinimum();
                     cellSizeTextField.setText(String.valueOf(cellSizeSlider.getMinimum()));
@@ -160,7 +197,12 @@ public final class OptionsDialog extends JDialog {
         final JTextField gridWidthTextField = new JTextField(String.valueOf(options.getGridWidth()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(gridWidthTextField, gridBagConstraints);
-        final JSlider gridWidthSlider = new JSlider(JSlider.HORIZONTAL, 1, 30, options.getGridWidth());
+        final JSlider gridWidthSlider = new JSlider(JSlider.HORIZONTAL, 1, 21, options.getGridWidth());
+        gridWidthSlider.setMajorTickSpacing(4);
+        gridWidthSlider.setMinorTickSpacing(1);
+        gridWidthSlider.setPaintLabels(true);
+        gridWidthSlider.setPaintTicks(true);
+        gridWidthSlider.setSnapToTicks(true);
         gridWidthSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -176,7 +218,14 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = Integer.parseInt(gridWidthTextField.getText());
+                int value = options.getGridWidth();
+                try {
+                    value = Integer.parseInt(gridWidthTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    gridWidthTextField.setText(String.valueOf(value));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 if (value < gridWidthSlider.getMinimum()) {
                     value = gridWidthSlider.getMinimum();
                     gridWidthTextField.setText(String.valueOf(gridWidthSlider.getMinimum()));
@@ -196,7 +245,11 @@ public final class OptionsDialog extends JDialog {
         final JTextField timerTextField = new JTextField(String.valueOf(options.getTimer()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(timerTextField, gridBagConstraints);
-        final JSlider timerSlider = new JSlider(JSlider.HORIZONTAL, 1, 1000, options.getTimer());
+        final JSlider timerSlider = new JSlider(JSlider.HORIZONTAL, 200, 1000, options.getTimer());
+        timerSlider.setMajorTickSpacing(200);
+        timerSlider.setPaintLabels(true);
+        timerSlider.setPaintTicks(true);
+        timerSlider.setSnapToTicks(true);
         timerSlider.addChangeListener(new ChangeListener() {
 
             @Override
@@ -212,7 +265,14 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = Integer.parseInt(timerTextField.getText());
+                int value = options.getTimer();
+                try {
+                    value = Integer.parseInt(timerTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    timerTextField.setText(String.valueOf(value));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
                 if (value < timerSlider.getMinimum()) {
                     value = timerSlider.getMinimum();
                     timerTextField.setText(String.valueOf(timerSlider.getMinimum()));
@@ -251,9 +311,43 @@ public final class OptionsDialog extends JDialog {
         impactPanel.setBorder(BorderFactory.createTitledBorder("Impact"));
         impactPanel.add(new JLabel("FST_IMPACT"));
         final JTextField fstImpactTextField = new JTextField(String.valueOf(options.getFstImpact()));
+        fstImpactTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(fstImpactTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    fstImpactTextField.setText(String.valueOf(options.getFstImpact()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         impactPanel.add(fstImpactTextField);
         impactPanel.add(new JLabel("SND_IMPACT"));
         final JTextField sndImpactTextField = new JTextField(String.valueOf(options.getSndImpact()));
+        sndImpactTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(sndImpactTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    sndImpactTextField.setText(String.valueOf(options.getSndImpact()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         impactPanel.add(sndImpactTextField);
         modeImpactPanel.add(impactPanel);
         mainPanel.add(modeImpactPanel);
@@ -262,15 +356,83 @@ public final class OptionsDialog extends JDialog {
         environmentPanel.setBorder(BorderFactory.createTitledBorder("Environment"));
         environmentPanel.add(new JLabel("LIVE_BEGIN"));
         final JTextField liveBeginTextField = new JTextField(String.valueOf(options.getLiveBegin()));
+        liveBeginTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(liveBeginTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    liveBeginTextField.setText(String.valueOf(options.getLiveBegin()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         environmentPanel.add(liveBeginTextField);
         environmentPanel.add(new JLabel("LIVE_END"));
         final JTextField liveEndTextField = new JTextField(String.valueOf(options.getLiveEnd()));
+        liveEndTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(liveEndTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    liveEndTextField.setText(String.valueOf(options.getLiveEnd()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         environmentPanel.add(liveEndTextField);
         environmentPanel.add(new JLabel("BIRTH_BEGIN"));
         final JTextField birthBeginTextField = new JTextField(String.valueOf(options.getBirthBegin()));
+        birthBeginTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(birthBeginTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    birthBeginTextField.setText(String.valueOf(options.getBirthBegin()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         environmentPanel.add(birthBeginTextField);
         environmentPanel.add(new JLabel("BIRTH_END"));
         final JTextField birthEndTextField = new JTextField(String.valueOf(options.getBirthEnd()));
+        birthEndTextField.addFocusListener(new FocusListener() {
+
+            @Override
+            public void focusGained(FocusEvent fe) {
+            }
+
+            @Override
+            public void focusLost(FocusEvent fe) {
+                try {
+                    Double.parseDouble(birthEndTextField.getText());
+                } catch (NumberFormatException e) {
+                    error = true;
+                    birthEndTextField.setText(String.valueOf(options.getBirthEnd()));
+                    JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         environmentPanel.add(birthEndTextField);
         mainPanel.add(environmentPanel);
 
@@ -279,38 +441,42 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String command = group.getSelection().getActionCommand();
-
-                switch (command) {
-                    case REPLACE_COMMAND:
-                        initMainWindow.onReplace();
-                        break;
-                    case XOR_COMMAND:
-                        initMainWindow.onXor();
-                        break;
-                }
-                options.setFstImpact(Double.parseDouble(fstImpactTextField.getText()));
-                options.setSndImpact(Double.parseDouble(sndImpactTextField.getText()));
-                options.setRowNumber(Integer.parseInt(rowsTextField.getText()));
-                options.setColumnNumber(Integer.parseInt(columnsTextField.getText()));
-                options.setCellSize(Integer.parseInt(cellSizeTextField.getText()));
-                options.setGridWidth(Integer.parseInt(gridWidthTextField.getText()));
-                options.setTimer(Integer.parseInt(timerTextField.getText()));
-                double liveBegin = Double.parseDouble(liveBeginTextField.getText());
-                double liveEnd = Double.parseDouble(liveEndTextField.getText());
-                double birthBegin = Double.parseDouble(birthBeginTextField.getText());
-                double birthEnd = Double.parseDouble(birthEndTextField.getText());
-                if (0 <= liveBegin && liveBegin <= birthBegin && birthBegin <= birthEnd && birthEnd <= liveEnd) {
-                    options.setBirthBegin(birthBegin);
-                    options.setBirthEnd(birthEnd);
-                    options.setLiveBegin(liveBegin);
-                    options.setLiveEnd(liveEnd);
+                if (error) {
+                    error = false;
                 } else {
-                    JOptionPane.showMessageDialog(OptionsDialog.this, "LIVE_BEGIN ≤ BIRTH_BEGIN ≤ BIRTH_END ≤ LIVE_END", "Error", JOptionPane.ERROR_MESSAGE);
-                    return;
+                    String command = group.getSelection().getActionCommand();
+
+                    switch (command) {
+                        case REPLACE_COMMAND:
+                            initMainWindow.onReplace();
+                            break;
+                        case XOR_COMMAND:
+                            initMainWindow.onXor();
+                            break;
+                    }
+                    options.setFstImpact(Double.parseDouble(fstImpactTextField.getText()));
+                    options.setSndImpact(Double.parseDouble(sndImpactTextField.getText()));
+                    options.setRowNumber(Integer.parseInt(rowsTextField.getText()));
+                    options.setColumnNumber(Integer.parseInt(columnsTextField.getText()));
+                    options.setCellSize(Integer.parseInt(cellSizeTextField.getText()));
+                    options.setGridWidth(Integer.parseInt(gridWidthTextField.getText()));
+                    options.setTimer(Integer.parseInt(timerTextField.getText()));
+                    double liveBegin = Double.parseDouble(liveBeginTextField.getText());
+                    double liveEnd = Double.parseDouble(liveEndTextField.getText());
+                    double birthBegin = Double.parseDouble(birthBeginTextField.getText());
+                    double birthEnd = Double.parseDouble(birthEndTextField.getText());
+                    if (0 <= liveBegin && liveBegin <= birthBegin && birthBegin <= birthEnd && birthEnd <= liveEnd) {
+                        options.setBirthBegin(birthBegin);
+                        options.setBirthEnd(birthEnd);
+                        options.setLiveBegin(liveBegin);
+                        options.setLiveEnd(liveEnd);
+                    } else {
+                        JOptionPane.showMessageDialog(OptionsDialog.this, "LIVE_BEGIN ≤ BIRTH_BEGIN ≤ BIRTH_END ≤ LIVE_END", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    initMainWindow.redraw();
+                    setVisible(false);
                 }
-                initMainWindow.redraw();
-                setVisible(false);
             }
         });
         mainPanel.add(okButton);
@@ -347,7 +513,7 @@ public final class OptionsDialog extends JDialog {
         mainPanel.add(cancelButton);
 
         add(mainPanel);
-        
+
         addWindowListener(new WindowListener() {
 
             @Override

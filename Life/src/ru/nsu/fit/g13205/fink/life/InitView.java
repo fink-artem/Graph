@@ -21,9 +21,11 @@ public class InitView extends JPanel {
     private boolean impactMode = false;
     private boolean runMode = false;
     private final double exp = Math.pow(0.1, 6);
+    private InitMainWindow initMainWindow;
 
-    public InitView(final Options options) {
+    public InitView(final Options options, InitMainWindow initMainWindow) {
         this.options = options;
+        this.initMainWindow = initMainWindow;
         setBackground(ViewColor.BACKGROUND_COLOR);
         grid = new Grid();
         model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
@@ -111,6 +113,7 @@ public class InitView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(bufferedImage, 0, 0, this);
+        initMainWindow.rescroll();
     }
 
     public final void initGrid(boolean newModel) {
@@ -120,7 +123,7 @@ public class InitView extends JPanel {
         height = 2 * Grid.MARGIN_GRID + options.getRowNumber() * ((int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + 3 * options.getCellSize() / 2) + (int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + options.getCellSize() / 2 + 1;
         bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         setPreferredSize(new Dimension(width, height));
-        if (newModel || options.getRowNumber()!=model.getN() || options.getColumnNumber()!=model.getM()) {
+        if (newModel || options.getRowNumber() != model.getN() || options.getColumnNumber() != model.getM()) {
             model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
         }
         grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
@@ -170,7 +173,7 @@ public class InitView extends JPanel {
             b = !b;
         }
         if (impactMode) {
-            grid.drawImpact(bufferedImage, n, m, model);
+            grid.drawImpact(bufferedImage, n, m1, model);
         }
         repaint();
     }
@@ -217,8 +220,8 @@ public class InitView extends JPanel {
     public Model getModel() {
         return model;
     }
-    
-    public void createNewModel(){
+
+    public void createNewModel() {
         model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
     }
 

@@ -240,7 +240,7 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onAbout() {
-        JOptionPane.showMessageDialog(this, "Fink Artem, NSU, FIT, group 13025", "About Author", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this, "Fink Artem, NSU, FIT, group 13205", "About Author", JOptionPane.INFORMATION_MESSAGE);
     }
 
     void createNewDocument() {

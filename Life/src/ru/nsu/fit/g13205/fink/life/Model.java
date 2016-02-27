@@ -49,7 +49,6 @@ public class Model {
                 livingCellsNumber--;
             } else {
                 sig = 1;
-                System.out.println("live");
                 livingCellsNumber++;
             }
             live[y][x] = status;

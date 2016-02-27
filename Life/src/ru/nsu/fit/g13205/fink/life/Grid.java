@@ -21,6 +21,7 @@ public class Grid {
     private int stepY;
     private int w;
     private int k;
+    int a = 0;
 
     private void drawLine(BufferedImage bufferedImage, int x1, int y1, int x2, int y2) {
         int deltaX = Math.abs(x1 - x2);
@@ -68,9 +69,16 @@ public class Grid {
         }
     }
 
-    private void drawCell(BufferedImage bufferedImage, int x, int y, int k, int w) {
+    private void drawCell(BufferedImage bufferedImage, int x, int y, int k, int w, boolean one, boolean two, boolean three, boolean four, boolean five, boolean six) {
         int xArray[] = new int[ANGLE];
         int yArray[] = new int[ANGLE];
+        boolean b[] = new boolean[ANGLE + 1];
+        b[1] = one;
+        b[2] = two;
+        b[3] = three;
+        b[4] = four;
+        b[5] = five;
+        b[6] = six;
         xArray[0] = (int) (x - (k * SQRT_THREE + w) / 2);
         yArray[0] = (int) (y - k / 2 - w / 2 / SQRT_THREE);
         xArray[1] = x;
@@ -85,17 +93,25 @@ public class Grid {
         yArray[5] = (int) (y + k / 2 + w / 2 / SQRT_THREE);
         if (w == 1) {
             for (int i = 1; i < ANGLE; i++) {
-                drawLine(bufferedImage, xArray[i - 1], yArray[i - 1], xArray[i], yArray[i]);
+                if (b[i]) {
+                    drawLine(bufferedImage, xArray[i - 1], yArray[i - 1], xArray[i], yArray[i]);
+                }
             }
-            drawLine(bufferedImage, xArray[0], yArray[0], xArray[ANGLE - 1], yArray[ANGLE - 1]);
+            if (b[ANGLE]) {
+                drawLine(bufferedImage, xArray[0], yArray[0], xArray[ANGLE - 1], yArray[ANGLE - 1]);
+            }
         } else {
             Graphics2D g = (Graphics2D) bufferedImage.getGraphics();
             g.setStroke(new BasicStroke(w, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
             g.setPaint(ViewColor.BORDER_COLOR);
             for (int i = 1; i < ANGLE; i++) {
-                g.drawLine(xArray[i - 1], yArray[i - 1], xArray[i], yArray[i]);
+                if (b[i]) {
+                    g.drawLine(xArray[i - 1], yArray[i - 1], xArray[i], yArray[i]);
+                }
             }
-            g.drawLine(xArray[0], yArray[0], xArray[ANGLE - 1], yArray[ANGLE - 1]);
+            if (b[ANGLE]) {
+                g.drawLine(xArray[0], yArray[0], xArray[ANGLE - 1], yArray[ANGLE - 1]);
+            }
         }
     }
 
@@ -139,21 +155,42 @@ public class Grid {
             startX2 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE + w - 1 + w / 2);
             stepX = (int) Math.round(k * SQRT_THREE + w - 1);
             startY = (int) Math.round(MARGIN_GRID + k + 2 * w / SQRT_THREE - 1);
-            stepY = (int) Math.round(k * 3 / 2 + 2 * w / SQRT_THREE - 1);
         } else {
             startX1 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE / 2 + w);
             startX2 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE + w + w / 2);
             stepX = (int) Math.round(k * SQRT_THREE + w);
             startY = (int) Math.round(MARGIN_GRID + k + 2 * w / SQRT_THREE);
-            stepY = (int) Math.round(k * 3 / 2 + 2 * w / SQRT_THREE);
         }
+        stepY = (int) Math.round((k * 3 + w * SQRT_THREE) / 2);
         int x;
         int y;
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                x = startX1 + j * stepX;
-                y = startY + i * stepY;
-                drawCell(bufferedImage, x, y, k, w);
+        drawCell(bufferedImage, startX1, startY, k, w, true, true, true, true, true, true);
+        if (model.getCellStatus(0, 0) == Model.Cell.DEAD) {
+            fill(bufferedImage, startX1, startY, ViewColor.CELL_COLOR_OFF.getRGB());
+        } else {
+            fill(bufferedImage, startX1, startY, ViewColor.CELL_COLOR_ON.getRGB());
+        }
+        for (int j = 1; j < m; j++) {
+            x = startX1 + j * stepX;
+            drawCell(bufferedImage, x, startY, k, w, true, true, true, true, true, false);
+            if (model.getCellStatus(j, 0) == Model.Cell.DEAD) {
+                fill(bufferedImage, x, startY, ViewColor.CELL_COLOR_OFF.getRGB());
+            } else {
+                fill(bufferedImage, x, startY, ViewColor.CELL_COLOR_ON.getRGB());
+            }
+        }
+
+        for (int i = 1; i < n; i++) {
+            y = startY + i * stepY;
+            drawCell(bufferedImage, startX2, y, k, w, false, false, true, true, true, true);
+            if (model.getCellStatus(0, i) == Model.Cell.DEAD) {
+                fill(bufferedImage, startX2, y, ViewColor.CELL_COLOR_OFF.getRGB());
+            } else {
+                fill(bufferedImage, startX2, y, ViewColor.CELL_COLOR_ON.getRGB());
+            }
+            for (int j = 1; j < m2; j++) {
+                x = startX2 + j * stepX;
+                drawCell(bufferedImage, x, y, k, w, false, false, true, true, true, false);
                 if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
                     fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
                 } else {
@@ -164,15 +201,27 @@ public class Grid {
             if (i >= n) {
                 break;
             }
-            for (int j = 0; j < m2; j++) {
-                x = startX2 + j * stepX;
-                y = startY + i * stepY;
-                drawCell(bufferedImage, x, y, k, w);
+            y = startY + i * stepY;
+            drawCell(bufferedImage, startX1, y, k, w, true, false, true, true, true, true);
+            if (model.getCellStatus(0, i) == Model.Cell.DEAD) {
+                fill(bufferedImage, startX1, y, ViewColor.CELL_COLOR_OFF.getRGB());
+            } else {
+                fill(bufferedImage, startX1, y, ViewColor.CELL_COLOR_ON.getRGB());
+            }
+            for (int j = 1; j < m2; j++) {
+                x = startX1 + j * stepX;
+                drawCell(bufferedImage, x, y, k, w, false, false, true, true, true, false);
                 if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
                     fill(bufferedImage, x, y, ViewColor.CELL_COLOR_OFF.getRGB());
                 } else {
                     fill(bufferedImage, x, y, ViewColor.CELL_COLOR_ON.getRGB());
                 }
+            }
+            drawCell(bufferedImage, startX1 + m2 * stepX, y, k, w, false, true, true, true, true, false);
+            if (model.getCellStatus(0, i) == Model.Cell.DEAD) {
+                fill(bufferedImage, startX1 + m2 * stepX, y, ViewColor.CELL_COLOR_OFF.getRGB());
+            } else {
+                fill(bufferedImage, startX1 + m2 * stepX, y, ViewColor.CELL_COLOR_ON.getRGB());
             }
         }
     }
@@ -226,9 +275,9 @@ public class Grid {
         double y1 = y - MARGIN_GRID - w * SQRT_THREE - k / 2;
         double x1 = x - MARGIN_GRID - w / 2;
         double x2 = x - MARGIN_GRID - w / 2 - k * SQRT_THREE / 2;
-        y1 /= 3 * k / 2 + 2 * w / SQRT_THREE;
-        x1 /= (k * SQRT_THREE) + w;
-        x2 /= (k * SQRT_THREE) + w;
+        y1 /= stepY;
+        x1 /= stepX;
+        x2 /= stepX;
         if (((int) y1) % 2 == 0) {
             Point p1 = getCellCordinate((int) x1, (int) y1);
             Point p2 = getCellCordinate((int) x2, (int) y1 + 1);
@@ -259,22 +308,22 @@ public class Grid {
         return new Point(x, y);
     }
 
-    void drawImpact(BufferedImage bufferedImage, int n, int m, Model model) {
+    void drawImpact(BufferedImage bufferedImage, int n, int m, Model model, int k) {
         int m2 = m - 1;
         int x;
         int y;
         Graphics g = bufferedImage.createGraphics();
         g.setColor(ViewColor.IMPACT_COLOR);
-        g.setFont(new Font("X", Font.BOLD, 20));
+        g.setFont(new Font("X", Font.BOLD, 15));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 x = startX1 + j * stepX;
                 y = startY + i * stepY;
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (impact == (int) impact) {
-                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                    g.drawString(String.valueOf((int) impact), x - 10, y + 7);
                 } else {
-                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                    g.drawString(String.valueOf(impact), x - 10, y + 7);
                 }
             }
             i++;
@@ -286,20 +335,20 @@ public class Grid {
                 y = startY + i * stepY;
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (impact == (int) impact) {
-                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                    g.drawString(String.valueOf((int) impact), x - 10, y + 7);
                 } else {
-                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                    g.drawString(String.valueOf(impact), x - 10, y + 7);
                 }
             }
         }
     }
 
-    void clearImpact(BufferedImage bufferedImage, int n, int m, Model model) {
+    void clearImpact(BufferedImage bufferedImage, int n, int m, Model model, int k) {
         int m2 = m - 1;
         int x;
         int y;
         Graphics g = bufferedImage.createGraphics();
-        g.setFont(new Font("X", Font.BOLD, 20));
+        g.setFont(new Font("X", Font.BOLD, 15));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 x = startX1 + j * stepX;
@@ -311,9 +360,9 @@ public class Grid {
                     g.setColor(ViewColor.CELL_COLOR_ON);
                 }
                 if (impact == (int) impact) {
-                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                    g.drawString(String.valueOf((int) impact), x - 10, y + 7);
                 } else {
-                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                    g.drawString(String.valueOf(impact), x - 10, y + 7);
                 }
             }
             i++;
@@ -330,9 +379,9 @@ public class Grid {
                     g.setColor(ViewColor.CELL_COLOR_ON);
                 }
                 if (impact == (int) impact) {
-                    g.drawString(String.valueOf((int) impact), x - 14, y + 7);
+                    g.drawString(String.valueOf((int) impact), x - 10, y + 7);
                 } else {
-                    g.drawString(String.valueOf(impact), x - 14, y + 7);
+                    g.drawString(String.valueOf(impact), x - 10, y + 7);
                 }
             }
         }

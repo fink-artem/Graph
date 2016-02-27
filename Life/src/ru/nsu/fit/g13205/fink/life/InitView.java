@@ -21,7 +21,7 @@ public class InitView extends JPanel {
     private boolean impactMode = false;
     private boolean runMode = false;
     private final double exp = Math.pow(0.1, 6);
-    private InitMainWindow initMainWindow;
+    private final InitMainWindow initMainWindow;
 
     public InitView(final Options options, InitMainWindow initMainWindow) {
         this.options = options;
@@ -40,23 +40,23 @@ public class InitView extends JPanel {
                     if (p.x != Grid.ERROR) {
                         if (model.getCellStatus(p.x, p.y) == Model.Cell.DEAD) {
                             if (impactMode) {
-                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                             }
                             grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
                             model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
                             if (impactMode) {
-                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                             }
                             coordinateNow.x = p.x;
                             coordinateNow.y = p.y;
                         } else if (options.getPaintMode() == Options.PaintMode.XOR && model.getCellStatus(p.x, p.y) == Model.Cell.LIVE) {
                             if (impactMode) {
-                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                             }
                             grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
                             model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
                             if (impactMode) {
-                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                             }
                             coordinateNow.x = p.x;
                             coordinateNow.y = p.y;
@@ -79,23 +79,23 @@ public class InitView extends JPanel {
                         if (p.x != coordinateNow.x || p.y != coordinateNow.y) {
                             if (model.getCellStatus(p.x, p.y) == Model.Cell.DEAD) {
                                 if (impactMode) {
-                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                                 }
                                 grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_ON.getRGB());
                                 model.setCellStatus(p.x, p.y, Model.Cell.LIVE);
                                 if (impactMode) {
-                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                                 }
                                 coordinateNow.x = p.x;
                                 coordinateNow.y = p.y;
                             } else if (options.getPaintMode() == Options.PaintMode.XOR && model.getCellStatus(p.x, p.y) == Model.Cell.LIVE) {
                                 if (impactMode) {
-                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                    grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                                 }
                                 grid.fill(bufferedImage, e.getX(), e.getY(), ViewColor.CELL_COLOR_OFF.getRGB());
                                 model.setCellStatus(p.x, p.y, Model.Cell.DEAD);
                                 if (impactMode) {
-                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+                                    grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
                                 }
                                 coordinateNow.x = p.x;
                                 coordinateNow.y = p.y;
@@ -129,7 +129,7 @@ public class InitView extends JPanel {
         grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
         grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
         if (impactMode) {
-            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
         }
         repaint();
     }
@@ -138,7 +138,7 @@ public class InitView extends JPanel {
         int n = options.getRowNumber();
         int m = options.getColumnNumber();
         if (impactMode) {
-            grid.clearImpact(bufferedImage, n, m, model);
+            grid.clearImpact(bufferedImage, n, m, model, options.getCellSize());
         }
         double impact[][] = new double[n][m];
         for (int i = 0; i < n; i++) {
@@ -173,7 +173,7 @@ public class InitView extends JPanel {
             b = !b;
         }
         if (impactMode) {
-            grid.drawImpact(bufferedImage, n, m1, model);
+            grid.drawImpact(bufferedImage, n, m1, model, options.getCellSize());
         }
         repaint();
     }
@@ -181,14 +181,14 @@ public class InitView extends JPanel {
     void ImpactOn() {
         impactMode = true;
         if (!runMode) {
-            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
             repaint();
         }
     }
 
     void ImpactOff() {
         impactMode = false;
-        grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+        grid.clearImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
         repaint();
     }
 
@@ -212,7 +212,7 @@ public class InitView extends JPanel {
         grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
         grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
         if (impactMode) {
-            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model);
+            grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
         }
         repaint();
     }

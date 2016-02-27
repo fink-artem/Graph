@@ -149,7 +149,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField cellSizeTextField = new JTextField(String.valueOf(options.getCellSize()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(cellSizeTextField, gridBagConstraints);
-        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, 5, 65, options.getCellSize());
+        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 65, options.getCellSize());
         cellSizeSlider.setMajorTickSpacing(10);
         cellSizeSlider.setMinorTickSpacing(1);
         cellSizeSlider.setPaintLabels(true);

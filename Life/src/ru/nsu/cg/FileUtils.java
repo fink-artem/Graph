@@ -21,15 +21,7 @@ public class FileUtils {
      */
     public static File getDataDirectory() {
         if (dataDirectory == null) {
-            try {
-                String path = URLDecoder.decode(MainFrame.class.getProtectionDomain().getCodeSource().getLocation().getFile(), Charset.defaultCharset().toString());
-                dataDirectory = new File(path).getParentFile();
-            } catch (UnsupportedEncodingException e) {
-                dataDirectory = new File(".");
-            }
-            if (dataDirectory == null || !dataDirectory.exists()) {
-                dataDirectory = new File(".");
-            }
+            dataDirectory = new File(".");
             for (File f : dataDirectory.listFiles()) {
                 if (f.isDirectory() && f.getName().endsWith("_Data")) {
                     dataDirectory = f;

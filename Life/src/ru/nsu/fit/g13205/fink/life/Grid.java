@@ -21,7 +21,6 @@ public class Grid {
     private int stepY;
     private int w;
     private int k;
-    int a = 0;
 
     private void drawLine(BufferedImage bufferedImage, int x1, int y1, int x2, int y2) {
         int deltaX = Math.abs(x1 - x2);

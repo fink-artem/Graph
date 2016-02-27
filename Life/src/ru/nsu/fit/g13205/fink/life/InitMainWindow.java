@@ -97,9 +97,9 @@ public class InitMainWindow extends MainFrame {
                 s = s.substring(0, search).trim();
             }
             search = s.indexOf(" ");
-            options.setRowNumber(Integer.parseInt(s.substring(0, search)));
+            options.setColumnNumber(Integer.parseInt(s.substring(0, search)));
             s = s.substring(search + 1).trim();
-            options.setColumnNumber(Integer.parseInt(s));
+            options.setRowNumber(Integer.parseInt(s));
             s = reader.nextLine();
             search = s.indexOf("//");
             if (search != - 1) {
@@ -141,7 +141,7 @@ public class InitMainWindow extends MainFrame {
     public void onSave() {
         File file = getSaveFileName("", "");
         try (PrintWriter out = new PrintWriter(file)) {
-            out.println(options.getRowNumber() + " " + options.getColumnNumber());
+            out.println(options.getColumnNumber() + " " + options.getRowNumber());
             out.println(options.getGridWidth());
             out.println(options.getCellSize());
             Model model = initView.getModel();

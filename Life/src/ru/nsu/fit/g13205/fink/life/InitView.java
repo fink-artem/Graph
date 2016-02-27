@@ -29,7 +29,13 @@ public class InitView extends JPanel {
         setBackground(ViewColor.BACKGROUND_COLOR);
         grid = new Grid();
         model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
-        initGrid(true);
+        width = 2 * Grid.MARGIN_GRID + options.getColumnNumber() * (options.getGridWidth() + (int) Math.round(options.getCellSize() * Math.sqrt(3))) + options.getGridWidth() + 1;
+        height = 2 * Grid.MARGIN_GRID + options.getRowNumber() * ((int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + 3 * options.getCellSize() / 2) + (int) Math.round(2 * options.getGridWidth() / Math.sqrt(3)) + options.getCellSize() / 2 + 1;
+        bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        setPreferredSize(new Dimension(width, height));
+        model = new Model(options.getRowNumber(), options.getColumnNumber(), options.getFstImpact(), options.getSndImpact());
+        grid.drawGrid(bufferedImage, options.getRowNumber(), options.getColumnNumber(), options.getCellSize(), options.getGridWidth(), model);
+        grid.fill(bufferedImage, 0, 0, ViewColor.BACKGROUND_COLOR.getRGB());
         addMouseListener(new MouseAdapter() {
 
             @Override
@@ -113,7 +119,6 @@ public class InitView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(bufferedImage, 0, 0, this);
-        initMainWindow.rescroll();
     }
 
     public final void initGrid(boolean newModel) {
@@ -131,6 +136,7 @@ public class InitView extends JPanel {
         if (impactMode) {
             grid.drawImpact(bufferedImage, options.getRowNumber(), options.getColumnNumber(), model, options.getCellSize());
         }
+        initMainWindow.rescroll();
         repaint();
     }
 

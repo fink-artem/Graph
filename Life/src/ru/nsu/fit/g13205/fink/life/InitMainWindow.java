@@ -97,21 +97,33 @@ public class InitMainWindow extends MainFrame {
                 s = s.substring(0, search).trim();
             }
             search = s.indexOf(" ");
-            options.setColumnNumber(Integer.parseInt(s.substring(0, search)));
+            int result = options.setColumnNumber(Integer.parseInt(s.substring(0, search)));
+            if (result == Options.ERROR) {
+                throw new Exception();
+            }
             s = s.substring(search + 1).trim();
-            options.setRowNumber(Integer.parseInt(s));
+            result = options.setRowNumber(Integer.parseInt(s));
+            if (result == Options.ERROR) {
+                throw new Exception();
+            }
             s = reader.nextLine();
             search = s.indexOf("//");
             if (search != - 1) {
                 s = s.substring(0, search).trim();
             }
-            options.setGridWidth(Integer.parseInt(s));
+            result = options.setGridWidth(Integer.parseInt(s));
+            if (result == Options.ERROR) {
+                throw new Exception();
+            }
             s = reader.nextLine();
             search = s.indexOf("//");
             if (search != - 1) {
                 s = s.substring(0, search).trim();
             }
-            options.setCellSize(Integer.parseInt(s));
+            result = options.setCellSize(Integer.parseInt(s));
+            if (result == Options.ERROR) {
+                throw new Exception();
+            }
             s = reader.nextLine();
             search = s.indexOf("//");
             if (search != - 1) {

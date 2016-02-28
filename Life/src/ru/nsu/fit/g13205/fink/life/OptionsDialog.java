@@ -53,7 +53,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField rowsTextField = new JTextField(String.valueOf(options.getRowNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(rowsTextField, gridBagConstraints);
-        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, 1, 41, options.getRowNumber());
+        final JSlider rowsSlider = new JSlider(JSlider.HORIZONTAL, Options.MIN_ROW_NUMBER, Options.MAX_ROW_NUMBER, options.getRowNumber());
         rowsSlider.setMajorTickSpacing(5);
         rowsSlider.setMinorTickSpacing(1);
         rowsSlider.setPaintLabels(true);
@@ -82,12 +82,12 @@ public final class OptionsDialog extends JDialog {
                     rowsTextField.setText(String.valueOf(value));
                     JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < rowsSlider.getMinimum()) {
-                    value = rowsSlider.getMinimum();
+                if (value < Options.MIN_ROW_NUMBER) {
+                    value = Options.MIN_ROW_NUMBER;
                     rowsTextField.setText(String.valueOf(rowsSlider.getMinimum()));
                 }
-                if (value > rowsSlider.getMaximum()) {
-                    value = rowsSlider.getMaximum();
+                if (value > Options.MAX_ROW_NUMBER) {
+                    value = Options.MAX_ROW_NUMBER;
                     rowsTextField.setText(String.valueOf(rowsSlider.getMaximum()));
                 }
                 rowsSlider.setValue(value);
@@ -101,7 +101,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField columnsTextField = new JTextField(String.valueOf(options.getColumnNumber()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(columnsTextField, gridBagConstraints);
-        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, 1, 41, options.getColumnNumber());
+        final JSlider columnsSlider = new JSlider(JSlider.HORIZONTAL, Options.MIN_COLUMN_NUMBER, Options.MAX_COLUMN_NUMBER, options.getColumnNumber());
         columnsSlider.setMajorTickSpacing(5);
         columnsSlider.setMinorTickSpacing(1);
         columnsSlider.setPaintLabels(true);
@@ -130,12 +130,12 @@ public final class OptionsDialog extends JDialog {
                     columnsTextField.setText(String.valueOf(value));
                     JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < columnsSlider.getMinimum()) {
-                    value = columnsSlider.getMinimum();
+                if (value < Options.MIN_COLUMN_NUMBER) {
+                    value = Options.MIN_COLUMN_NUMBER;
                     columnsTextField.setText(String.valueOf(columnsSlider.getMinimum()));
                 }
-                if (value > columnsSlider.getMaximum()) {
-                    value = columnsSlider.getMaximum();
+                if (value > Options.MAX_COLUMN_NUMBER) {
+                    value = Options.MAX_COLUMN_NUMBER;
                     columnsTextField.setText(String.valueOf(columnsSlider.getMaximum()));
                 }
                 columnsSlider.setValue(value);
@@ -149,7 +149,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField cellSizeTextField = new JTextField(String.valueOf(options.getCellSize()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(cellSizeTextField, gridBagConstraints);
-        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, 15, 65, options.getCellSize());
+        final JSlider cellSizeSlider = new JSlider(JSlider.HORIZONTAL, Options.MIN_CELL_SIZE, Options.MAX_CELL_SIZE, options.getCellSize());
         cellSizeSlider.setMajorTickSpacing(10);
         cellSizeSlider.setMinorTickSpacing(1);
         cellSizeSlider.setPaintLabels(true);
@@ -178,12 +178,12 @@ public final class OptionsDialog extends JDialog {
                     cellSizeTextField.setText(String.valueOf(value));
                     JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < cellSizeSlider.getMinimum()) {
-                    value = cellSizeSlider.getMinimum();
+                if (value < Options.MIN_CELL_SIZE) {
+                    value = Options.MIN_CELL_SIZE;
                     cellSizeTextField.setText(String.valueOf(cellSizeSlider.getMinimum()));
                 }
-                if (value > cellSizeSlider.getMaximum()) {
-                    value = cellSizeSlider.getMaximum();
+                if (value > Options.MAX_CELL_SIZE) {
+                    value = Options.MAX_CELL_SIZE;
                     cellSizeTextField.setText(String.valueOf(cellSizeSlider.getMaximum()));
                 }
                 cellSizeSlider.setValue(value);
@@ -197,7 +197,7 @@ public final class OptionsDialog extends JDialog {
         final JTextField gridWidthTextField = new JTextField(String.valueOf(options.getGridWidth()), TEXT_FIELD_SIZE);
         gridBagConstraints.gridx = 1;
         fieldPropertiesPanel.add(gridWidthTextField, gridBagConstraints);
-        final JSlider gridWidthSlider = new JSlider(JSlider.HORIZONTAL, 1, 21, options.getGridWidth());
+        final JSlider gridWidthSlider = new JSlider(JSlider.HORIZONTAL, Options.MIN_GRID_WIDTH, Options.MAX_GRID_WIDTH, options.getGridWidth());
         gridWidthSlider.setMajorTickSpacing(4);
         gridWidthSlider.setMinorTickSpacing(1);
         gridWidthSlider.setPaintLabels(true);
@@ -226,12 +226,12 @@ public final class OptionsDialog extends JDialog {
                     gridWidthTextField.setText(String.valueOf(value));
                     JOptionPane.showMessageDialog(OptionsDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < gridWidthSlider.getMinimum()) {
-                    value = gridWidthSlider.getMinimum();
+                if (value < Options.MIN_GRID_WIDTH) {
+                    value = Options.MIN_GRID_WIDTH;
                     gridWidthTextField.setText(String.valueOf(gridWidthSlider.getMinimum()));
                 }
-                if (value > gridWidthSlider.getMaximum()) {
-                    value = gridWidthSlider.getMaximum();
+                if (value > Options.MAX_GRID_WIDTH) {
+                    value = Options.MAX_GRID_WIDTH;
                     gridWidthTextField.setText(String.valueOf(gridWidthSlider.getMaximum()));
                 }
                 gridWidthSlider.setValue(value);
@@ -486,27 +486,6 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent ae) {
-                fstImpactTextField.setText(String.valueOf(options.getFstImpact()));
-                sndImpactTextField.setText(String.valueOf(options.getSndImpact()));
-                rowsTextField.setText(String.valueOf(options.getRowNumber()));
-                columnsTextField.setText(String.valueOf(options.getColumnNumber()));
-                cellSizeTextField.setText(String.valueOf(options.getCellSize()));
-                gridWidthTextField.setText(String.valueOf(options.getGridWidth()));
-                timerTextField.setText(String.valueOf(options.getTimer()));
-                liveBeginTextField.setText(String.valueOf(options.getLiveBegin()));
-                liveEndTextField.setText(String.valueOf(options.getLiveEnd()));
-                birthBeginTextField.setText(String.valueOf(options.getBirthBegin()));
-                birthEndTextField.setText(String.valueOf(options.getBirthEnd()));
-                rowsSlider.setValue(options.getRowNumber());
-                columnsSlider.setValue(options.getColumnNumber());
-                cellSizeSlider.setValue(options.getCellSize());
-                gridWidthSlider.setValue(options.getGridWidth());
-                timerSlider.setValue(options.getTimer());
-                if (options.getPaintMode() == Options.PaintMode.REPLACE) {
-                    radioButtons[0].setSelected(true);
-                } else {
-                    radioButtons[1].setSelected(true);
-                }
                 setVisible(false);
             }
         });
@@ -522,27 +501,7 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void windowClosing(WindowEvent we) {
-                fstImpactTextField.setText(String.valueOf(options.getFstImpact()));
-                sndImpactTextField.setText(String.valueOf(options.getSndImpact()));
-                rowsTextField.setText(String.valueOf(options.getRowNumber()));
-                columnsTextField.setText(String.valueOf(options.getColumnNumber()));
-                cellSizeTextField.setText(String.valueOf(options.getCellSize()));
-                gridWidthTextField.setText(String.valueOf(options.getGridWidth()));
-                timerTextField.setText(String.valueOf(options.getTimer()));
-                liveBeginTextField.setText(String.valueOf(options.getLiveBegin()));
-                liveEndTextField.setText(String.valueOf(options.getLiveEnd()));
-                birthBeginTextField.setText(String.valueOf(options.getBirthBegin()));
-                birthEndTextField.setText(String.valueOf(options.getBirthEnd()));
-                rowsSlider.setValue(options.getRowNumber());
-                columnsSlider.setValue(options.getColumnNumber());
-                cellSizeSlider.setValue(options.getCellSize());
-                gridWidthSlider.setValue(options.getGridWidth());
-                timerSlider.setValue(options.getTimer());
-                if (options.getPaintMode() == Options.PaintMode.REPLACE) {
-                    radioButtons[0].setSelected(true);
-                } else {
-                    radioButtons[1].setSelected(true);
-                }
+
             }
 
             @Override
@@ -559,6 +518,27 @@ public final class OptionsDialog extends JDialog {
 
             @Override
             public void windowActivated(WindowEvent we) {
+                fstImpactTextField.setText(String.valueOf(options.getFstImpact()));
+                sndImpactTextField.setText(String.valueOf(options.getSndImpact()));
+                rowsTextField.setText(String.valueOf(options.getRowNumber()));
+                columnsTextField.setText(String.valueOf(options.getColumnNumber()));
+                cellSizeTextField.setText(String.valueOf(options.getCellSize()));
+                gridWidthTextField.setText(String.valueOf(options.getGridWidth()));
+                timerTextField.setText(String.valueOf(options.getTimer()));
+                liveBeginTextField.setText(String.valueOf(options.getLiveBegin()));
+                liveEndTextField.setText(String.valueOf(options.getLiveEnd()));
+                birthBeginTextField.setText(String.valueOf(options.getBirthBegin()));
+                birthEndTextField.setText(String.valueOf(options.getBirthEnd()));
+                rowsSlider.setValue(options.getRowNumber());
+                columnsSlider.setValue(options.getColumnNumber());
+                cellSizeSlider.setValue(options.getCellSize());
+                gridWidthSlider.setValue(options.getGridWidth());
+                timerSlider.setValue(options.getTimer());
+                if (options.getPaintMode() == Options.PaintMode.REPLACE) {
+                    radioButtons[0].setSelected(true);
+                } else {
+                    radioButtons[1].setSelected(true);
+                }
             }
 
             @Override

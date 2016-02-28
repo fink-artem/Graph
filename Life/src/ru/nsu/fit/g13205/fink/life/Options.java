@@ -7,6 +7,16 @@ public class Options {
         XOR, REPLACE
     }
 
+    public static final int MAX_ROW_NUMBER = 41;
+    public static final int MIN_ROW_NUMBER = 1;
+    public static final int MAX_COLUMN_NUMBER = 41;
+    public static final int MIN_COLUMN_NUMBER = 1;
+    public static final int MAX_CELL_SIZE = 65;
+    public static final int MIN_CELL_SIZE = 15;
+    public static final int MAX_GRID_WIDTH = 21;
+    public static final int MIN_GRID_WIDTH = 1;
+    public static final int ERROR = 1;
+    public static final int SUCCESS = 0;
     private PaintMode paintMode = PaintMode.REPLACE;
     private int rowNumber = 20;
     private int columnNumber = 25;
@@ -32,32 +42,48 @@ public class Options {
         return rowNumber;
     }
 
-    public void setRowNumber(int rowNumber) {
+    public int setRowNumber(int rowNumber) {
+        if (rowNumber > MAX_ROW_NUMBER || rowNumber < MIN_ROW_NUMBER) {
+
+        }
         this.rowNumber = rowNumber;
+        return SUCCESS;
     }
 
     public int getColumnNumber() {
         return columnNumber;
     }
 
-    public void setColumnNumber(int columnNumber) {
+    public int setColumnNumber(int columnNumber) {
+        if (columnNumber > MAX_COLUMN_NUMBER || columnNumber < MIN_COLUMN_NUMBER) {
+            return ERROR;
+        }
         this.columnNumber = columnNumber;
+        return SUCCESS;
     }
 
     public int getCellSize() {
         return cellSize;
     }
 
-    public void setCellSize(int cellSize) {
+    public int setCellSize(int cellSize) {
+        if (cellSize > MAX_CELL_SIZE || cellSize < MIN_CELL_SIZE) {
+            return ERROR;
+        }
         this.cellSize = cellSize;
+        return SUCCESS;
     }
 
     public int getGridWidth() {
         return gridWidth;
     }
 
-    public void setGridWidth(int gridWidth) {
+    public int setGridWidth(int gridWidth) {
+        if (gridWidth > MAX_GRID_WIDTH || gridWidth < MIN_GRID_WIDTH) {
+            return ERROR;
+        }
         this.gridWidth = gridWidth;
+        return SUCCESS;
     }
 
     public int getTimer() {

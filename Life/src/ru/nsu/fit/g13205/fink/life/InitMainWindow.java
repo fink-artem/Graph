@@ -135,6 +135,8 @@ public class InitMainWindow extends MainFrame {
             }
             initView.initGrid(false);
         } catch (FileNotFoundException | NullPointerException e) {
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

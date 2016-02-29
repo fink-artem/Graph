@@ -44,16 +44,16 @@ public final class NewDocumentDialog extends JDialog {
                 try {
                     int n = Integer.parseInt(rowsTextField.getText());
                     int m = Integer.parseInt(columnsTextField.getText());
-                    if (n > 0 && m > 0) {
+                    if (n >= Options.MIN_ROW_NUMBER && m >= Options.MIN_COLUMN_NUMBER && n <= Options.MAX_ROW_NUMBER && m <= Options.MAX_COLUMN_NUMBER) {
                         options.setRowNumber(n);
                         options.setColumnNumber(m);
                         initMainWindow.createNewDocument();
                     } else {
-                        JOptionPane.showMessageDialog(NewDocumentDialog.this, "Value must be positive!", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(NewDocumentDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     setVisible(false);
-                }catch(NumberFormatException me){
+                } catch (NumberFormatException me) {
                     JOptionPane.showMessageDialog(NewDocumentDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }

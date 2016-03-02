@@ -10,17 +10,17 @@ import java.util.Stack;
 
 public class Grid {
 
-    public static final int MARGIN_GRID = 5;
+    public static final int MARGIN_GRID = 10;
     public static final int ERROR = -1;
     private static final int ANGLE = 6;
     private static final double SQRT_THREE = Math.sqrt(3);
-    private int startX1;
-    private int startX2;
-    private int stepX;
-    private int startY;
-    private int stepY;
-    private int w;
-    private int k;
+    private double startX1;
+    private double startX2;
+    private double stepX;
+    private double startY;
+    private double stepY;
+    private double w;
+    private double k;
 
     private void drawLine(BufferedImage bufferedImage, int x1, int y1, int x2, int y2) {
         int deltaX = Math.abs(x1 - x2);
@@ -36,7 +36,7 @@ public class Grid {
             }
             int y = y1;
             int changeY = (int) Math.signum(y2 - y1);
-            double error = 0;
+            int error = 0;
             for (int x = x1; x <= x2; x++) {
                 bufferedImage.setRGB(x, y, ViewColor.BORDER_COLOR.getRGB());
                 error += deltaY;
@@ -56,7 +56,7 @@ public class Grid {
             }
             int x = x1;
             int changeX = (int) Math.signum(x2 - x1);
-            double error = 0;
+            int error = 0;
             for (int y = y1; y <= y2; y++) {
                 bufferedImage.setRGB(x, y, ViewColor.BORDER_COLOR.getRGB());
                 error += deltaX;
@@ -68,7 +68,7 @@ public class Grid {
         }
     }
 
-    private void drawCell(BufferedImage bufferedImage, int x, int y, int k, int w, boolean one, boolean two, boolean three, boolean four, boolean five, boolean six) {
+    private void drawCell(BufferedImage bufferedImage, double x, double y, int k, int w, boolean one, boolean two, boolean three, boolean four, boolean five, boolean six) {
         int xArray[] = new int[ANGLE];
         int yArray[] = new int[ANGLE];
         boolean b[] = new boolean[ANGLE + 1];
@@ -78,18 +78,18 @@ public class Grid {
         b[4] = four;
         b[5] = five;
         b[6] = six;
-        xArray[0] = (int) (x - (k * SQRT_THREE + w) / 2);
-        yArray[0] = (int) (y - k / 2 - w / 2 / SQRT_THREE);
-        xArray[1] = x;
-        yArray[1] = (int) (y - k - w / SQRT_THREE);
-        xArray[2] = (int) (x + (k * SQRT_THREE + w) / 2);
-        yArray[2] = (int) (y - k / 2 - w / 2 / SQRT_THREE);
-        xArray[3] = (int) (x + (k * SQRT_THREE + w) / 2);
-        yArray[3] = (int) (y + k / 2 + w / 2 / SQRT_THREE);
-        xArray[4] = x;
-        yArray[4] = (int) (y + k + w / SQRT_THREE);
-        xArray[5] = (int) (x - (k * SQRT_THREE + w) / 2);
-        yArray[5] = (int) (y + k / 2 + w / 2 / SQRT_THREE);
+        xArray[0] = (int) Math.round(x - (k * SQRT_THREE + w) / 2);
+        yArray[0] = (int) Math.round(y - k / 2 - w / 2 / SQRT_THREE);
+        xArray[1] = (int) Math.round(x);
+        yArray[1] = (int) Math.round(y - k - w / SQRT_THREE);
+        xArray[2] = (int) Math.round(x + (k * SQRT_THREE + w) / 2);
+        yArray[2] = (int) Math.round(y - k / 2 - w / 2 / SQRT_THREE);
+        xArray[3] = (int) Math.round(x + (k * SQRT_THREE + w) / 2);
+        yArray[3] = (int) Math.round(y + k / 2 + w / 2 / SQRT_THREE);
+        xArray[4] = (int) Math.round(x);
+        yArray[4] = (int) Math.round(y + k + w / SQRT_THREE);
+        xArray[5] = (int) Math.round(x - (k * SQRT_THREE + w) / 2);
+        yArray[5] = (int) Math.round(y + k / 2 + w / 2 / SQRT_THREE);
         if (w == 1) {
             for (int i = 1; i < ANGLE; i++) {
                 if (b[i]) {
@@ -114,10 +114,10 @@ public class Grid {
         }
     }
 
-    void fill(BufferedImage bufferedImage, int x, int y, int color) {
+    void fill(BufferedImage bufferedImage, double x, double y, int color) {
         Stack<Point> stack = new Stack<>();
-        stack.push(new Point(x, y));
-        int startColor = bufferedImage.getRGB(x, y);
+        stack.push(new Point((int) x, (int) y));
+        int startColor = bufferedImage.getRGB((int) x, (int) y);
         if (startColor == color) {
             return;
         }
@@ -149,20 +149,14 @@ public class Grid {
         this.w = w;
         this.k = k;
         int m2 = m - 1;
-        if (w % 2 != 0) {
-            startX1 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE / 2 + w - 1);
-            startX2 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE + w - 1 + w / 2);
-            stepX = (int) Math.round(k * SQRT_THREE + w - 1);
-            startY = (int) Math.round(MARGIN_GRID + k + 2 * w / SQRT_THREE - 1);
-        } else {
-            startX1 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE / 2 + w);
-            startX2 = (int) Math.round(MARGIN_GRID + k * SQRT_THREE + w + w / 2);
-            stepX = (int) Math.round(k * SQRT_THREE + w);
-            startY = (int) Math.round(MARGIN_GRID + k + 2 * w / SQRT_THREE);
-        }
-        stepY = (int) Math.round((k * 3 + w * SQRT_THREE) / 2);
-        int x;
-        int y;
+        startX1 = MARGIN_GRID + k * SQRT_THREE / 2 + w;
+        startX2 = MARGIN_GRID + k * SQRT_THREE + w + (double) w / 2;
+        stepX = k * SQRT_THREE + w;
+        startY = MARGIN_GRID + k + 2 * w / SQRT_THREE;
+
+        stepY = (k * 3 + w * SQRT_THREE) / 2;
+        double x;
+        double y;
         drawCell(bufferedImage, startX1, startY, k, w, true, true, true, true, true, true);
         if (model.getCellStatus(0, 0) == Model.Cell.DEAD) {
             fill(bufferedImage, startX1, startY, ViewColor.CELL_COLOR_OFF.getRGB());
@@ -299,11 +293,11 @@ public class Grid {
     //Координаты центра
     Point getCellCordinate(int x, int y) {
         if (y % 2 == 0) {
-            x = startX1 + x * stepX;
+            x = (int) Math.round(startX1 + x * stepX);
         } else {
-            x = startX2 + x * stepX;
+            x = (int) Math.round(startX2 + x * stepX);
         }
-        y = startY + y * stepY;
+        y = (int) Math.round(startY + y * stepY);
         return new Point(x, y);
     }
 
@@ -316,8 +310,8 @@ public class Grid {
         g.setFont(new Font("X", Font.BOLD, 15));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                x = startX1 + j * stepX;
-                y = startY + i * stepY;
+                x = (int) Math.round(startX1 + j * stepX);
+                y = (int) Math.round(startY + i * stepY);
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (impact == (int) impact) {
                     g.drawString(String.valueOf((int) impact), x - 10, y + 7);
@@ -330,8 +324,8 @@ public class Grid {
                 break;
             }
             for (int j = 0; j < m2; j++) {
-                x = startX2 + j * stepX;
-                y = startY + i * stepY;
+                x = (int) Math.round(startX2 + j * stepX);
+                y = (int) Math.round(startY + i * stepY);
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (impact == (int) impact) {
                     g.drawString(String.valueOf((int) impact), x - 10, y + 7);
@@ -350,8 +344,8 @@ public class Grid {
         g.setFont(new Font("X", Font.BOLD, 15));
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                x = startX1 + j * stepX;
-                y = startY + i * stepY;
+                x = (int) Math.round(startX1 + j * stepX);
+                y = (int) Math.round(startY + i * stepY);
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
                     g.setColor(ViewColor.CELL_COLOR_OFF);
@@ -369,8 +363,8 @@ public class Grid {
                 break;
             }
             for (int j = 0; j < m2; j++) {
-                x = startX2 + j * stepX;
-                y = startY + i * stepY;
+                x = (int) Math.round(startX2 + j * stepX);
+                y = (int) Math.round(startY + i * stepY);
                 double impact = (double) Math.round(model.getCellImpact(j, i) * 10) / 10;
                 if (model.getCellStatus(j, i) == Model.Cell.DEAD) {
                     g.setColor(ViewColor.CELL_COLOR_OFF);

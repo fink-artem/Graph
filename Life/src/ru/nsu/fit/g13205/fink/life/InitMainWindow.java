@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import ru.nsu.cg.MainFrame;
+import ru.nsu.fit.g13205.fink.life.Model.Cell;
 
 public class InitMainWindow extends MainFrame {
 
@@ -89,7 +90,18 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onOpen() {
-        File file = getOpenFileName("", "");
+        File file = getOpenFileName("txt", "");
+        int rowNumber = options.getRowNumber();
+        int columnNumber = options.getColumnNumber();
+        int gridWidth = options.getGridWidth();
+        int cellSize = options.getCellSize();
+        Cell a[][] = new Cell[rowNumber][columnNumber];
+        Model model = initView.getModel();
+        for (int i = 0; i < rowNumber; i++) {
+            for (int j = 0; j < columnNumber; j++) {
+                a[i][j] = model.getCellStatus(j, i);
+            }
+        }
         try (Scanner reader = new Scanner(file)) {
             String s = reader.nextLine();
             int search = s.indexOf("//");
@@ -132,7 +144,7 @@ public class InitMainWindow extends MainFrame {
             int length = Integer.parseInt(s);
             int x, y;
             initView.createNewModel();
-            Model model = initView.getModel();
+            model = initView.getModel();
             for (int i = 0; i < length; i++) {
                 s = reader.nextLine();
                 search = s.indexOf("//");
@@ -143,17 +155,31 @@ public class InitMainWindow extends MainFrame {
                 x = Integer.parseInt(s.substring(0, search));
                 s = s.substring(search + 1).trim();
                 y = Integer.parseInt(s);
-                model.setCellStatus(y, x, Model.Cell.LIVE);
+                model.setCellStatus(x, y, Model.Cell.LIVE);
             }
             initView.initGrid(false);
         } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception e) {
+            options.setRowNumber(rowNumber);
+            options.setColumnNumber(columnNumber);
+            options.setGridWidth(gridWidth);
+            options.setCellSize(cellSize);
+            initView.createNewModel();
+            model = initView.getModel();
+            for (int i = 0; i < rowNumber; i++) {
+                for (int j = 0; j < columnNumber; j++) {
+                    if (a[i][j] == Cell.LIVE) {
+                        model.setCellStatus(j, i, Cell.LIVE);
+                    }
+                }
+            }
+            initView.initGrid(false);
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public void onSave() {
-        File file = getSaveFileName("", "");
+        File file = getSaveFileName("txt", "");
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(options.getColumnNumber() + " " + options.getRowNumber());
             out.println(options.getGridWidth());
@@ -165,7 +191,7 @@ public class InitMainWindow extends MainFrame {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < m; j++) {
                     if (model.getCellStatus(j, i) == Model.Cell.LIVE) {
-                        out.println(i + " " + j);
+                        out.println(j + " " + i);
                     }
                 }
             }

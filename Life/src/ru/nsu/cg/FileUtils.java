@@ -47,6 +47,7 @@ public class FileUtils {
         FileFilter filter = new ExtensionFileFilter(extension, description);
         fileChooser.addChoosableFileFilter(filter);
         fileChooser.setCurrentDirectory(getDataDirectory());
+        fileChooser.setFileFilter(filter);
         if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
             File f = fileChooser.getSelectedFile();
             if (!f.getName().contains(".")) {
@@ -72,6 +73,7 @@ public class FileUtils {
         FileFilter filter = new ExtensionFileFilter(extension, description);
         fileChooser.addChoosableFileFilter(filter);
         fileChooser.setCurrentDirectory(getDataDirectory());
+        fileChooser.setFileFilter(filter);
         if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
             File f = fileChooser.getSelectedFile();
             if (!f.getName().contains(".")) {

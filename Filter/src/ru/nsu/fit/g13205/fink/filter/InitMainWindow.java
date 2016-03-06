@@ -44,8 +44,12 @@ public class InitMainWindow extends MainFrame {
             addMenuSeparator("Edit");
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
+            addMenuItem("Edit/Sobel", "Sobel operator", KeyEvent.VK_X, "Sobel.png", "onSobel", statusBar);
+            addMenuItem("Edit/Robert", "Robert operator", KeyEvent.VK_X, "Robert.png", "onRobert", statusBar);
+            addMenuItem("Edit/Smoothing", "Image smoothing", KeyEvent.VK_X, "Smoothing.png", "onSmoothing", statusBar);
             addMenuItem("Edit/Sharpness", "Image sharpness", KeyEvent.VK_X, "Sharpness.png", "onSharpness", statusBar);
             addMenuItem("Edit/Stamping", "Image stamping", KeyEvent.VK_X, "Stamping.png", "onStamping", statusBar);
+            addMenuItem("Edit/Watercolor", "Watercolor correction", KeyEvent.VK_X, "Watercolor.png", "onWatercolor", statusBar);
             addMenuSeparator("Edit");
             addMenuItem("Edit/Gamma", "Gamma correction", KeyEvent.VK_X, "Gamma.png", "onGamma", statusBar);
 
@@ -60,8 +64,12 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
+            addToolBarButton("Edit/Sobel", "Sobel operator", statusBar);
+            addToolBarButton("Edit/Robert", "Robert operator", statusBar);
+            addToolBarButton("Edit/Smoothing", "Image smoothing", statusBar);
             addToolBarButton("Edit/Sharpness", "Image sharpness", statusBar);
             addToolBarButton("Edit/Stamping", "Image stamping", statusBar);
+            addToolBarButton("Edit/Watercolor", "Watercolor correction", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Gamma", "Gamma correction", statusBar);
             addToolBarSeparator();
@@ -144,12 +152,28 @@ public class InitMainWindow extends MainFrame {
         initView.negativeTransformation();
     }
     
+    public void onSobel(){
+        initView.sobel();
+    }
+    
+    public void onRobert(){
+        initView.robert();
+    }
+    
+    public void onSmoothing(){
+        initView.smoothing();
+    }
+    
     public void onSharpness(){
         initView.sharpness();
     }
     
     public void onStamping(){
         initView.stamping();
+    }
+    
+    public void onWatercolor(){
+        initView.watercolorCorrection();
     }
 
     public void onGamma() {

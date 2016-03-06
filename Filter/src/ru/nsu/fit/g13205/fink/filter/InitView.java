@@ -67,6 +67,21 @@ public class InitView extends JPanel {
         zoneC.repaint();
     }
 
+    void sobel() {
+        zoneC.setImage(Filter.sobel(Filter.blackAndWhiteTransformation(zoneB.getImage())));
+        zoneC.repaint();
+    }
+
+    void robert() {
+        zoneC.setImage(Filter.robert(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
+    void smoothing() {
+        zoneC.setImage(Filter.smoothing(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
     void sharpness() {
         zoneC.setImage(Filter.sharpness(zoneB.getImage()));
         zoneC.repaint();
@@ -74,6 +89,11 @@ public class InitView extends JPanel {
 
     void stamping() {
         zoneC.setImage(Filter.stamping(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
+    void watercolorCorrection() {
+        zoneC.setImage(Filter.watercolorCorrection(zoneB.getImage()));
         zoneC.repaint();
     }
 

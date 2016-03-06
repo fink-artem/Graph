@@ -21,7 +21,7 @@ public abstract class Zone extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (image != null) {
-            g.drawImage(image, 0, 0, this);
+            g.drawImage(image, 1, 1, this);
         }
     }
 

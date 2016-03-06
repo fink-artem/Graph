@@ -12,7 +12,6 @@ import java.awt.image.BufferedImage;
 public class ZoneA extends Zone {
 
     private final float dash[] = {1, 1};
-    private final InitView initView;
     private boolean allocation = false;
     private boolean allocationMode = false;
     private BufferedImage originalImage;
@@ -26,14 +25,13 @@ public class ZoneA extends Zone {
 
     public ZoneA(final InitView initView) {
         super();
-        this.initView = initView;
         zoneName = ZoneName.ZONE_A;
         addMouseListener(new MouseAdapter() {
 
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                if (bufferedImage != null && allocationMode) {
+                if (image != null && allocationMode) {
                     allocation = true;
                     rectangleX1 = e.getX() - (int) (rectWidth / 2 + 0.5);
                     rectangleY1 = e.getY() - (int) (rectWidth / 2 + 0.5);
@@ -104,25 +102,25 @@ public class ZoneA extends Zone {
     }
 
     @Override
-    public void setImage(BufferedImage image) {
-        originalImage = image;
-        if (bufferedImage == null) {
-            bufferedImage = new BufferedImage(ViewOptions.ZONE_WIDTH, ViewOptions.ZONE_HEIGHT, BufferedImage.TYPE_INT_RGB);
+    public void setImage(BufferedImage newImage) {
+        originalImage = newImage;
+        if (image == null) {
+            image = new BufferedImage(ViewOptions.ZONE_WIDTH, ViewOptions.ZONE_HEIGHT, BufferedImage.TYPE_INT_RGB);
         }
-        width = image.getWidth();
-        height = image.getHeight();
+        width = newImage.getWidth();
+        height = newImage.getHeight();
         if (width <= ViewOptions.ZONE_WIDTH && height <= ViewOptions.ZONE_HEIGHT) {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    bufferedImage.setRGB(i, j, image.getRGB(i, j));
+                    image.setRGB(i, j, newImage.getRGB(i, j));
                 }
                 for (int j = height; j < ViewOptions.ZONE_HEIGHT; j++) {
-                    bufferedImage.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
+                    image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
             for (int i = width; i < ViewOptions.ZONE_WIDTH; i++) {
                 for (int j = 0; j < ViewOptions.ZONE_HEIGHT; j++) {
-                    bufferedImage.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
+                    image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
             rectHeight = height;
@@ -140,15 +138,15 @@ public class ZoneA extends Zone {
             }
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    bufferedImage.setRGB(i, j, image.getRGB((int) (i * step + 0.5), (int) (j * step + 0.5)));
+                    image.setRGB(i, j, newImage.getRGB((int) (i * step + 0.5), (int) (j * step + 0.5)));
                 }
                 for (int j = height; j < ViewOptions.ZONE_HEIGHT; j++) {
-                    bufferedImage.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
+                    image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
             for (int i = width; i < ViewOptions.ZONE_WIDTH; i++) {
                 for (int j = 0; j < ViewOptions.ZONE_HEIGHT; j++) {
-                    bufferedImage.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
+                    image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
             rectWidth = (int) (ViewOptions.ZONE_WIDTH / step + 0.5);

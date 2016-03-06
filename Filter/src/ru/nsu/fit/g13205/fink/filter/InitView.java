@@ -57,4 +57,19 @@ public class InitView extends JPanel {
         zoneA.setAllocationMode(mode);
     }
 
+    void blackAndWhiteTransformation() {
+        zoneC.setImage(Filter.blackAndWhiteTransformation(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
+    void negativeTransformation() {
+        zoneC.setImage(Filter.negativeTransformation(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
+    void gammaCorrection(double gamma) {
+        zoneC.setImage(Filter.gammaCorrection(zoneB.getImage(), gamma));
+        zoneC.repaint();
+    }
+
 }

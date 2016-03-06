@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 public abstract class Zone extends JPanel {
 
-    protected BufferedImage bufferedImage = null;
+    protected BufferedImage image = null;
     protected ZoneName zoneName;
 
     public Zone() {
@@ -20,17 +20,21 @@ public abstract class Zone extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        if (bufferedImage != null) {
-            g.drawImage(bufferedImage, 0, 0, this);
+        if (image != null) {
+            g.drawImage(image, 0, 0, this);
         }
     }
 
     void setImage(BufferedImage bufferedImage) {
-        this.bufferedImage = bufferedImage;
+        this.image = bufferedImage;
+    }
+    
+    BufferedImage getImage(){
+        return image;
     }
 
     void removeImage() {
-        bufferedImage = null;
+        image = null;
     }
 
 }

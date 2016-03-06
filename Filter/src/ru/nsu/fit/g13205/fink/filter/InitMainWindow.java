@@ -25,6 +25,7 @@ public class InitMainWindow extends MainFrame {
     private InitView initView = new InitView();
     private JLabel statusBar = new JLabel("Ready");
     private boolean selectMode = false;
+    private GammaDialog gammaDialog;
 
     public InitMainWindow() {
         super();
@@ -40,6 +41,9 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
             addSubMenu("Edit", KeyEvent.VK_F);
             addMenuItem("Edit/Select", "Select a part of image", KeyEvent.VK_X, "Select.png", "onSelect", statusBar);
+            addMenuSeparator("Edit");
+            addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
+            addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
             addMenuItem("Edit/Gamma", "Gamma correction", KeyEvent.VK_X, "Gamma.png", "onGamma", statusBar);
 
             addSubMenu("Help", KeyEvent.VK_H);
@@ -50,6 +54,8 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Select", "Select a part of image", statusBar);
+            addToolBarButton("Edit/Black And White", "Black and white", statusBar);
+            addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
             addToolBarButton("Edit/Gamma", "Gamma correction", statusBar);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
@@ -123,8 +129,19 @@ public class InitMainWindow extends MainFrame {
         initView.setAllocationMode(selectMode);
     }
     
-    public void onGamma(){
-        
+    public void onBlackAndWhite(){
+        initView.blackAndWhiteTransformation();
+    }
+    
+    public void onNegative(){
+        initView.negativeTransformation();
+    }
+
+    public void onGamma() {
+        if (gammaDialog == null) {
+            gammaDialog = new GammaDialog(initView);
+        }
+        gammaDialog.setVisible(true);
     }
 
     public void onExit() {

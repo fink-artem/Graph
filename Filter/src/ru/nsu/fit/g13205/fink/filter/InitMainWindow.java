@@ -44,6 +44,9 @@ public class InitMainWindow extends MainFrame {
             addMenuSeparator("Edit");
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
+            addMenuItem("Edit/Sharpness", "Image sharpness", KeyEvent.VK_X, "Sharpness.png", "onSharpness", statusBar);
+            addMenuItem("Edit/Stamping", "Image stamping", KeyEvent.VK_X, "Stamping.png", "onStamping", statusBar);
+            addMenuSeparator("Edit");
             addMenuItem("Edit/Gamma", "Gamma correction", KeyEvent.VK_X, "Gamma.png", "onGamma", statusBar);
 
             addSubMenu("Help", KeyEvent.VK_H);
@@ -54,8 +57,12 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Select", "Select a part of image", statusBar);
+            addToolBarSeparator();
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
+            addToolBarButton("Edit/Sharpness", "Image sharpness", statusBar);
+            addToolBarButton("Edit/Stamping", "Image stamping", statusBar);
+            addToolBarSeparator();
             addToolBarButton("Edit/Gamma", "Gamma correction", statusBar);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
@@ -135,6 +142,14 @@ public class InitMainWindow extends MainFrame {
     
     public void onNegative(){
         initView.negativeTransformation();
+    }
+    
+    public void onSharpness(){
+        initView.sharpness();
+    }
+    
+    public void onStamping(){
+        initView.stamping();
     }
 
     public void onGamma() {

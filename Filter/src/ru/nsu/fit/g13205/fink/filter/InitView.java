@@ -67,6 +67,16 @@ public class InitView extends JPanel {
         zoneC.repaint();
     }
 
+    void sharpness() {
+        zoneC.setImage(Filter.sharpness(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
+    void stamping() {
+        zoneC.setImage(Filter.stamping(zoneB.getImage()));
+        zoneC.repaint();
+    }
+
     void gammaCorrection(double gamma) {
         zoneC.setImage(Filter.gammaCorrection(zoneB.getImage(), gamma));
         zoneC.repaint();

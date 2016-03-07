@@ -136,9 +136,36 @@ public class ZoneA extends Zone {
                 width /= step;
                 height = ViewOptions.ZONE_HEIGHT;
             }
+            int startX, endX;
+            int startY, endY;
+            int red, green, blue;
+            Color color;
+            int n;
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
-                    image.setRGB(i, j, newImage.getRGB((int) (i * step + 0.5), (int) (j * step + 0.5)));
+                    startX = (int) (i * step);
+                    startY = (int) (j * step);
+                    endX = (int) ((i + 1) * step);
+                    if ((double) endX != (i + 1) * step) {
+                        endX++;
+                    }
+                    endY = (int) ((j + 1) * step);
+                    if ((double) endY != (j + 1) * step) {
+                        endY++;
+                    }
+                    red = 0;
+                    green = 0;
+                    blue = 0;
+                    for (int k = startY; k < endY; k++) {
+                        for (int l = startX; l < endX; l++) {
+                            color = new Color(newImage.getRGB(l, k));
+                            red += color.getRed();
+                            green += color.getGreen();
+                            blue += color.getBlue();
+                        }
+                    }
+                    n = (endY - startY) * (endX - startX);
+                    image.setRGB(i, j, (new Color(red / n, green / n, blue / n)).getRGB());
                 }
                 for (int j = height; j < ViewOptions.ZONE_HEIGHT; j++) {
                     image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());

@@ -44,6 +44,8 @@ public class InitMainWindow extends MainFrame {
             addMenuSeparator("Edit");
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
+            addMenuItem("Edit/Floyd dithering", "Floyd-Stenberg dithering", KeyEvent.VK_X, "FloydDithering.png", "onFloydDithering", statusBar);
+            addMenuItem("Edit/Zoom", "Zoom 2x", KeyEvent.VK_X, "Zoom.png", "onZoom", statusBar);
             addMenuItem("Edit/Sobel", "Sobel operator", KeyEvent.VK_X, "Sobel.png", "onSobel", statusBar);
             addMenuItem("Edit/Robert", "Robert operator", KeyEvent.VK_X, "Robert.png", "onRobert", statusBar);
             addMenuItem("Edit/Smoothing", "Image smoothing", KeyEvent.VK_X, "Smoothing.png", "onSmoothing", statusBar);
@@ -64,6 +66,8 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
+            addToolBarButton("Edit/Floyd dithering", "Floyd-Stenberg dithering", statusBar);
+            addToolBarButton("Edit/Zoom", "Zoom 2x", statusBar);
             addToolBarButton("Edit/Sobel", "Sobel operator", statusBar);
             addToolBarButton("Edit/Robert", "Robert operator", statusBar);
             addToolBarButton("Edit/Smoothing", "Image smoothing", statusBar);
@@ -143,42 +147,50 @@ public class InitMainWindow extends MainFrame {
         ((JButton) toolBar.getComponentAtIndex(4)).setSelected(selectMode);
         initView.setAllocationMode(selectMode);
     }
-    
-    public void onBlackAndWhite(){
-        initView.blackAndWhiteTransformation();
+
+    public void onBlackAndWhite() {
+        initView.setImageInZone(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onNegative(){
-        initView.negativeTransformation();
+
+    public void onNegative() {
+        initView.setImageInZone(Filter.negativeTransformation(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onSobel(){
-        initView.sobel();
+
+    public void onFloydDithering() {
+        initView.setImageInZone(Filter.floydDithering(initView.getImageZone(ZoneName.ZONE_B), 2, 2, 2), ZoneName.ZONE_C);
     }
-    
-    public void onRobert(){
-        initView.robert();
+
+    public void onZoom() {
+        initView.setImageInZone(Filter.zoom(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onSmoothing(){
-        initView.smoothing();
+
+    public void onSobel() {
+        initView.setImageInZone(Filter.sobel(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onSharpness(){
-        initView.sharpness();
+
+    public void onRobert() {
+        initView.setImageInZone(Filter.robert(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onStamping(){
-        initView.stamping();
+
+    public void onSmoothing() {
+        initView.setImageInZone(Filter.smoothing(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
-    
-    public void onWatercolor(){
-        initView.watercolorCorrection();
+
+    public void onSharpness() {
+        initView.setImageInZone(Filter.sharpness(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+    }
+
+    public void onStamping() {
+        initView.setImageInZone(Filter.stamping(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+    }
+
+    public void onWatercolor() {
+        initView.setImageInZone(Filter.watercolorCorrection(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
 
     public void onGamma() {
         if (gammaDialog == null) {
-            gammaDialog = new GammaDialog(initView);
+            gammaDialog = new GammaDialog(this);
         }
         gammaDialog.setVisible(true);
     }
@@ -193,6 +205,10 @@ public class InitMainWindow extends MainFrame {
 
     public void rescroll() {
         scrollPane.updateUI();
+    }
+
+    void gammaCorrection(double gamma) {
+        initView.setImageInZone(Filter.gammaCorrection(initView.getImageZone(ZoneName.ZONE_B), gamma), ZoneName.ZONE_C);
     }
 
     public static void main(String[] args) {

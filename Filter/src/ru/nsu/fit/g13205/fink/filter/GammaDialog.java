@@ -23,7 +23,7 @@ public final class GammaDialog extends JDialog {
     private final double MIN_GAMMA = 0.005;
     private final double MAX_GAMMA = 10.0;
 
-    public GammaDialog(final InitView initView) {
+    public GammaDialog(final InitMainWindow initMainWindow) {
         super(new JFrame(), true);
         setTitle("Gamma");
         setResizable(false);
@@ -43,7 +43,7 @@ public final class GammaDialog extends JDialog {
                 try {
                     double gamma = Double.parseDouble(gammaTextField.getText());
                     if (gamma >= MIN_GAMMA && gamma <= MAX_GAMMA) {
-                        initView.gammaCorrection(gamma);
+                        initMainWindow.gammaCorrection(gamma);
                         setVisible(false);
                     } else {
                         JOptionPane.showMessageDialog(GammaDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);

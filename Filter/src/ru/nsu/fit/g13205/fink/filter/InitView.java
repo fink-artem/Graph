@@ -44,6 +44,19 @@ public class InitView extends JPanel {
         }
     }
 
+    public BufferedImage getImageZone(ZoneName zoneName) {
+        switch (zoneName) {
+            case ZONE_A:
+                return zoneA.getImage();
+            case ZONE_B:
+                return zoneB.getImage();
+            case ZONE_C:
+                return zoneC.getImage();
+            default:
+                return null;
+        }
+    }
+
     void clear() {
         zoneA.removeImage();
         zoneA.repaint();
@@ -56,50 +69,4 @@ public class InitView extends JPanel {
     void setAllocationMode(boolean mode) {
         zoneA.setAllocationMode(mode);
     }
-
-    void blackAndWhiteTransformation() {
-        zoneC.setImage(Filter.blackAndWhiteTransformation(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void negativeTransformation() {
-        zoneC.setImage(Filter.negativeTransformation(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void sobel() {
-        zoneC.setImage(Filter.sobel(Filter.blackAndWhiteTransformation(zoneB.getImage())));
-        zoneC.repaint();
-    }
-
-    void robert() {
-        zoneC.setImage(Filter.robert(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void smoothing() {
-        zoneC.setImage(Filter.smoothing(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void sharpness() {
-        zoneC.setImage(Filter.sharpness(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void stamping() {
-        zoneC.setImage(Filter.stamping(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void watercolorCorrection() {
-        zoneC.setImage(Filter.watercolorCorrection(zoneB.getImage()));
-        zoneC.repaint();
-    }
-
-    void gammaCorrection(double gamma) {
-        zoneC.setImage(Filter.gammaCorrection(zoneB.getImage(), gamma));
-        zoneC.repaint();
-    }
-
 }

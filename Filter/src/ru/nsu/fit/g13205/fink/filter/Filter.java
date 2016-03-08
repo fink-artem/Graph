@@ -291,6 +291,73 @@ public class Filter {
         return sharpness(smoothing(originalImage));
     }
 
+    static BufferedImage turn(BufferedImage originalImage, int angle) {
+        if (originalImage == null) {
+            return null;
+        }
+        double radAngle = (Math.PI / 180.0) * angle;
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                resultImage.setRGB(j, i, Color.WHITE.getRGB());
+            }
+        }
+        int centerX = 175;
+        int centerY = 175;
+        double startAngle;
+        double r;
+        int newX;
+        int newY;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                r = Math.sqrt((centerX - j) * (centerX - j) + (centerY - i) * (centerY - i));
+                if (r == 0) {
+                    continue;
+                }
+                if (i == 175 && j == width - 1) {
+                    System.out.println("");
+                }
+                startAngle = Math.acos(Math.abs(centerX - j) / r);
+                if (j < centerX) {
+                    startAngle = Math.PI - startAngle;
+                }
+                if (i > centerY) {
+                    startAngle = -startAngle;
+                }
+                startAngle -= radAngle;
+                if (startAngle > Math.PI) {
+                    startAngle -= 2 * Math.PI;
+                }
+                if (startAngle < -Math.PI) {
+                    startAngle += 2 * Math.PI;
+                }
+                if (startAngle < Math.PI / 2 && startAngle > -Math.PI / 2) {
+                    newX = (int) (centerX + Math.cos(startAngle) * r + 0.5);
+                    newY = (int) (centerY - Math.sin(startAngle) * r + 0.5);
+                } else {
+                    if (startAngle < 0) {
+                        startAngle = -Math.PI - startAngle;
+                    }
+                    if (startAngle > 0) {
+                        startAngle = Math.PI - startAngle;
+                    }
+                    newX = (int) (centerX - Math.cos(startAngle) * r + 0.5);
+                    newY = (int) (centerY - Math.sin(startAngle) * r + 0.5);
+                }
+                if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
+                    resultImage.setRGB(newX, newY, originalImage.getRGB(j, i));
+                }
+            }
+        }
+        if (Math.abs(angle) % 90 == 0) {
+            return resultImage;
+        } else {
+            return smoothing(resultImage);
+        }
+    }
+
     static BufferedImage gammaCorrection(BufferedImage originalImage, double gamma) {
         if (originalImage == null) {
             return null;

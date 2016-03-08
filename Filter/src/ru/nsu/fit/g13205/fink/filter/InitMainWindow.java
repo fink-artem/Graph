@@ -30,6 +30,7 @@ public class InitMainWindow extends MainFrame {
     private GammaDialog gammaDialog;
     private SobelDialog sobelDialog;
     private RobertDialog robertDialog;
+    private TurnDialog turnDialog;
 
     public InitMainWindow() {
         super();
@@ -58,6 +59,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Edit/Stamping", "Image stamping", KeyEvent.VK_X, "Stamping.png", "onStamping", statusBar);
             addMenuItem("Edit/Watercolor", "Watercolor correction", KeyEvent.VK_X, "Watercolor.png", "onWatercolor", statusBar);
             addMenuSeparator("Edit");
+            addMenuItem("Edit/Turn", "Image turn", KeyEvent.VK_X, "Turn.png", "onTurn", statusBar);
             addMenuItem("Edit/Gamma", "Gamma correction", KeyEvent.VK_X, "Gamma.png", "onGamma", statusBar);
 
             addSubMenu("Help", KeyEvent.VK_H);
@@ -81,6 +83,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Edit/Stamping", "Image stamping", statusBar);
             addToolBarButton("Edit/Watercolor", "Watercolor correction", statusBar);
             addToolBarSeparator();
+            addToolBarButton("Edit/Turn", "Image turn", statusBar);
             addToolBarButton("Edit/Gamma", "Gamma correction", statusBar);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
@@ -109,7 +112,6 @@ public class InitMainWindow extends MainFrame {
                 if (headerInt[i] < 0) {
                     headerInt[i] += 256;
                 }
-                System.out.println((i + 1) + " " + headerInt[i]);
             }
             if (headerInt[0] != 'B' || headerInt[1] != 'M') {
                 throw new Exception();
@@ -270,6 +272,13 @@ public class InitMainWindow extends MainFrame {
         initView.setImageInZone(Filter.watercolorCorrection(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
 
+    public void onTurn() {
+        if (turnDialog == null) {
+            turnDialog = new TurnDialog(this);
+        }
+        turnDialog.setVisible(true);
+    }
+
     public void onGamma() {
         if (gammaDialog == null) {
             gammaDialog = new GammaDialog(this);
@@ -287,6 +296,10 @@ public class InitMainWindow extends MainFrame {
 
     public void rescroll() {
         scrollPane.updateUI();
+    }
+
+    void turn(int angle) {
+        initView.setImageInZone(Filter.turn(initView.getImageZone(ZoneName.ZONE_B), angle), ZoneName.ZONE_C);
     }
 
     void gammaCorrection(double gamma) {

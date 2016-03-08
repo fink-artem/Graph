@@ -20,42 +20,42 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class SobelDialog extends JDialog {
+public class TurnDialog extends JDialog {
 
     private final int WIDTH = 430;
     private final int HEIGHT = 130;
     private final int TEXT_FIELD_SIZE = 5;
-    private final int DEFAULT_SOBEL = 80;
-    private final int MIN_SOBEL = 1;
-    private final int MAX_SOBEL = 101;
+    private final int DEFAULT_ANGLE = 0;
+    private final int MIN_ANGLE = -180;
+    private final int MAX_ANGLE = 180;
     private boolean error = false;
 
-    public SobelDialog(final InitMainWindow initMainWindow) {
+    public TurnDialog(final InitMainWindow initMainWindow) {
         super(new JFrame(), true);
-        setTitle("Sobel operator");
+        setTitle("Rotation angle");
         setResizable(false);
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT / 2, WIDTH, HEIGHT);
         JPanel mainPanel = new JPanel();
 
-        JPanel sobelPanel = new JPanel(new GridLayout(1, 2, TEXT_FIELD_SIZE, TEXT_FIELD_SIZE));
+        JPanel anglePanel = new JPanel(new GridLayout(1, 2, TEXT_FIELD_SIZE, TEXT_FIELD_SIZE));
         JPanel textPanel = new JPanel(new GridLayout(1, 2, TEXT_FIELD_SIZE, TEXT_FIELD_SIZE));
-        textPanel.add(new JLabel("Level"));
-        final JTextField sobelTextField = new JTextField(String.valueOf(DEFAULT_SOBEL));
-        textPanel.add(sobelTextField);
-        final JSlider sobelSlider = new JSlider(JSlider.HORIZONTAL, MIN_SOBEL, MAX_SOBEL, DEFAULT_SOBEL);
-        sobelSlider.setMajorTickSpacing(10);
-        sobelSlider.setMinorTickSpacing(1);
-        sobelSlider.setPaintLabels(true);
-        sobelSlider.setPaintTicks(true);
-        sobelSlider.setSnapToTicks(true);
-        sobelSlider.addChangeListener(new ChangeListener() {
+        textPanel.add(new JLabel("Angle"));
+        final JTextField angleTextField = new JTextField(String.valueOf(DEFAULT_ANGLE));
+        textPanel.add(angleTextField);
+        final JSlider angleSlider = new JSlider(JSlider.HORIZONTAL, MIN_ANGLE, MAX_ANGLE, DEFAULT_ANGLE);
+        angleSlider.setMajorTickSpacing(60);
+        angleSlider.setMinorTickSpacing(1);
+        angleSlider.setPaintLabels(true);
+        angleSlider.setPaintTicks(true);
+        angleSlider.setSnapToTicks(true);
+        angleSlider.addChangeListener(new ChangeListener() {
 
             @Override
             public void stateChanged(ChangeEvent ce) {
-                sobelTextField.setText(String.valueOf(sobelSlider.getValue()));
+                angleTextField.setText(String.valueOf(angleSlider.getValue()));
             }
         });
-        sobelTextField.addFocusListener(new FocusListener() {
+        angleTextField.addFocusListener(new FocusListener() {
 
             @Override
             public void focusGained(FocusEvent fe) {
@@ -63,29 +63,29 @@ public class SobelDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = DEFAULT_SOBEL;
+                int value = DEFAULT_ANGLE;
                 try {
-                    value = Integer.parseInt(sobelTextField.getText());
+                    value = Integer.parseInt(angleTextField.getText());
                 } catch (NumberFormatException e) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    angleTextField.setText(String.valueOf(DEFAULT_ANGLE));
+                    JOptionPane.showMessageDialog(TurnDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < MIN_SOBEL) {
+                if (value < MIN_ANGLE) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    angleTextField.setText(String.valueOf(DEFAULT_ANGLE));
+                    JOptionPane.showMessageDialog(TurnDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value > MAX_SOBEL) {
+                if (value > MAX_ANGLE) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    angleTextField.setText(String.valueOf(DEFAULT_ANGLE));
+                    JOptionPane.showMessageDialog(TurnDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                sobelSlider.setValue(value);
+                angleSlider.setValue(value);
             }
         });
-        sobelPanel.add(textPanel);
-        sobelPanel.add(sobelSlider);
+        anglePanel.add(textPanel);
+        anglePanel.add(angleSlider);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -97,7 +97,7 @@ public class SobelDialog extends JDialog {
                     return;
                 }
                 setVisible(false);
-                initMainWindow.sobelOperator(Integer.parseInt(sobelTextField.getText()));
+                initMainWindow.turn(Integer.parseInt(angleTextField.getText()));
             }
         });
 
@@ -109,8 +109,8 @@ public class SobelDialog extends JDialog {
                 setVisible(false);
             }
         });
-        sobelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-        mainPanel.add(sobelPanel);
+        anglePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        mainPanel.add(anglePanel);
         mainPanel.add(okButton);
         mainPanel.add(new JLabel("           "));
         mainPanel.add(cancelButton);
@@ -139,8 +139,8 @@ public class SobelDialog extends JDialog {
 
             @Override
             public void windowActivated(WindowEvent we) {
-                sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                sobelSlider.setValue(DEFAULT_SOBEL);
+                angleTextField.setText(String.valueOf(DEFAULT_ANGLE));
+                angleSlider.setValue(DEFAULT_ANGLE);
             }
 
             @Override

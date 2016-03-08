@@ -28,7 +28,7 @@ public class RobertDialog extends JDialog {
     private final int DEFAULT_ROBERT = 80;
     private final int MIN_ROBERT = 1;
     private final int MAX_ROBERT = 101;
-    private boolean error = true;
+    private boolean error = false;
 
     public RobertDialog(final InitMainWindow initMainWindow) {
         super(new JFrame(), true);
@@ -96,8 +96,8 @@ public class RobertDialog extends JDialog {
                     error = false;
                     return;
                 }
-                initMainWindow.robertOperator(Integer.parseInt(robertTextField.getText()));
                 setVisible(false);
+                initMainWindow.robertOperator(Integer.parseInt(robertTextField.getText()));
             }
         });
 

@@ -9,8 +9,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.OutputStream;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -21,11 +22,14 @@ public class InitMainWindow extends MainFrame {
 
     private final int MIN_WIDTH = 800;
     private final int MIN_HEIGHT = 600;
+    private final int HEADER_SIZE = 54;
     private JScrollPane scrollPane;
     private InitView initView = new InitView();
     private JLabel statusBar = new JLabel("Ready");
     private boolean selectMode = false;
     private GammaDialog gammaDialog;
+    private SobelDialog sobelDialog;
+    private RobertDialog robertDialog;
 
     public InitMainWindow() {
         super();
@@ -41,6 +45,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
             addSubMenu("Edit", KeyEvent.VK_F);
             addMenuItem("Edit/Select", "Select a part of image", KeyEvent.VK_X, "Select.png", "onSelect", statusBar);
+            addMenuItem("Edit/Copy", "Copy C to B", KeyEvent.VK_X, "Copy.png", "onCopy", statusBar);
             addMenuSeparator("Edit");
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
@@ -63,6 +68,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Select", "Select a part of image", statusBar);
+            addToolBarButton("Edit/Copy", "Copy C to B", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
@@ -93,24 +99,29 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onOpen() {
-        File file = getOpenFileName("bmp", "");
+        File file = getOpenFileName("bmp", "Bitmap");
         try (InputStream in = new FileInputStream(file)) {
-            byte headerByte[] = new byte[54];
-            int headerInt[] = new int[54];
-            in.read(headerByte, 0, 54);
-            for (int i = 0; i < 54; i++) {
+            byte headerByte[] = new byte[HEADER_SIZE];
+            int headerInt[] = new int[HEADER_SIZE];
+            in.read(headerByte, 0, HEADER_SIZE);
+            for (int i = 0; i < HEADER_SIZE; i++) {
                 headerInt[i] = headerByte[i];
                 if (headerInt[i] < 0) {
                     headerInt[i] += 256;
                 }
+                System.out.println((i + 1) + " " + headerInt[i]);
             }
-            int width = 256 * headerInt[19] + headerInt[18];
-            int height = 256 * headerInt[23] + headerInt[22];
+            if (headerInt[0] != 'B' || headerInt[1] != 'M') {
+                throw new Exception();
+            }
+            int width = ((headerInt[21] * 256 + headerInt[20]) * 256 + headerInt[19]) * 256 + headerInt[18];
+            int height = ((headerInt[25] * 256 + headerInt[24]) * 256 + headerInt[23]) * 256 + headerInt[22];
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             byte b[] = new byte[3];
             int blue;
             int green;
             int red;
+            int pass = (4 - 3 * width % 4) % 4;
             for (int i = height - 1; i >= 0; i--) {
                 for (int j = 0; j < width; j++) {
                     in.read(b, 0, 3);
@@ -128,17 +139,78 @@ public class InitMainWindow extends MainFrame {
                     }
                     bufferedImage.setRGB(j, i, (new Color(red, green, blue)).getRGB());
                 }
+                in.skip(pass);
             }
             initView.setImageInZone(bufferedImage, ZoneName.ZONE_A);
+        } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public void onSave() {
-        File file = getSaveFileName("bmp", "");
-        try (PrintWriter out = new PrintWriter(file)) {
-
-        } catch (FileNotFoundException | NullPointerException e) {
+        BufferedImage image = initView.getImageZone(ZoneName.ZONE_C);
+        if (image == null) {
+            JOptionPane.showMessageDialog(this, "Image not found", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        int width = image.getWidth();
+        int height = image.getHeight();
+        File file = getSaveFileName("bmp", "Bitmap");
+        try (OutputStream out = new FileOutputStream(file)) {
+            byte header[] = new byte[HEADER_SIZE];
+            header[0] = 'B';
+            header[1] = 'M';
+            int pass = (4 - 3 * width % 4) % 4;
+            int newWidth = width * 3 + pass;
+            int fileSize = HEADER_SIZE + height * newWidth;
+            for (int i = 2; i < 6; i++) {
+                header[i] = (byte) (fileSize % 256);
+                fileSize /= 256;
+            }
+            int offset = 54;
+            for (int i = 10; i < 14; i++) {
+                header[i] = (byte) (offset % 256);
+                offset /= 256;
+            }
+            int headerSize = 40;
+            for (int i = 14; i < 18; i++) {
+                header[i] = (byte) (headerSize % 256);
+                headerSize /= 256;
+            }
+            int imageWidth = width;
+            for (int i = 18; i < 22; i++) {
+                header[i] = (byte) (imageWidth % 256);
+                imageWidth /= 256;
+            }
+            int imageHeight = height;
+            for (int i = 22; i < 26; i++) {
+                header[i] = (byte) (imageHeight % 256);
+                imageHeight /= 256;
+            }
+            int number = 1;
+            for (int i = 26; i < 28; i++) {
+                header[i] = (byte) (number % 256);
+                number /= 256;
+            }
+            number = 24;
+            for (int i = 28; i < 30; i++) {
+                header[i] = (byte) (number % 256);
+                number /= 256;
+            }
+            out.write(header, 0, HEADER_SIZE);
+            byte buffer[] = new byte[newWidth];
+            Color color;
+            for (int i = height - 1; i >= 0; i--) {
+                for (int j = 0; j < width; j++) {
+                    color = new Color(image.getRGB(j, i));
+                    buffer[3 * j] = (byte) color.getBlue();
+                    buffer[3 * j + 1] = (byte) color.getGreen();
+                    buffer[3 * j + 2] = (byte) color.getRed();
+                }
+                out.write(buffer, 0, newWidth);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -146,6 +218,10 @@ public class InitMainWindow extends MainFrame {
         selectMode = !selectMode;
         ((JButton) toolBar.getComponentAtIndex(4)).setSelected(selectMode);
         initView.setAllocationMode(selectMode);
+    }
+
+    public void onCopy() {
+        initView.setImageInZone(initView.getImageZone(ZoneName.ZONE_C), ZoneName.ZONE_B);
     }
 
     public void onBlackAndWhite() {
@@ -165,11 +241,17 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onSobel() {
-        initView.setImageInZone(Filter.sobel(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        if (sobelDialog == null) {
+            sobelDialog = new SobelDialog(this);
+        }
+        sobelDialog.setVisible(true);
     }
 
     public void onRobert() {
-        initView.setImageInZone(Filter.robert(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        if (robertDialog == null) {
+            robertDialog = new RobertDialog(this);
+        }
+        robertDialog.setVisible(true);
     }
 
     public void onSmoothing() {
@@ -209,6 +291,14 @@ public class InitMainWindow extends MainFrame {
 
     void gammaCorrection(double gamma) {
         initView.setImageInZone(Filter.gammaCorrection(initView.getImageZone(ZoneName.ZONE_B), gamma), ZoneName.ZONE_C);
+    }
+
+    void sobelOperator(int level) {
+        initView.setImageInZone(Filter.sobel(initView.getImageZone(ZoneName.ZONE_B), level), ZoneName.ZONE_C);
+    }
+
+    void robertOperator(int level) {
+        initView.setImageInZone(Filter.robert(initView.getImageZone(ZoneName.ZONE_B), level), ZoneName.ZONE_C);
     }
 
     public static void main(String[] args) {

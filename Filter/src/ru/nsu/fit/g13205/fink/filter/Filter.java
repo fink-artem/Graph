@@ -169,7 +169,7 @@ public class Filter {
         return resultImage;
     }
 
-    static BufferedImage sobel(BufferedImage originalImage) {
+    static BufferedImage sobel(BufferedImage originalImage, int level) {
         if (originalImage == null) {
             return null;
         }
@@ -215,7 +215,7 @@ public class Filter {
         return resultImage;
     }
 
-    static BufferedImage robert(BufferedImage originalImage) {
+    static BufferedImage robert(BufferedImage originalImage, int level) {
         if (originalImage == null) {
             return null;
         }

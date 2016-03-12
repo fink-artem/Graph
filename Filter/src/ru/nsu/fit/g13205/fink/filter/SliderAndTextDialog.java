@@ -20,30 +20,31 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class SobelDialog extends JDialog {
+public class SliderAndTextDialog extends JDialog {
 
+    public static final boolean SUCCESS = true;
+    public static final boolean FAILED = false;
     private final int WIDTH = 430;
     private final int HEIGHT = 130;
     private final int TEXT_FIELD_SIZE = 5;
-    private final int DEFAULT_SOBEL = 80;
-    private final int MIN_SOBEL = 1;
-    private final int MAX_SOBEL = 101;
     private boolean error = false;
+    private boolean status = false;
+    private int value = 0;
 
-    public SobelDialog(final InitMainWindow initMainWindow) {
+    public SliderAndTextDialog(final int minValue, final int maxValue, final int defaultValue, int sliderStep, String title, String label) {
         super(new JFrame(), true);
-        setTitle("Sobel operator");
+        setTitle(title);
         setResizable(false);
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT / 2, WIDTH, HEIGHT);
         JPanel mainPanel = new JPanel();
 
         JPanel sobelPanel = new JPanel(new GridLayout(1, 2, TEXT_FIELD_SIZE, TEXT_FIELD_SIZE));
         JPanel textPanel = new JPanel(new GridLayout(1, 2, TEXT_FIELD_SIZE, TEXT_FIELD_SIZE));
-        textPanel.add(new JLabel("Level"));
-        final JTextField sobelTextField = new JTextField(String.valueOf(DEFAULT_SOBEL));
+        textPanel.add(new JLabel(label));
+        final JTextField sobelTextField = new JTextField(String.valueOf(defaultValue));
         textPanel.add(sobelTextField);
-        final JSlider sobelSlider = new JSlider(JSlider.HORIZONTAL, MIN_SOBEL, MAX_SOBEL, DEFAULT_SOBEL);
-        sobelSlider.setMajorTickSpacing(10);
+        final JSlider sobelSlider = new JSlider(JSlider.HORIZONTAL, minValue, maxValue, defaultValue);
+        sobelSlider.setMajorTickSpacing(sliderStep);
         sobelSlider.setMinorTickSpacing(1);
         sobelSlider.setPaintLabels(true);
         sobelSlider.setPaintTicks(true);
@@ -63,23 +64,23 @@ public class SobelDialog extends JDialog {
 
             @Override
             public void focusLost(FocusEvent fe) {
-                int value = DEFAULT_SOBEL;
+                int value = defaultValue;
                 try {
                     value = Integer.parseInt(sobelTextField.getText());
                 } catch (NumberFormatException e) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    sobelTextField.setText(String.valueOf(defaultValue));
+                    JOptionPane.showMessageDialog(SliderAndTextDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value < MIN_SOBEL) {
+                if (value < minValue) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    sobelTextField.setText(String.valueOf(defaultValue));
+                    JOptionPane.showMessageDialog(SliderAndTextDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-                if (value > MAX_SOBEL) {
+                if (value > maxValue) {
                     error = true;
-                    sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                    JOptionPane.showMessageDialog(SobelDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    sobelTextField.setText(String.valueOf(defaultValue));
+                    JOptionPane.showMessageDialog(SliderAndTextDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
                 sobelSlider.setValue(value);
             }
@@ -96,8 +97,9 @@ public class SobelDialog extends JDialog {
                     error = false;
                     return;
                 }
+                status = SUCCESS;
+                value = Integer.parseInt(sobelTextField.getText());
                 setVisible(false);
-                initMainWindow.sobelOperator(Integer.parseInt(sobelTextField.getText()));
             }
         });
 
@@ -139,14 +141,23 @@ public class SobelDialog extends JDialog {
 
             @Override
             public void windowActivated(WindowEvent we) {
-                sobelTextField.setText(String.valueOf(DEFAULT_SOBEL));
-                sobelSlider.setValue(DEFAULT_SOBEL);
+                sobelTextField.setText(String.valueOf(defaultValue));
+                status = FAILED;
+                sobelSlider.setValue(defaultValue);
             }
 
             @Override
             public void windowDeactivated(WindowEvent we) {
             }
         });
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public int getValue() {
+        return value;
     }
 
 }

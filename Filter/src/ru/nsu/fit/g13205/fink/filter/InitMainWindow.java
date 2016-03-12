@@ -28,9 +28,11 @@ public class InitMainWindow extends MainFrame {
     private JLabel statusBar = new JLabel("Ready");
     private boolean selectMode = false;
     private GammaDialog gammaDialog;
-    private SobelDialog sobelDialog;
-    private RobertDialog robertDialog;
-    private TurnDialog turnDialog;
+    private SliderAndTextDialog sobelDialog;
+    private SliderAndTextDialog robertDialog;
+    private SliderAndTextDialog turnDialog;
+    private DialogRGB floydDitheringDialog;
+    private DialogRGB orderedDitheringDialog;
 
     public InitMainWindow() {
         super();
@@ -51,6 +53,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
             addMenuItem("Edit/Floyd dithering", "Floyd-Stenberg dithering", KeyEvent.VK_X, "FloydDithering.png", "onFloydDithering", statusBar);
+            addMenuItem("Edit/Ordered dithering", "Ordered dithering", KeyEvent.VK_X, "OrderedDithering.png", "onOrderedDithering", statusBar);
             addMenuItem("Edit/Zoom", "Zoom 2x", KeyEvent.VK_X, "Zoom.png", "onZoom", statusBar);
             addMenuItem("Edit/Sobel", "Sobel operator", KeyEvent.VK_X, "Sobel.png", "onSobel", statusBar);
             addMenuItem("Edit/Robert", "Robert operator", KeyEvent.VK_X, "Robert.png", "onRobert", statusBar);
@@ -75,6 +78,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
             addToolBarButton("Edit/Floyd dithering", "Floyd-Stenberg dithering", statusBar);
+            addToolBarButton("Edit/Ordered dithering", "Ordered dithering", statusBar);
             addToolBarButton("Edit/Zoom", "Zoom 2x", statusBar);
             addToolBarButton("Edit/Sobel", "Sobel operator", statusBar);
             addToolBarButton("Edit/Robert", "Robert operator", statusBar);
@@ -235,7 +239,25 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onFloydDithering() {
-        initView.setImageInZone(Filter.floydDithering(initView.getImageZone(ZoneName.ZONE_B), 2, 2, 2), ZoneName.ZONE_C);
+        if (floydDitheringDialog == null) {
+            floydDitheringDialog = new DialogRGB();
+        }
+        floydDitheringDialog.setVisible(true);
+        if (floydDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
+            Color color = floydDitheringDialog.getValue();
+            initView.setImageInZone(Filter.floydDithering(initView.getImageZone(ZoneName.ZONE_B), color.getRed(), color.getGreen(), color.getBlue()), ZoneName.ZONE_C);
+        }
+    }
+    
+    public void onOrderedDithering() {
+        if (orderedDitheringDialog == null) {
+            orderedDitheringDialog = new DialogRGB();
+        }
+        orderedDitheringDialog.setVisible(true);
+        if (orderedDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
+            Color color = orderedDitheringDialog.getValue();
+            initView.setImageInZone(Filter.orderedDithering(initView.getImageZone(ZoneName.ZONE_B), color.getRed(), color.getGreen(), color.getBlue()), ZoneName.ZONE_C);
+        }
     }
 
     public void onZoom() {
@@ -244,16 +266,22 @@ public class InitMainWindow extends MainFrame {
 
     public void onSobel() {
         if (sobelDialog == null) {
-            sobelDialog = new SobelDialog(this);
+            sobelDialog = new SliderAndTextDialog(10, 250, 80, 40, "Sobel operator", "Level");
         }
         sobelDialog.setVisible(true);
+        if (sobelDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+            initView.setImageInZone(Filter.sobel(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), sobelDialog.getValue()), ZoneName.ZONE_C);
+        }
     }
 
     public void onRobert() {
         if (robertDialog == null) {
-            robertDialog = new RobertDialog(this);
+            robertDialog = new SliderAndTextDialog(10, 250, 80, 40, "Robert dialog", "Level");
         }
         robertDialog.setVisible(true);
+        if (robertDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+            initView.setImageInZone(Filter.robert(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), robertDialog.getValue()), ZoneName.ZONE_C);
+        }
     }
 
     public void onSmoothing() {
@@ -274,16 +302,22 @@ public class InitMainWindow extends MainFrame {
 
     public void onTurn() {
         if (turnDialog == null) {
-            turnDialog = new TurnDialog(this);
+            turnDialog = new SliderAndTextDialog(-180, 180, 0, 60, "Rotation angle", "Angle");
         }
         turnDialog.setVisible(true);
+        if (turnDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+            initView.setImageInZone(Filter.turn(initView.getImageZone(ZoneName.ZONE_B), turnDialog.getValue()), ZoneName.ZONE_C);
+        }
     }
 
     public void onGamma() {
         if (gammaDialog == null) {
-            gammaDialog = new GammaDialog(this);
+            gammaDialog = new GammaDialog();
         }
         gammaDialog.setVisible(true);
+        if (gammaDialog.getStatus() == GammaDialog.SUCCESS) {
+            initView.setImageInZone(Filter.gammaCorrection(initView.getImageZone(ZoneName.ZONE_B), gammaDialog.getValue()), ZoneName.ZONE_C);
+        }
     }
 
     public void onExit() {
@@ -298,25 +332,12 @@ public class InitMainWindow extends MainFrame {
         scrollPane.updateUI();
     }
 
-    void turn(int angle) {
-        initView.setImageInZone(Filter.turn(initView.getImageZone(ZoneName.ZONE_B), angle), ZoneName.ZONE_C);
-    }
-
-    void gammaCorrection(double gamma) {
-        initView.setImageInZone(Filter.gammaCorrection(initView.getImageZone(ZoneName.ZONE_B), gamma), ZoneName.ZONE_C);
-    }
-
-    void sobelOperator(int level) {
-        initView.setImageInZone(Filter.sobel(initView.getImageZone(ZoneName.ZONE_B), level), ZoneName.ZONE_C);
-    }
-
-    void robertOperator(int level) {
-        initView.setImageInZone(Filter.robert(initView.getImageZone(ZoneName.ZONE_B), level), ZoneName.ZONE_C);
-    }
-
     public static void main(String[] args) {
-        InitMainWindow mainFrame = new InitMainWindow();
-        mainFrame.setVisible(true);
+        try {
+            InitMainWindow mainFrame = new InitMainWindow();
+            mainFrame.setVisible(true);
+        } catch (Exception e) {
+        }
     }
 
 }

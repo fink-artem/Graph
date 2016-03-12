@@ -1,5 +1,6 @@
 package ru.nsu.fit.g13205.fink.filter;
 
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -14,30 +15,36 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public final class GammaDialog extends JDialog {
+public class DialogRGB extends JDialog {
 
     public static final boolean SUCCESS = true;
     public static final boolean FAILED = false;
     private final int WIDTH = 250;
-    private final int HEIGHT = 100;
+    private final int HEIGHT = 190;
     private final int TEXT_FIELD_SIZE = 5;
-    private final double DEFAULT_GAMMA = 1.0;
-    private final double MIN_GAMMA = 0.005;
-    private final double MAX_GAMMA = 10.0;
+    private final int DEFAULT_VALUE = 2;
+    private final int MIN_VALUE = 2;
+    private final int MAX_VALUE = 256;
     private boolean status = false;
-    private double value = 0;
+    private Color value = null;
 
-    public GammaDialog() {
+    public DialogRGB() {
         super(new JFrame(), true);
-        setTitle("Gamma");
+        setTitle("Dithering");
         setResizable(false);
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - HEIGHT / 2, WIDTH, HEIGHT);
         JPanel mainPanel = new JPanel();
 
-        JPanel gammaPanel = new JPanel(new GridLayout(2, 2, 10, 10));
-        gammaPanel.add(new JLabel("Gamma(" + MIN_GAMMA + " - " + MAX_GAMMA + ")"));
-        final JTextField gammaTextField = new JTextField(String.valueOf(DEFAULT_GAMMA), TEXT_FIELD_SIZE);
-        gammaPanel.add(gammaTextField);
+        JPanel PanelRGB = new JPanel(new GridLayout(4, 2, 10, 10));
+        PanelRGB.add(new JLabel("Red(" + MIN_VALUE + " - " + MAX_VALUE + ")"));
+        final JTextField redTextField = new JTextField(String.valueOf(DEFAULT_VALUE), TEXT_FIELD_SIZE);
+        PanelRGB.add(redTextField);
+        PanelRGB.add(new JLabel("Green(" + MIN_VALUE + " - " + MAX_VALUE + ")"));
+        final JTextField greenTextField = new JTextField(String.valueOf(DEFAULT_VALUE), TEXT_FIELD_SIZE);
+        PanelRGB.add(greenTextField);
+        PanelRGB.add(new JLabel("Blue(" + MIN_VALUE + " - " + MAX_VALUE + ")"));
+        final JTextField blueTextField = new JTextField(String.valueOf(DEFAULT_VALUE), TEXT_FIELD_SIZE);
+        PanelRGB.add(blueTextField);
 
         JButton okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -45,20 +52,22 @@ public final class GammaDialog extends JDialog {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    double gamma = Double.parseDouble(gammaTextField.getText());
-                    if (gamma >= MIN_GAMMA && gamma <= MAX_GAMMA) {
-                        value = gamma;
+                    int red = Integer.parseInt(redTextField.getText());
+                    int green = Integer.parseInt(greenTextField.getText());
+                    int blue = Integer.parseInt(blueTextField.getText());
+                    if (red >= MIN_VALUE && red <= MAX_VALUE && green >= MIN_VALUE && green <= MAX_VALUE && blue >= MIN_VALUE && blue <= MAX_VALUE) {
+                        value = new Color(red - 1, green - 1, blue - 1);
                         status = SUCCESS;
                         setVisible(false);
                     } else {
-                        JOptionPane.showMessageDialog(GammaDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(DialogRGB.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException me) {
-                    JOptionPane.showMessageDialog(GammaDialog.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(DialogRGB.this, "Invalid value", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        gammaPanel.add(okButton);
+        PanelRGB.add(okButton);
 
         JButton cancelButton = new JButton("Cancel");
         cancelButton.addActionListener(new ActionListener() {
@@ -68,8 +77,8 @@ public final class GammaDialog extends JDialog {
                 setVisible(false);
             }
         });
-        gammaPanel.add(cancelButton);
-        mainPanel.add(gammaPanel);
+        PanelRGB.add(cancelButton);
+        mainPanel.add(PanelRGB);
         add(mainPanel);
 
         addWindowListener(new WindowListener() {
@@ -96,7 +105,9 @@ public final class GammaDialog extends JDialog {
 
             @Override
             public void windowActivated(WindowEvent we) {
-                gammaTextField.setText(String.valueOf(DEFAULT_GAMMA));
+                redTextField.setText(String.valueOf(DEFAULT_VALUE));
+                greenTextField.setText(String.valueOf(DEFAULT_VALUE));
+                blueTextField.setText(String.valueOf(DEFAULT_VALUE));
                 status = FAILED;
             }
 
@@ -110,7 +121,8 @@ public final class GammaDialog extends JDialog {
         return status;
     }
 
-    public double getValue() {
+    public Color getValue() {
         return value;
     }
+
 }

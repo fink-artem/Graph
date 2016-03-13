@@ -27,12 +27,15 @@ public class InitMainWindow extends MainFrame {
     private InitView initView = new InitView();
     private JLabel statusBar = new JLabel("Ready");
     private boolean selectMode = false;
+    private int pixelWidth = 1;
     private GammaDialog gammaDialog;
     private SliderAndTextDialog sobelDialog;
     private SliderAndTextDialog robertDialog;
     private SliderAndTextDialog turnDialog;
     private DialogRGB floydDitheringDialog;
     private DialogRGB orderedDitheringDialog;
+    private PixelizeDialog pixelizeDialog;
+    private BufferedImage savedImage;
 
     public InitMainWindow() {
         super();
@@ -49,6 +52,7 @@ public class InitMainWindow extends MainFrame {
             addSubMenu("Edit", KeyEvent.VK_F);
             addMenuItem("Edit/Select", "Select a part of image", KeyEvent.VK_X, "Select.png", "onSelect", statusBar);
             addMenuItem("Edit/Copy", "Copy C to B", KeyEvent.VK_X, "Copy.png", "onCopy", statusBar);
+            addMenuItem("Edit/Pixelize", "Pixelize mode", KeyEvent.VK_X, "Pixelize.png", "onPixelize", statusBar);
             addMenuSeparator("Edit");
             addMenuItem("Edit/Black And White", "Black and white", KeyEvent.VK_X, "BlackAndWhite.png", "onBlackAndWhite", statusBar);
             addMenuItem("Edit/Negative", "Negative transformation", KeyEvent.VK_X, "Negative.png", "onNegative", statusBar);
@@ -74,6 +78,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarSeparator();
             addToolBarButton("Edit/Select", "Select a part of image", statusBar);
             addToolBarButton("Edit/Copy", "Copy C to B", statusBar);
+            addToolBarButton("Edit/Pixelize", "Pixelize mode", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Black And White", "Black and white", statusBar);
             addToolBarButton("Edit/Negative", "Negative transformation", statusBar);
@@ -148,6 +153,11 @@ public class InitMainWindow extends MainFrame {
                 in.skip(pass);
             }
             initView.setImageInZone(bufferedImage, ZoneName.ZONE_A);
+            pixelWidth = 1;
+            selectMode = false;
+            initView.setAllocationMode(selectMode);
+            ((JButton) toolBar.getComponentAtIndex(4)).setSelected(selectMode);
+            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
         } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
@@ -230,6 +240,26 @@ public class InitMainWindow extends MainFrame {
         initView.setImageInZone(initView.getImageZone(ZoneName.ZONE_C), ZoneName.ZONE_B);
     }
 
+    public void onPixelize() {
+        if (pixelWidth != 1) {
+            pixelWidth = 1;
+            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+            initView.setImageInZone(savedImage, ZoneName.ZONE_B);
+            initView.setImageInZone(null, ZoneName.ZONE_C);
+        } else {
+            if (pixelizeDialog == null) {
+                pixelizeDialog = new PixelizeDialog();
+            }
+            pixelizeDialog.setVisible(true);
+            if (pixelizeDialog.getStatus() == PixelizeDialog.SUCCESS) {
+                pixelWidth = pixelizeDialog.getValue();
+                ((JButton) toolBar.getComponentAtIndex(6)).setSelected(true);
+                savedImage = initView.getImageZone(ZoneName.ZONE_B);
+                initView.setImageInZone(Filter.pixelize(savedImage, pixelWidth), ZoneName.ZONE_B);
+            }
+        }
+    }
+
     public void onBlackAndWhite() {
         initView.setImageInZone(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
     }
@@ -239,84 +269,117 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onFloydDithering() {
-        if (floydDitheringDialog == null) {
-            floydDitheringDialog = new DialogRGB();
-        }
-        floydDitheringDialog.setVisible(true);
-        if (floydDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
-            Color color = floydDitheringDialog.getValue();
-            initView.setImageInZone(Filter.floydDithering(initView.getImageZone(ZoneName.ZONE_B), color.getRed(), color.getGreen(), color.getBlue()), ZoneName.ZONE_C);
+        try {
+            if (floydDitheringDialog == null) {
+                floydDitheringDialog = new DialogRGB();
+            }
+            floydDitheringDialog.setVisible(true);
+            if (floydDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
+                Color color = floydDitheringDialog.getValue();
+                initView.setImageInZone(Filter.pixelUp(Filter.floydDithering(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth), color.getRed(), color.getGreen(), color.getBlue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
-    
+
     public void onOrderedDithering() {
-        if (orderedDitheringDialog == null) {
-            orderedDitheringDialog = new DialogRGB();
-        }
-        orderedDitheringDialog.setVisible(true);
-        if (orderedDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
-            Color color = orderedDitheringDialog.getValue();
-            initView.setImageInZone(Filter.orderedDithering(initView.getImageZone(ZoneName.ZONE_B), color.getRed(), color.getGreen(), color.getBlue()), ZoneName.ZONE_C);
+        try {
+            if (orderedDitheringDialog == null) {
+                orderedDitheringDialog = new DialogRGB();
+            }
+            orderedDitheringDialog.setVisible(true);
+            if (orderedDitheringDialog.getStatus() == DialogRGB.SUCCESS) {
+                Color color = orderedDitheringDialog.getValue();
+                initView.setImageInZone(Filter.pixelUp(Filter.orderedDithering(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth), color.getRed(), color.getGreen(), color.getBlue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
 
     public void onZoom() {
-        initView.setImageInZone(Filter.zoom(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        try {
+            initView.setImageInZone(Filter.pixelUp(Filter.zoom(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), pixelWidth), ZoneName.ZONE_C);
+        } catch (Exception e) {
+        }
     }
 
     public void onSobel() {
-        if (sobelDialog == null) {
-            sobelDialog = new SliderAndTextDialog(10, 250, 80, 40, "Sobel operator", "Level");
-        }
-        sobelDialog.setVisible(true);
-        if (sobelDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
-            initView.setImageInZone(Filter.sobel(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), sobelDialog.getValue()), ZoneName.ZONE_C);
+        try {
+            if (sobelDialog == null) {
+                sobelDialog = new SliderAndTextDialog(10, 250, 80, 40, "Sobel operator", "Level");
+            }
+            sobelDialog.setVisible(true);
+            if (sobelDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+                initView.setImageInZone(Filter.pixelUp(Filter.sobel(Filter.blackAndWhiteTransformation(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), sobelDialog.getValue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
 
     public void onRobert() {
-        if (robertDialog == null) {
-            robertDialog = new SliderAndTextDialog(10, 250, 80, 40, "Robert dialog", "Level");
-        }
-        robertDialog.setVisible(true);
-        if (robertDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
-            initView.setImageInZone(Filter.robert(Filter.blackAndWhiteTransformation(initView.getImageZone(ZoneName.ZONE_B)), robertDialog.getValue()), ZoneName.ZONE_C);
+        try {
+            if (robertDialog == null) {
+                robertDialog = new SliderAndTextDialog(10, 250, 80, 40, "Robert dialog", "Level");
+            }
+            robertDialog.setVisible(true);
+            if (robertDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+                initView.setImageInZone(Filter.pixelUp(Filter.robert(Filter.blackAndWhiteTransformation(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), robertDialog.getValue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
 
     public void onSmoothing() {
-        initView.setImageInZone(Filter.smoothing(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        try {
+            initView.setImageInZone(Filter.pixelUp(Filter.smoothing(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), pixelWidth), ZoneName.ZONE_C);
+        } catch (Exception e) {
+        }
     }
 
     public void onSharpness() {
-        initView.setImageInZone(Filter.sharpness(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        try {
+            initView.setImageInZone(Filter.pixelUp(Filter.sharpness(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), pixelWidth), ZoneName.ZONE_C);
+        } catch (Exception e) {
+        }
     }
 
     public void onStamping() {
-        initView.setImageInZone(Filter.stamping(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        try {
+            initView.setImageInZone(Filter.pixelUp(Filter.stamping(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), pixelWidth), ZoneName.ZONE_C);
+        } catch (Exception e) {
+        }
     }
 
     public void onWatercolor() {
-        initView.setImageInZone(Filter.watercolorCorrection(initView.getImageZone(ZoneName.ZONE_B)), ZoneName.ZONE_C);
+        try {
+            initView.setImageInZone(Filter.pixelUp(Filter.watercolorCorrection(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth)), pixelWidth), ZoneName.ZONE_C);
+        } catch (Exception e) {
+        }
     }
 
     public void onTurn() {
-        if (turnDialog == null) {
-            turnDialog = new SliderAndTextDialog(-180, 180, 0, 60, "Rotation angle", "Angle");
-        }
-        turnDialog.setVisible(true);
-        if (turnDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
-            initView.setImageInZone(Filter.turn(initView.getImageZone(ZoneName.ZONE_B), turnDialog.getValue()), ZoneName.ZONE_C);
+        try {
+            if (turnDialog == null) {
+                turnDialog = new SliderAndTextDialog(-180, 180, 0, 60, "Rotation angle", "Angle");
+            }
+            turnDialog.setVisible(true);
+            if (turnDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
+                initView.setImageInZone(Filter.pixelUp(Filter.turn(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth), turnDialog.getValue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
 
     public void onGamma() {
-        if (gammaDialog == null) {
-            gammaDialog = new GammaDialog();
-        }
-        gammaDialog.setVisible(true);
-        if (gammaDialog.getStatus() == GammaDialog.SUCCESS) {
-            initView.setImageInZone(Filter.gammaCorrection(initView.getImageZone(ZoneName.ZONE_B), gammaDialog.getValue()), ZoneName.ZONE_C);
+        try {
+            if (gammaDialog == null) {
+                gammaDialog = new GammaDialog();
+            }
+            gammaDialog.setVisible(true);
+            if (gammaDialog.getStatus() == GammaDialog.SUCCESS) {
+                initView.setImageInZone(Filter.pixelUp(Filter.gammaCorrection(Filter.pixelDown(initView.getImageZone(ZoneName.ZONE_B), pixelWidth), gammaDialog.getValue()), pixelWidth), ZoneName.ZONE_C);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -333,11 +396,8 @@ public class InitMainWindow extends MainFrame {
     }
 
     public static void main(String[] args) {
-        try {
-            InitMainWindow mainFrame = new InitMainWindow();
-            mainFrame.setVisible(true);
-        } catch (Exception e) {
-        }
+        InitMainWindow mainFrame = new InitMainWindow();
+        mainFrame.setVisible(true);
     }
 
 }

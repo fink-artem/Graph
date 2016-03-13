@@ -117,7 +117,6 @@ public class Filter {
         int green;
         int blue;
         Color color;
-        //int matrix[][] = {{0, 8, 2, 10}, {12, 4, 14, 6}, {3, 11, 1, 9}, {15, 7, 13, 5}};
         double matrix[][] = {{1, 9, 3, 11}, {13, 5, 15, 7}, {4, 12, 2, 10}, {16, 8, 14, 6}};
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -125,9 +124,9 @@ public class Filter {
                 red = color.getRed();
                 green = color.getGreen();
                 blue = color.getBlue();
-                red = Math.max(Math.min(findClosestPaletteColor(red + red * matrix[j % 4][i % 4] / 17.0, step[0]), 255), 0);
-                green = Math.max(Math.min(findClosestPaletteColor(green + green * matrix[j % 4][i % 4] / 17.0, step[1]), 255), 0);
-                blue = Math.max(Math.min(findClosestPaletteColor(blue + blue * matrix[j % 4][i % 4] / 17.0, step[2]), 255), 0);
+                red = Math.max(Math.min(findClosestPaletteColor(red + step[0] * matrix[j % 4][i % 4] / 32.0, step[0]), 255), 0);
+                green = Math.max(Math.min(findClosestPaletteColor(green + step[1] * matrix[j % 4][i % 4] / 32.0, step[1]), 255), 0);
+                blue = Math.max(Math.min(findClosestPaletteColor(blue + step[2] * matrix[j % 4][i % 4] / 32.0, step[2]), 255), 0);
                 resultImage.setRGB(j, i, (new Color(red, green, blue)).getRGB());
             }
         }
@@ -356,8 +355,8 @@ public class Filter {
         int width = originalImage.getWidth();
         int height = originalImage.getHeight();
         BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        int centerX = 175;
-        int centerY = 175;
+        int centerX = width / 2;
+        int centerY = height / 2;
         double startAngle;
         double r;
         int newX;
@@ -366,6 +365,7 @@ public class Filter {
             for (int j = 0; j < width; j++) {
                 r = Math.sqrt((centerX - j) * (centerX - j) + (centerY - i) * (centerY - i));
                 if (r == 0) {
+                    resultImage.setRGB(j, i, originalImage.getRGB(j, i));
                     continue;
                 }
                 startAngle = Math.acos(Math.abs(centerX - j) / r);
@@ -494,6 +494,77 @@ public class Filter {
                     blue = 255;
                 }
                 resultImage.setRGB(j, i, (new Color(red, green, blue)).getRGB());
+            }
+        }
+        return resultImage;
+    }
+
+    public static BufferedImage pixelize(BufferedImage originalImage, int pixelWidth) {
+        if (originalImage == null) {
+            return null;
+        }
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        width /= pixelWidth;
+        height /= pixelWidth;
+        int sumR, sumG, sumB;
+        int sqrWidth = pixelWidth * pixelWidth;
+        Color color;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                sumR = 0;
+                sumG = 0;
+                sumB = 0;
+                for (int k = 0; k < pixelWidth; k++) {
+                    for (int l = 0; l < pixelWidth; l++) {
+                        color = new Color(originalImage.getRGB(l + j * pixelWidth, k + i * pixelWidth));
+                        sumR += color.getRed();
+                        sumG += color.getGreen();
+                        sumB += color.getBlue();
+                    }
+                }
+                for (int k = 0; k < pixelWidth; k++) {
+                    for (int l = 0; l < pixelWidth; l++) {
+                        resultImage.setRGB(l + j * pixelWidth, k + i * pixelWidth, (new Color(sumR / sqrWidth, sumG / sqrWidth, sumB / sqrWidth)).getRGB());
+                    }
+                }
+            }
+        }
+        return resultImage;
+    }
+
+    public static BufferedImage pixelUp(BufferedImage originalImage, int pixelWidth) {
+        if (originalImage == null) {
+            return null;
+        }
+        if (pixelWidth == 1) {
+            return originalImage;
+        }
+        int width = originalImage.getWidth() * pixelWidth;
+        int height = originalImage.getHeight() * pixelWidth;
+        BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                resultImage.setRGB(j, i, originalImage.getRGB(j / pixelWidth, i / pixelWidth));
+            }
+        }
+        return resultImage;
+    }
+
+    public static BufferedImage pixelDown(BufferedImage originalImage, int pixelWidth) {
+        if (originalImage == null) {
+            return null;
+        }
+        if (pixelWidth == 1) {
+            return originalImage;
+        }
+        int width = originalImage.getWidth() / pixelWidth;
+        int height = originalImage.getHeight() / pixelWidth;
+        BufferedImage resultImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                resultImage.setRGB(j, i, originalImage.getRGB(j * pixelWidth, i * pixelWidth));
             }
         }
         return resultImage;

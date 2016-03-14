@@ -12,6 +12,7 @@ import java.awt.image.BufferedImage;
 public class ZoneA extends Zone {
 
     private final float dash[] = {1, 1};
+    private final double EPS = 0.00000001;
     private boolean allocation = false;
     private boolean allocationMode = false;
     private BufferedImage originalImage;
@@ -97,7 +98,7 @@ public class ZoneA extends Zone {
             Graphics2D g2 = (Graphics2D) g;
             g2.setColor(Color.WHITE);
             g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 10, dash, 0));
-            g2.draw(new Rectangle2D.Double(rectangleX1, rectangleY1, rectWidth - ViewOptions.BORDER_SIZE - 1, rectHeight - ViewOptions.BORDER_SIZE - 1));
+            g2.draw(new Rectangle2D.Double(rectangleX1, rectangleY1, rectWidth - ViewOptions.BORDER_SIZE, rectHeight - ViewOptions.BORDER_SIZE));
         }
     }
 
@@ -146,11 +147,11 @@ public class ZoneA extends Zone {
                     startX = (int) (i * step);
                     startY = (int) (j * step);
                     endX = (int) ((i + 1) * step);
-                    if ((double) endX != (i + 1) * step) {
+                    if (Math.abs((double) endX - (i + 1) * step) > EPS) {
                         endX++;
                     }
                     endY = (int) ((j + 1) * step);
-                    if ((double) endY != (j + 1) * step) {
+                    if (Math.abs((double) endY - (j + 1) * step) > EPS) {
                         endY++;
                     }
                     red = 0;

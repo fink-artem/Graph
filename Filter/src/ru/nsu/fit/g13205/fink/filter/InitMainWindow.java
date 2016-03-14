@@ -306,7 +306,7 @@ public class InitMainWindow extends MainFrame {
     public void onSobel() {
         try {
             if (sobelDialog == null) {
-                sobelDialog = new SliderAndTextDialog(10, 250, 80, 40, "Sobel operator", "Level");
+                sobelDialog = new SliderAndTextDialog(10, 250, 50, 40, "Sobel operator", "Level");
             }
             sobelDialog.setVisible(true);
             if (sobelDialog.getStatus() == SliderAndTextDialog.SUCCESS) {
@@ -319,7 +319,7 @@ public class InitMainWindow extends MainFrame {
     public void onRobert() {
         try {
             if (robertDialog == null) {
-                robertDialog = new SliderAndTextDialog(10, 250, 80, 40, "Robert dialog", "Level");
+                robertDialog = new SliderAndTextDialog(10, 250, 15, 40, "Robert dialog", "Level");
             }
             robertDialog.setVisible(true);
             if (robertDialog.getStatus() == SliderAndTextDialog.SUCCESS) {

@@ -1,0 +1,19 @@
+﻿Финк Артём ФИТ 13205
+
+--Описание программы--
+Все алгоритмы находятся в классе ru.nsu.fit.g13205.fink.filter.Filter
+1) Перевод цветного изображения в черно-белое - blackAndWhiteTransformation()
+2) Преобразование изображение в негативное - negativeTransformation()
+3) Алгоритм Флойда-Стейнберга - floydDithering()
+4) Алгоритм ordered dither - orderedDithering()
+5) Удвоение изображение - zoom()
+6) Оператор Собеля - sobel()
+7) Оператор Робертса - robert()
+8) Сглаживающий фильтр - smoothing()
+9) Фильтр повышения резкости - sharpness()
+10) Тиснение - stamping()
+11) Акварелизация - watercolorCorrection()
+12) Поворот на произвольный угол - turn()
+13) Гамма коррекция - gammaCorrection()
+
+Суперсемплинг - ru.nsu.fit.g13205.fink.filter.ZoneA - setImage()

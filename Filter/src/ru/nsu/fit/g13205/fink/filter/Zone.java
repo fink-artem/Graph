@@ -12,7 +12,7 @@ public abstract class Zone extends JPanel {
     protected ZoneName zoneName;
 
     public Zone() {
-        setPreferredSize(new Dimension(ViewOptions.ZONE_WIDTH + ViewOptions.BORDER_SIZE, ViewOptions.ZONE_HEIGHT + ViewOptions.BORDER_SIZE));
+        setPreferredSize(new Dimension(ViewOptions.ZONE_WIDTH + 2 * ViewOptions.BORDER_SIZE, ViewOptions.ZONE_HEIGHT + 2 * ViewOptions.BORDER_SIZE));
         setBackground(ViewOptions.BACKGROUND_COLOR);
         setBorder(BorderFactory.createLineBorder(ViewOptions.BORDER_COLOR, ViewOptions.BORDER_SIZE, false));
     }
@@ -28,8 +28,8 @@ public abstract class Zone extends JPanel {
     void setImage(BufferedImage bufferedImage) {
         this.image = bufferedImage;
     }
-    
-    BufferedImage getImage(){
+
+    BufferedImage getImage() {
         return image;
     }
 

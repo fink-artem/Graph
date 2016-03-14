@@ -17,12 +17,12 @@ public class ZoneA extends Zone {
     private boolean allocationMode = false;
     private BufferedImage originalImage;
     private double step;
-    private int rectWidth;
-    private int rectHeight;
+    private double rectWidth;
+    private double rectHeight;
     private int width;
     private int height;
-    private int rectangleX1;
-    private int rectangleY1;
+    private double rectangleX1;
+    private double rectangleY1;
 
     public ZoneA(final InitView initView) {
         super();
@@ -34,8 +34,8 @@ public class ZoneA extends Zone {
                 super.mousePressed(e);
                 if (image != null && allocationMode) {
                     allocation = true;
-                    rectangleX1 = e.getX() - (int) (rectWidth / 2 + 0.5);
-                    rectangleY1 = e.getY() - (int) (rectWidth / 2 + 0.5);
+                    rectangleX1 = e.getX() - rectWidth / 2;
+                    rectangleY1 = e.getY() - rectWidth / 2;
                     if (rectangleX1 < ViewOptions.BORDER_SIZE) {
                         rectangleX1 = ViewOptions.BORDER_SIZE;
                     }
@@ -48,7 +48,10 @@ public class ZoneA extends Zone {
                     if (rectangleY1 - ViewOptions.BORDER_SIZE + rectHeight > height) {
                         rectangleY1 = height - rectHeight + ViewOptions.BORDER_SIZE;
                     }
-                    initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
+                    try {
+                        initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
+                    } catch (Exception ex) {
+                    }
                     repaint();
                 }
             }
@@ -69,8 +72,8 @@ public class ZoneA extends Zone {
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
                 if (allocation) {
-                    rectangleX1 = e.getX() - (int) (rectWidth / 2 + 0.5);
-                    rectangleY1 = e.getY() - (int) (rectHeight / 2 + 0.5);
+                    rectangleX1 = e.getX() - rectWidth / 2;
+                    rectangleY1 = e.getY() - rectHeight / 2;
                     if (rectangleX1 < ViewOptions.BORDER_SIZE) {
                         rectangleX1 = ViewOptions.BORDER_SIZE;
                     }
@@ -83,7 +86,10 @@ public class ZoneA extends Zone {
                     if (rectangleY1 - ViewOptions.BORDER_SIZE + rectHeight > height) {
                         rectangleY1 = height - rectHeight + ViewOptions.BORDER_SIZE;
                     }
-                    initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
+                    try {
+                        initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
+                    } catch (Exception ex) {
+                    }
                     repaint();
                 }
             }
@@ -98,7 +104,7 @@ public class ZoneA extends Zone {
             Graphics2D g2 = (Graphics2D) g;
             g2.setColor(Color.WHITE);
             g2.setStroke(new BasicStroke(1, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL, 10, dash, 0));
-            g2.draw(new Rectangle2D.Double(rectangleX1, rectangleY1, rectWidth - ViewOptions.BORDER_SIZE, rectHeight - ViewOptions.BORDER_SIZE));
+            g2.draw(new Rectangle2D.Double(rectangleX1, rectangleY1, rectWidth - 1, rectHeight - 1));
         }
     }
 
@@ -177,7 +183,7 @@ public class ZoneA extends Zone {
                     image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
-            rectWidth = (int) (ViewOptions.ZONE_WIDTH / step + 0.5);
+            rectWidth = (double) ViewOptions.ZONE_WIDTH / step;
             rectHeight = rectWidth;
         }
         repaint();

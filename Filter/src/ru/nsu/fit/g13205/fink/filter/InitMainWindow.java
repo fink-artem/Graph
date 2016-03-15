@@ -250,7 +250,11 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onCopy() {
-        initView.setImageInZone(initView.getImageZone(ZoneName.ZONE_C), ZoneName.ZONE_B);
+        if (initView.getImageZone(ZoneName.ZONE_C) != null) {
+            initView.setImageInZone(initView.getImageZone(ZoneName.ZONE_C), ZoneName.ZONE_B);
+        } else {
+            JOptionPane.showMessageDialog(this, "Image not found", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void onPixelize() {

@@ -108,6 +108,11 @@ public class InitMainWindow extends MainFrame {
 
     public void onNew() {
         initView.clear();
+        savedImage = null;
+        pixelWidth = 1;
+        ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+        ((JButton) toolBar.getComponentAtIndex(4)).setSelected(false);
+        initView.setAllocationMode(false);
     }
 
     public void onOpen() {
@@ -234,6 +239,14 @@ public class InitMainWindow extends MainFrame {
         selectMode = !selectMode;
         ((JButton) toolBar.getComponentAtIndex(4)).setSelected(selectMode);
         initView.setAllocationMode(selectMode);
+        if (selectMode && pixelWidth != 1) {
+            pixelWidth = 1;
+            if (savedImage != null) {
+                initView.setImageInZone(savedImage, ZoneName.ZONE_B);
+            }
+            initView.setImageInZone(null, ZoneName.ZONE_C);
+            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+        }
     }
 
     public void onCopy() {
@@ -241,22 +254,29 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onPixelize() {
-        if (pixelWidth != 1) {
-            pixelWidth = 1;
-            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
-            initView.setImageInZone(savedImage, ZoneName.ZONE_B);
-            initView.setImageInZone(null, ZoneName.ZONE_C);
-        } else {
-            if (pixelizeDialog == null) {
-                pixelizeDialog = new PixelizeDialog();
+        if (initView.getImageZone(ZoneName.ZONE_B) != null) {
+            if (pixelWidth != 1) {
+                pixelWidth = 1;
+                ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+                initView.setImageInZone(savedImage, ZoneName.ZONE_B);
+                initView.setImageInZone(null, ZoneName.ZONE_C);
+            } else {
+                if (pixelizeDialog == null) {
+                    pixelizeDialog = new PixelizeDialog();
+                }
+                pixelizeDialog.setVisible(true);
+                if (pixelizeDialog.getStatus() == PixelizeDialog.SUCCESS) {
+                    selectMode = false;
+                    ((JButton) toolBar.getComponentAtIndex(4)).setSelected(selectMode);
+                    initView.setAllocationMode(selectMode);
+                    pixelWidth = pixelizeDialog.getValue();
+                    ((JButton) toolBar.getComponentAtIndex(6)).setSelected(true);
+                    savedImage = initView.getImageZone(ZoneName.ZONE_B);
+                    initView.setImageInZone(Filter.pixelize(savedImage, pixelWidth), ZoneName.ZONE_B);
+                }
             }
-            pixelizeDialog.setVisible(true);
-            if (pixelizeDialog.getStatus() == PixelizeDialog.SUCCESS) {
-                pixelWidth = pixelizeDialog.getValue();
-                ((JButton) toolBar.getComponentAtIndex(6)).setSelected(true);
-                savedImage = initView.getImageZone(ZoneName.ZONE_B);
-                initView.setImageInZone(Filter.pixelize(savedImage, pixelWidth), ZoneName.ZONE_B);
-            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Image not found", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

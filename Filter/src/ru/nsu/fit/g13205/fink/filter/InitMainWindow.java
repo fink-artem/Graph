@@ -254,13 +254,15 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onPixelize() {
-        if (initView.getImageZone(ZoneName.ZONE_B) != null) {
-            if (pixelWidth != 1) {
-                pixelWidth = 1;
-                ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+        if (pixelWidth != 1) {
+            pixelWidth = 1;
+            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(false);
+            if (initView.getImageZone(ZoneName.ZONE_B) != null) {
                 initView.setImageInZone(savedImage, ZoneName.ZONE_B);
-                initView.setImageInZone(null, ZoneName.ZONE_C);
-            } else {
+            }
+            initView.setImageInZone(null, ZoneName.ZONE_C);
+        } else {
+            if (initView.getImageZone(ZoneName.ZONE_B) != null) {
                 if (pixelizeDialog == null) {
                     pixelizeDialog = new PixelizeDialog();
                 }
@@ -274,9 +276,9 @@ public class InitMainWindow extends MainFrame {
                     savedImage = initView.getImageZone(ZoneName.ZONE_B);
                     initView.setImageInZone(Filter.pixelize(savedImage, pixelWidth), ZoneName.ZONE_B);
                 }
+            } else {
+                JOptionPane.showMessageDialog(this, "Image not found", "Error", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
-            JOptionPane.showMessageDialog(this, "Image not found", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

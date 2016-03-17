@@ -82,7 +82,7 @@ public class Filter {
             resultImage.setRGB(width, i, (new Color(findClosestPaletteColor(a[i][width][0], step[0]), findClosestPaletteColor(a[i][width][1], step[1]), findClosestPaletteColor(a[i][width][2], step[2]))).getRGB());
         }
         for (int j = 0; j <= width; j++) {
-            resultImage.setRGB(j, height, (new Color(findClosestPaletteColor(a[j][height][0], step[0]), findClosestPaletteColor(a[j][height][1], step[1]), findClosestPaletteColor(a[j][height][2], step[2]))).getRGB());
+            resultImage.setRGB(j, height, (new Color(findClosestPaletteColor(a[height][j][0], step[0]), findClosestPaletteColor(a[height][j][1], step[1]), findClosestPaletteColor(a[height][j][2], step[2]))).getRGB());
         }
         for (int i = 0; i < height; i++) {
             for (int j = 1; j < width; j++) {

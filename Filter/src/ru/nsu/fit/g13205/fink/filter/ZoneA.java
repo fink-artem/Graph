@@ -36,17 +36,17 @@ public class ZoneA extends Zone {
                     allocation = true;
                     rectangleX1 = e.getX() - rectWidth / 2;
                     rectangleY1 = e.getY() - rectWidth / 2;
-                    if (rectangleX1 < ViewOptions.BORDER_SIZE) {
-                        rectangleX1 = ViewOptions.BORDER_SIZE;
-                    }
-                    if (rectangleY1 < ViewOptions.BORDER_SIZE) {
-                        rectangleY1 = ViewOptions.BORDER_SIZE;
-                    }
                     if (rectangleX1 - ViewOptions.BORDER_SIZE + rectWidth > width) {
                         rectangleX1 = width - rectWidth + ViewOptions.BORDER_SIZE;
                     }
                     if (rectangleY1 - ViewOptions.BORDER_SIZE + rectHeight > height) {
                         rectangleY1 = height - rectHeight + ViewOptions.BORDER_SIZE;
+                    }
+                    if (rectangleX1 < ViewOptions.BORDER_SIZE) {
+                        rectangleX1 = ViewOptions.BORDER_SIZE;
+                    }
+                    if (rectangleY1 < ViewOptions.BORDER_SIZE) {
+                        rectangleY1 = ViewOptions.BORDER_SIZE;
                     }
                     try {
                         initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
@@ -74,17 +74,17 @@ public class ZoneA extends Zone {
                 if (allocation) {
                     rectangleX1 = e.getX() - rectWidth / 2;
                     rectangleY1 = e.getY() - rectHeight / 2;
-                    if (rectangleX1 < ViewOptions.BORDER_SIZE) {
-                        rectangleX1 = ViewOptions.BORDER_SIZE;
-                    }
-                    if (rectangleY1 < ViewOptions.BORDER_SIZE) {
-                        rectangleY1 = ViewOptions.BORDER_SIZE;
-                    }
                     if (rectangleX1 - ViewOptions.BORDER_SIZE + rectWidth > width) {
                         rectangleX1 = width - rectWidth + ViewOptions.BORDER_SIZE;
                     }
                     if (rectangleY1 - ViewOptions.BORDER_SIZE + rectHeight > height) {
                         rectangleY1 = height - rectHeight + ViewOptions.BORDER_SIZE;
+                    }
+                    if (rectangleX1 < ViewOptions.BORDER_SIZE) {
+                        rectangleX1 = ViewOptions.BORDER_SIZE;
+                    }
+                    if (rectangleY1 < ViewOptions.BORDER_SIZE) {
+                        rectangleY1 = ViewOptions.BORDER_SIZE;
                     }
                     try {
                         initView.setImageInZone(originalImage.getSubimage((int) ((rectangleX1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) ((rectangleY1 - ViewOptions.BORDER_SIZE) * step + 0.5), (int) (rectWidth * step + 0.5), (int) (rectHeight * step + 0.5)), ZoneName.ZONE_B);
@@ -183,8 +183,16 @@ public class ZoneA extends Zone {
                     image.setRGB(i, j, ViewOptions.BACKGROUND_COLOR.getRGB());
                 }
             }
-            rectWidth = (double) ViewOptions.ZONE_WIDTH / step;
-            rectHeight = rectWidth;
+            if (newImage.getWidth() < ViewOptions.ZONE_WIDTH) {
+                rectWidth = (double) newImage.getWidth() / step;
+            } else {
+                rectWidth = (double) ViewOptions.ZONE_WIDTH / step;
+            }
+            if (newImage.getHeight() < ViewOptions.ZONE_HEIGHT) {
+                rectHeight = (double) newImage.getHeight() / step;
+            } else {
+                rectHeight = (double) ViewOptions.ZONE_HEIGHT / step;
+            }
         }
         repaint();
     }

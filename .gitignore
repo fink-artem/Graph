@@ -22,3 +22,7 @@ hs_err_pid*
 /Filter/build
 /Filter/manifest.mf
 /Filter/dist
+/Isoline/build/
+/Isoline/build.xml
+/Isoline/manifest.mf
+/Isoline/nbproject

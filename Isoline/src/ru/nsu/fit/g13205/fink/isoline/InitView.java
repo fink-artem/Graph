@@ -30,10 +30,11 @@ public class InitView extends JPanel {
             image = new BufferedImage(width - ViewOptions.MARGIN * 2 - ViewOptions.LEGEND_WIDTH - ViewOptions.LEGEND_MARGIN, height - ViewOptions.MARGIN * 2, BufferedImage.TYPE_INT_RGB);
             legend = new BufferedImage(ViewOptions.LEGEND_WIDTH, height - ViewOptions.MARGIN * 2, BufferedImage.TYPE_INT_RGB);
             Drawer.drawFunction(image, colors, n, options.getA(), options.getB(), options.getC(), options.getD());
-            //Drawer.drawFunction(legend, colors, isolineColor, n);
+            Drawer.drawLegend(legend, colors, n);
             if (gridMode) {
                 Drawer.drawGrid(image, options.getK(), options.getM());
             }
+            Drawer.drawIsoline(image, isolineColor, options.getK(), options.getM(), n, options.getA(), options.getB(), options.getC(), options.getD());
             g.drawImage(image, ViewOptions.MARGIN, ViewOptions.MARGIN, this);
             g.drawImage(legend, width - ViewOptions.MARGIN - ViewOptions.LEGEND_WIDTH, ViewOptions.MARGIN, this);
         }

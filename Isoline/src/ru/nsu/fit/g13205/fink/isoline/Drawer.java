@@ -2,19 +2,31 @@ package ru.nsu.fit.g13205.fink.isoline;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 public class Drawer {
+
+    private static double maxZ = 100;
+    private static double minZ = -100;
+
+    static class Coordinate {
+
+        double x;
+        double y;
+
+        public Coordinate(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
 
     static void drawFunction(BufferedImage image, int[] colors, int n, double a, double b, double c, double d) {
         int width = image.getWidth();
         int height = image.getHeight();
         double z;
-        double maxZ = 100;
-        double minZ = -100;
         double stepX = Math.abs(a - c) / width;
         double stepY = Math.abs(b - d) / height;
         double stepZ = Math.abs(maxZ - minZ) / n;
@@ -48,6 +60,18 @@ public class Drawer {
         }
     }
 
+    static void drawLabel(int n, Graphics g, int startX, int startY, int height) {
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("X", Font.BOLD, 15));
+        double stepZ = Math.abs(maxZ - minZ) / n;
+        double step = (double) height / n;
+        double z;
+        for (int i = 1; i < n; i++) {
+            z = Math.round((stepZ * i + minZ) * 1000) / 1000.0;
+            g.drawString(String.valueOf(z), startX - 50, (int) Math.round(startY + step * i+5));
+        }
+    }
+
     static void drawGrid(BufferedImage image, int k, int m) {
         int width = image.getWidth();
         int height = image.getHeight();
@@ -71,10 +95,10 @@ public class Drawer {
         int width = image.getWidth();
         int height = image.getHeight();
         double f1, f2, f3, f4;
-        double maxZ = 100;
-        double minZ = -100;
-        double stepX = Math.abs(a - c) / width * ((double) width / m);
-        double stepY = Math.abs(b - d) / height * ((double) height / k);
+        double stepX = Math.abs(a - c) / width;
+        double stepY = Math.abs(b - d) / height;
+        double stepM = stepX * ((double) width / m);
+        double stepK = stepY * ((double) height / k);
         double stepZ = Math.abs(maxZ - minZ) / n;
         double z;
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -83,46 +107,49 @@ public class Drawer {
             z = stepZ * l + minZ;
             for (int i = 0; i < k; i++) {
                 for (int j = 0; j < m; j++) {
-                    f1 = Logic.f(i * stepY + b, j * stepX + a);
-                    f2 = Logic.f(i * stepY + b, (j + 1) * stepX + a);
-                    f3 = Logic.f((i + 1) * stepY + b, j * stepX + a);
-                    f4 = Logic.f((i + 1) * stepY + b, (j + 1) * stepX + a);
+                    if (j == 4 && i == 7 && l == 2) {
+                        System.out.println("");
+                    }
+                    f1 = Logic.f(i * stepK + b, j * stepM + a);
+                    f2 = Logic.f(i * stepK + b, (j + 1) * stepM + a);
+                    f3 = Logic.f((i + 1) * stepK + b, j * stepM + a);
+                    f4 = Logic.f((i + 1) * stepK + b, (j + 1) * stepM + a);
                     boolean bool[] = new boolean[4];
-                    Point point[] = new Point[4];
+                    Coordinate point[] = new Coordinate[4];
                     int counter = 0;
-                    if (f1 >= z && f2 <= z || f1 <= z && f2 >= z) {
+                    if ((f1 >= z && f2 <= z || f1 <= z && f2 >= z) && f1 != f2) {
                         bool[0] = true;
                         if (f1 < f2) {
-                            point[counter] = new Point((int) Math.round(stepX * (z - f1) / (f2 - f1)), (int) Math.round(i * stepY + b));
+                            point[counter] = new Coordinate(j * stepM + a + stepM * (z - f1) / (f2 - f1), i * stepK + b);
                         } else {
-                            point[counter] = new Point((int) Math.round(stepX * (z - f2) / (f1 - f2)), (int) Math.round(i * stepY + b));
+                            point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f2) / (f1 - f2), i * stepK + b);
                         }
                         counter++;
                     }
-                    if (f2 >= z && f4 <= z || f2 <= z && f4 >= z) {
+                    if ((f2 >= z && f4 <= z || f2 <= z && f4 >= z) && f4 != f2) {
                         bool[1] = true;
                         if (f2 < f4) {
-                            point[counter] = new Point((int) Math.round((j + 1) * stepX + a), (int) Math.round(stepY * (z - f2) / (f4 - f2)));
+                            point[counter] = new Coordinate((j + 1) * stepM + a, i * stepK + b + stepK * (z - f2) / (f4 - f2));
                         } else {
-                            point[counter] = new Point((int) Math.round((j + 1) * stepX + a), (int) Math.round(stepY * (z - f4) / (f2 - f4)));
+                            point[counter] = new Coordinate((j + 1) * stepM + a, (i + 1) * stepK + b - stepK * (z - f4) / (f2 - f4));
                         }
                         counter++;
                     }
-                    if (f3 >= z && f4 <= z || f3 <= z && f4 >= z) {
+                    if ((f3 >= z && f4 <= z || f3 <= z && f4 >= z) && f3 != f4) {
                         bool[2] = true;
                         if (f3 < f4) {
-                            point[counter] = new Point((int) Math.round(stepX * (z - f3) / (f4 - f3)), (int) Math.round(i * stepY + b));
+                            point[counter] = new Coordinate(j * stepM + a + stepM * (z - f3) / (f4 - f3), (i + 1) * stepK + b);
                         } else {
-                            point[counter] = new Point((int) Math.round(stepX * (z - f4) / (f3 - f4)), (int) Math.round(i * stepY + b));
+                            point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f4) / (f3 - f4), (i + 1) * stepK + b);
                         }
                         counter++;
                     }
-                    if (f1 >= z && f3 <= z || f1 <= z && f3 >= z) {
+                    if ((f1 >= z && f3 <= z || f1 <= z && f3 >= z) && f1 != f3) {
                         bool[3] = true;
                         if (f1 < f3) {
-                            point[counter] = new Point((int) Math.round(j * stepX + a), (int) Math.round(stepY * (z - f1) / (f3 - f1)));
+                            point[counter] = new Coordinate(j * stepM + a, i * stepK + b + stepK * (z - f1) / (f3 - f1));
                         } else {
-                            point[counter] = new Point((int) Math.round(j * stepX + a), (int) Math.round(stepY * (z - f3) / (f1 - f3)));
+                            point[counter] = new Coordinate(j * stepM + a, (i + 1) * stepK + b - stepK * (z - f3) / (f1 - f3));
                         }
                         counter++;
                     }
@@ -133,11 +160,11 @@ public class Drawer {
                             g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
                             g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
                         } else if (!bool[1]) {
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepX, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
                             g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
                         } else if (!bool[2]) {
                             g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepX, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
                         } else if (!bool[3]) {
                             g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
                             g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
@@ -153,7 +180,7 @@ public class Drawer {
         }
     }
 
-    static int pointToCoordinate(int point, double step, double start) {
+    static int pointToCoordinate(double point, double step, double start) {
         return (int) Math.round((point - start) / step);
     }
 }

@@ -19,10 +19,11 @@ public class InitMainWindow extends MainFrame {
     private final int MIN_WIDTH = 800;
     private final int MIN_HEIGHT = 600;
     private Options options = new Options();
-    private InitView initView = new InitView(options);
     private JLabel statusBar = new JLabel("Ready");
+    private InitView initView = new InitView(options, statusBar);
     private OptionsDialog optionsDialog;
     private boolean gridMode = false;
+    private boolean isolineMode = false;
 
     public InitMainWindow() {
         super();
@@ -39,6 +40,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Edit/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
             getMenuElement("Edit/Options").getComponent().setEnabled(false);
             addMenuItem("Edit/Grid", "Draw grid", KeyEvent.VK_X, "Grid.png", "onGrid", statusBar);
+            addMenuItem("Edit/Isoline", "Draw isoline", KeyEvent.VK_X, "Isoline.png", "onIsoline", statusBar);
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
@@ -48,6 +50,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Edit/Options", "Options", statusBar);
             ((JButton) toolBar.getComponentAtIndex(3)).setEnabled(false);
             addToolBarButton("Edit/Grid", "Draw grid", statusBar);
+            addToolBarButton("Edit/Isoline", "Draw isoline", statusBar);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
 
@@ -95,11 +98,17 @@ public class InitMainWindow extends MainFrame {
             initView.repaint();
         }
     }
-    
-    public void onGrid(){
-        gridMode = ! gridMode;
+
+    public void onGrid() {
+        gridMode = !gridMode;
         ((JButton) toolBar.getComponentAtIndex(4)).setSelected(gridMode);
         initView.setGridMode(gridMode);
+    }
+    
+    public void onIsoline() {
+        isolineMode = !isolineMode;
+        ((JButton) toolBar.getComponentAtIndex(5)).setSelected(isolineMode);
+        initView.setIsolineMode(isolineMode);
     }
 
     public void onExit() {

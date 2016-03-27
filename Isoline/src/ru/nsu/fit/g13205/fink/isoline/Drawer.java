@@ -37,10 +37,6 @@ public class Drawer {
                     image.setRGB(j, i, colors[n - 1]);
                     continue;
                 }
-                if (z == 0) {
-                    image.setRGB(j, i, colors[0]);
-                    continue;
-                }
                 image.setRGB(j, i, colors[(int) z]);
             }
         }
@@ -178,5 +174,59 @@ public class Drawer {
 
     static int pointToCoordinate(double point, double step, double start) {
         return (int) Math.round((point - start) / step);
+    }
+
+    static void drawInterpolationLegend(BufferedImage image, int[] colors, int n) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        double step = (double) height / n;
+        int z;
+        n--;
+        double start = (step / 2);
+        double end = height - start;
+        int startInteger = (int) Math.round(start);
+        int endInteger = (int) Math.round(end);
+        double nearestColorUp;
+        double nearestColorDown;
+        double proc;
+        Color color1, color2, color3;
+        for (int i = 0; i < start; i++) {
+            z = n - (int) (i / step);
+            for (int j = 0; j < width; j++) {
+                image.setRGB(j, i, colors[z]);
+            }
+        }
+        for (int i = startInteger; i < endInteger; i++) {
+            nearestColorUp = ((int) ((i + start) / step)) * step - start;
+            nearestColorDown = nearestColorUp + step;
+            proc = (i - nearestColorUp) / step;
+            color1 = new Color(colors[n - (int) (nearestColorUp / step)]);
+            color2 = new Color(colors[n - (int) (nearestColorDown / step)]);
+            color3 = new Color((int) Math.round(color1.getRed() * (1 - proc) + color2.getRed() * proc), (int) Math.round(color1.getGreen() * (1 - proc) + color2.getGreen() * proc), (int) Math.round(color1.getBlue() * (1 - proc) + color2.getBlue() * proc));
+            for (int j = 0; j < width; j++) {
+                image.setRGB(j, i, color3.getRGB());
+            }
+        }
+        for (int i = endInteger; i < height; i++) {
+            z = n - (int) (i / step);
+            for (int j = 0; j < width; j++) {
+                image.setRGB(j, i, colors[z]);
+            }
+        }
+    }
+
+    static void drawInterpolationFunction(BufferedImage image, BufferedImage legend, int n, double a, double b, double c, double d) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int legendHeight = legend.getHeight();
+        double z;
+        double stepX = Math.abs(a - c) / width;
+        double stepY = Math.abs(b - d) / height;
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                z = Logic.f(i * stepY + b, j * stepX + a);
+                image.setRGB(j, i, legend.getRGB(0, (int)Math.round((legendHeight-1)*(z-minZ)/(maxZ-minZ))));
+            }
+        }
     }
 }

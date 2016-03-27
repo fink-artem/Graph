@@ -68,7 +68,7 @@ public class Drawer {
         double z;
         for (int i = 1; i < n; i++) {
             z = Math.round((stepZ * i + minZ) * 1000) / 1000.0;
-            g.drawString(String.valueOf(z), startX - 50, (int) Math.round(startY + step * i+5));
+            g.drawString(String.valueOf(z), startX - 50, (int) Math.round(startY + step * i + 5));
         }
     }
 
@@ -91,90 +91,86 @@ public class Drawer {
         }
     }
 
-    static void drawIsoline(BufferedImage image, int isolineColor, int k, int m, int n, double a, double b, double c, double d) {
-        int width = image.getWidth();
-        int height = image.getHeight();
+    static void drawIsolineMap(Graphics g, int isolineColor, int k, int m, int n, double a, double b, double c, double d, int height, int width) {
+        double stepZ = Math.abs(maxZ - minZ) / n;
+        for (int l = 1; l < n; l++) {
+            drawIsoline(g, isolineColor, k, m, a, b, c, d, height, width, stepZ * l + minZ);
+        }
+    }
+
+    static void drawIsoline(Graphics g, int isolineColor, int k, int m, double a, double b, double c, double d, int height, int width, double z) {
+        g.setColor(new Color(isolineColor));
         double f1, f2, f3, f4;
         double stepX = Math.abs(a - c) / width;
         double stepY = Math.abs(b - d) / height;
         double stepM = stepX * ((double) width / m);
         double stepK = stepY * ((double) height / k);
-        double stepZ = Math.abs(maxZ - minZ) / n;
-        double z;
-        Graphics2D g = (Graphics2D) image.getGraphics();
-        g.setPaint(new Color(isolineColor));
-        for (int l = 1; l < n; l++) {
-            z = stepZ * l + minZ;
-            for (int i = 0; i < k; i++) {
-                for (int j = 0; j < m; j++) {
-                    if (j == 4 && i == 7 && l == 2) {
-                        System.out.println("");
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < m; j++) {
+                f1 = Logic.f(i * stepK + b, j * stepM + a);
+                f2 = Logic.f(i * stepK + b, (j + 1) * stepM + a);
+                f3 = Logic.f((i + 1) * stepK + b, j * stepM + a);
+                f4 = Logic.f((i + 1) * stepK + b, (j + 1) * stepM + a);
+                boolean bool[] = new boolean[4];
+                Coordinate point[] = new Coordinate[4];
+                int counter = 0;
+                if ((f1 >= z && f2 <= z || f1 <= z && f2 >= z) && f1 != f2) {
+                    bool[0] = true;
+                    if (f1 < f2) {
+                        point[counter] = new Coordinate(j * stepM + a + stepM * (z - f1) / (f2 - f1), i * stepK + b);
+                    } else {
+                        point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f2) / (f1 - f2), i * stepK + b);
                     }
-                    f1 = Logic.f(i * stepK + b, j * stepM + a);
-                    f2 = Logic.f(i * stepK + b, (j + 1) * stepM + a);
-                    f3 = Logic.f((i + 1) * stepK + b, j * stepM + a);
-                    f4 = Logic.f((i + 1) * stepK + b, (j + 1) * stepM + a);
-                    boolean bool[] = new boolean[4];
-                    Coordinate point[] = new Coordinate[4];
-                    int counter = 0;
-                    if ((f1 >= z && f2 <= z || f1 <= z && f2 >= z) && f1 != f2) {
-                        bool[0] = true;
-                        if (f1 < f2) {
-                            point[counter] = new Coordinate(j * stepM + a + stepM * (z - f1) / (f2 - f1), i * stepK + b);
-                        } else {
-                            point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f2) / (f1 - f2), i * stepK + b);
-                        }
-                        counter++;
+                    counter++;
+                }
+                if ((f2 >= z && f4 <= z || f2 <= z && f4 >= z) && f4 != f2) {
+                    bool[1] = true;
+                    if (f2 < f4) {
+                        point[counter] = new Coordinate((j + 1) * stepM + a, i * stepK + b + stepK * (z - f2) / (f4 - f2));
+                    } else {
+                        point[counter] = new Coordinate((j + 1) * stepM + a, (i + 1) * stepK + b - stepK * (z - f4) / (f2 - f4));
                     }
-                    if ((f2 >= z && f4 <= z || f2 <= z && f4 >= z) && f4 != f2) {
-                        bool[1] = true;
-                        if (f2 < f4) {
-                            point[counter] = new Coordinate((j + 1) * stepM + a, i * stepK + b + stepK * (z - f2) / (f4 - f2));
-                        } else {
-                            point[counter] = new Coordinate((j + 1) * stepM + a, (i + 1) * stepK + b - stepK * (z - f4) / (f2 - f4));
-                        }
-                        counter++;
+                    counter++;
+                }
+                if ((f3 >= z && f4 <= z || f3 <= z && f4 >= z) && f3 != f4) {
+                    bool[2] = true;
+                    if (f3 < f4) {
+                        point[counter] = new Coordinate(j * stepM + a + stepM * (z - f3) / (f4 - f3), (i + 1) * stepK + b);
+                    } else {
+                        point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f4) / (f3 - f4), (i + 1) * stepK + b);
                     }
-                    if ((f3 >= z && f4 <= z || f3 <= z && f4 >= z) && f3 != f4) {
-                        bool[2] = true;
-                        if (f3 < f4) {
-                            point[counter] = new Coordinate(j * stepM + a + stepM * (z - f3) / (f4 - f3), (i + 1) * stepK + b);
-                        } else {
-                            point[counter] = new Coordinate((j + 1) * stepM + a - stepM * (z - f4) / (f3 - f4), (i + 1) * stepK + b);
-                        }
-                        counter++;
+                    counter++;
+                }
+                if ((f1 >= z && f3 <= z || f1 <= z && f3 >= z) && f1 != f3) {
+                    bool[3] = true;
+                    if (f1 < f3) {
+                        point[counter] = new Coordinate(j * stepM + a, i * stepK + b + stepK * (z - f1) / (f3 - f1));
+                    } else {
+                        point[counter] = new Coordinate(j * stepM + a, (i + 1) * stepK + b - stepK * (z - f3) / (f1 - f3));
                     }
-                    if ((f1 >= z && f3 <= z || f1 <= z && f3 >= z) && f1 != f3) {
-                        bool[3] = true;
-                        if (f1 < f3) {
-                            point[counter] = new Coordinate(j * stepM + a, i * stepK + b + stepK * (z - f1) / (f3 - f1));
-                        } else {
-                            point[counter] = new Coordinate(j * stepM + a, (i + 1) * stepK + b - stepK * (z - f3) / (f1 - f3));
-                        }
-                        counter++;
-                    }
-                    if (counter == 2) {
-                        g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
-                    } else if (counter == 3) {
-                        if (!bool[0]) {
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
-                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                        } else if (!bool[1]) {
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                        } else if (!bool[2]) {
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                        } else if (!bool[3]) {
-                            g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
-                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                        }
-                    } else if (counter == 4) {
+                    counter++;
+                }
+                if (counter == 2) {
+                    g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
+                } else if (counter == 3) {
+                    if (!bool[0]) {
                         g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
                         g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                        g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
-                        g.drawLine(pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b));
+                    } else if (!bool[1]) {
+                        g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                    } else if (!bool[2]) {
+                        g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                    } else if (!bool[3]) {
+                        g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
                     }
+                } else if (counter == 4) {
+                    g.drawLine(pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b), pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b));
+                    g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                    g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                    g.drawLine(pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[0].x, stepX, a), pointToCoordinate(point[0].y, stepY, b));
                 }
             }
         }

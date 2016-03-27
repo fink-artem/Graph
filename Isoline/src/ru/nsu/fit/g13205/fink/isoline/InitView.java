@@ -3,8 +3,9 @@ package ru.nsu.fit.g13205.fink.isoline;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 
 import javax.swing.JPanel;
@@ -21,6 +22,7 @@ public class InitView extends JPanel {
     private boolean isolineMode = false;
     private final Options options;
     private final JLabel statusBar;
+    private List<Double> isolineLevelList;
 
     public InitView(Options options, JLabel statusBar) {
         this.options = options;
@@ -58,10 +60,31 @@ public class InitView extends JPanel {
                 super.mouseExited(e);
                 statusBar.setText("Ready");
             }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                if (drawingMode && image != null && isolineMode) {
+                    int width = image.getWidth();
+                    int height = image.getHeight();
+                    if (e.getX() >= ViewOptions.MARGIN && e.getY() >= ViewOptions.MARGIN && e.getX() <= ViewOptions.MARGIN + width && e.getY() <= ViewOptions.MARGIN + height) {
+                        if (isolineLevelList == null) {
+                            isolineLevelList = new ArrayList<>();
+                        }
+                        double stepX = Math.abs(options.getA() - options.getC()) / width;
+                        double stepY = Math.abs(options.getB() - options.getD()) / height;
+                        double x = (e.getX() - ViewOptions.MARGIN) * stepX + options.getA();
+                        double y = (e.getY() - ViewOptions.MARGIN) * stepY + options.getB();
+                        isolineLevelList.add(Logic.f(y, x));
+                        repaint();
+                    }
+                }
+            }
         });
     }
 
     @Override
+
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if (drawingMode) {
@@ -75,16 +98,20 @@ public class InitView extends JPanel {
                 Drawer.drawGrid(image, options.getK(), options.getM());
             }
             if (isolineMode) {
-                Drawer.drawIsoline(image, isolineColor, options.getK(), options.getM(), n, options.getA(), options.getB(), options.getC(), options.getD());
+                Drawer.drawIsolineMap(image.getGraphics(), isolineColor, options.getK(), options.getM(), n, options.getA(), options.getB(), options.getC(), options.getD(), image.getHeight(), image.getWidth());
+                if (isolineLevelList != null) {
+                    isolineLevelList.forEach(z -> Drawer.drawIsoline(image.getGraphics(), isolineColor, options.getK(), options.getM(), options.getA(), options.getB(), options.getC(), options.getD(), image.getHeight(), image.getWidth(), z));
+                }
             }
             g.drawImage(image, ViewOptions.MARGIN, ViewOptions.MARGIN, this);
             g.drawImage(legend, width - ViewOptions.MARGIN - ViewOptions.LEGEND_WIDTH, ViewOptions.MARGIN, this);
-            Drawer.drawLabel(n, g,width - ViewOptions.MARGIN - ViewOptions.LEGEND_WIDTH,ViewOptions.MARGIN,legend.getHeight());
+            Drawer.drawLabel(n, g, width - ViewOptions.MARGIN - ViewOptions.LEGEND_WIDTH, ViewOptions.MARGIN, legend.getHeight());
         }
     }
 
     void clear() {
         drawingMode = false;
+        isolineLevelList = null;
         repaint();
     }
 

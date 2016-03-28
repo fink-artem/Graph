@@ -42,7 +42,7 @@ public class InitMainWindow extends MainFrame {
             getMenuElement("Edit/Options").getComponent().setEnabled(false);
             addMenuItem("Edit/Grid", "Draw grid", KeyEvent.VK_X, "Grid.png", "onGrid", statusBar);
             addMenuItem("Edit/Isoline", "Draw isoline", KeyEvent.VK_X, "Isoline.png", "onIsoline", statusBar);
-            addMenuItem("Edit/Interpolation", "Interpolation", KeyEvent.VK_X, "Isoline.png", "onInterpolation", statusBar);
+            addMenuItem("Edit/Interpolation", "Interpolation", KeyEvent.VK_X, "Interpolation.png", "onInterpolation", statusBar);
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 

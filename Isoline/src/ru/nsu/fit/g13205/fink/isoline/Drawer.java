@@ -9,8 +9,8 @@ import java.awt.image.BufferedImage;
 
 public class Drawer {
 
-    private static double maxZ = 100;
-    private static double minZ = -100;
+    private static double maxZ = 0;
+    private static double minZ = 0;
 
     static class Coordinate {
 
@@ -63,7 +63,7 @@ public class Drawer {
         double step = (double) height / n;
         double z;
         for (int i = 1; i < n; i++) {
-            z = Math.round((stepZ * i + minZ) * 1000) / 1000.0;
+            z = Math.round((maxZ - stepZ * i) * 1000) / 1000.0;
             g.drawString(String.valueOf(z), startX - 50, (int) Math.round(startY + step * i + 5));
         }
     }
@@ -225,7 +225,26 @@ public class Drawer {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 z = Logic.f(i * stepY + b, j * stepX + a);
-                image.setRGB(j, i, legend.getRGB(0, (int)Math.round((legendHeight-1)*(z-minZ)/(maxZ-minZ))));
+                image.setRGB(j, i, legend.getRGB(0, (int) Math.round((legendHeight - 1) * (z - minZ) / (maxZ - minZ))));
+            }
+        }
+    }
+
+    static void updateDomain(int height, int width, double a, double b, double c, double d) {
+        double z;
+        double stepX = Math.abs(a - c) / width;
+        double stepY = Math.abs(b - d) / height;
+        minZ = Logic.f(b, a);
+        maxZ = Logic.f(b, a);
+        for (int i = 0; i <= height; i++) {
+            for (int j = 0; j <= width; j++) {
+                z = Logic.f(i * stepY + b, j * stepX + a);
+                if (z < minZ) {
+                    minZ = z;
+                }
+                if (z > maxZ) {
+                    maxZ = z;
+                }
             }
         }
     }

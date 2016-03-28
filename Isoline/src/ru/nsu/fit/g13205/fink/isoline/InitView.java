@@ -93,6 +93,7 @@ public class InitView extends JPanel {
             int width = getSize().width;
             image = new BufferedImage(width - ViewOptions.MARGIN * 2 - ViewOptions.LEGEND_WIDTH - ViewOptions.LEGEND_MARGIN, height - ViewOptions.MARGIN * 2, BufferedImage.TYPE_INT_RGB);
             legend = new BufferedImage(ViewOptions.LEGEND_WIDTH, height - ViewOptions.MARGIN * 2, BufferedImage.TYPE_INT_RGB);
+            Drawer.updateDomain(image.getHeight(), image.getWidth(), options.getA(), options.getB(), options.getC(), options.getD());
             if (interpolationMode) {
                 Drawer.drawInterpolationLegend(legend, colors, n);
                 Drawer.drawInterpolationFunction(image, legend, n, options.getA(), options.getB(), options.getC(), options.getD());

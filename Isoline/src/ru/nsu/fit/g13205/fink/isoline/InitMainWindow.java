@@ -25,6 +25,7 @@ public class InitMainWindow extends MainFrame {
     private boolean gridMode = false;
     private boolean isolineMode = false;
     private boolean interpolationMode = false;
+    private boolean colorMapMode = true;
 
     public InitMainWindow() {
         super();
@@ -43,6 +44,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Edit/Grid", "Draw grid", KeyEvent.VK_X, "Grid.png", "onGrid", statusBar);
             addMenuItem("Edit/Isoline", "Draw isoline", KeyEvent.VK_X, "Isoline.png", "onIsoline", statusBar);
             addMenuItem("Edit/Interpolation", "Interpolation", KeyEvent.VK_X, "Interpolation.png", "onInterpolation", statusBar);
+            addMenuItem("Edit/ColorMap", "ColorMap", KeyEvent.VK_X, "ColorMap.png", "onColorMap", statusBar);
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
@@ -54,6 +56,8 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Edit/Grid", "Draw grid", statusBar);
             addToolBarButton("Edit/Isoline", "Draw isoline", statusBar);
             addToolBarButton("Edit/Interpolation", "Interpolation", statusBar);
+            addToolBarButton("Edit/ColorMap", "ColorMap", statusBar);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(colorMapMode);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
 
@@ -118,6 +122,12 @@ public class InitMainWindow extends MainFrame {
         interpolationMode = !interpolationMode;
         ((JButton) toolBar.getComponentAtIndex(6)).setSelected(interpolationMode);
         initView.setInterpolationMode(interpolationMode);
+    }
+
+    public void onColorMap() {
+        colorMapMode = !colorMapMode;
+        ((JButton) toolBar.getComponentAtIndex(7)).setSelected(colorMapMode);
+        initView.setColorMapMode(colorMapMode);
     }
 
     public void onExit() {

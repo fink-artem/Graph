@@ -1,5 +1,6 @@
 package ru.nsu.fit.g13205.fink.isoline;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -21,6 +22,7 @@ public class InitView extends JPanel {
     private boolean gridMode = false;
     private boolean isolineMode = false;
     private boolean interpolationMode = false;
+    private boolean colorMapMode = true;
     private final Options options;
     private final JLabel statusBar;
     private List<Double> isolineLevelList;
@@ -96,9 +98,17 @@ public class InitView extends JPanel {
             Drawer.updateDomain(image.getHeight(), image.getWidth(), options.getA(), options.getB(), options.getC(), options.getD());
             if (interpolationMode) {
                 Drawer.drawInterpolationLegend(legend, colors, n);
-                Drawer.drawInterpolationFunction(image, legend, n, options.getA(), options.getB(), options.getC(), options.getD());
+                if (colorMapMode) {
+                    Drawer.drawInterpolationFunction(image, legend, n, options.getA(), options.getB(), options.getC(), options.getD());
+                } else {
+                    Drawer.fill(image, Color.WHITE.getRGB());
+                }
             } else {
-                Drawer.drawFunction(image, colors, n, options.getA(), options.getB(), options.getC(), options.getD());
+                if (colorMapMode) {
+                    Drawer.drawFunction(image, colors, n, options.getA(), options.getB(), options.getC(), options.getD());
+                } else {
+                    Drawer.fill(image, Color.WHITE.getRGB());
+                }
                 Drawer.drawLegend(legend, colors, n);
             }
             if (gridMode) {
@@ -142,6 +152,11 @@ public class InitView extends JPanel {
 
     void setInterpolationMode(boolean interpolationMode) {
         this.interpolationMode = interpolationMode;
+        repaint();
+    }
+
+    void setColorMapMode(boolean colorMapMode) {
+        this.colorMapMode = colorMapMode;
         repaint();
     }
 

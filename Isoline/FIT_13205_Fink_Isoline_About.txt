@@ -1,3 +1,11 @@
 ﻿Финк Артём ФИТ 13205
 
 --Описание программы--
+Все алгоритмы находятся в классе ru.nsu.fit.g13205.fink.isoline.Drawer
+1) Рисование легенды - drawLegend()
+2) Рисование функции - drawFunction()
+3) Рисование интерполированной легенды - drawInterpolationLegend()
+4) Рисование интерполированной функции - drawInterpolationFunction()
+5) Алгоритм марширующих кубиков - drawIsoline()
+
+Сама функция задаётся в ru.nsu.fit.g13205.fink.isoline.Logic - f()

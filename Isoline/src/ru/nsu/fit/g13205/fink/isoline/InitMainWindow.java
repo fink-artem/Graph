@@ -79,6 +79,9 @@ public class InitMainWindow extends MainFrame {
         try (Scanner reader = new Scanner(new FileInputStream(file))) {
             int k = reader.nextInt();
             int m = reader.nextInt();
+            if (k < 1 || m < 1) {
+                JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
+            }
             int n = reader.nextInt() + 1;
             int colors[] = new int[n];
             for (int i = 0; i < n; i++) {

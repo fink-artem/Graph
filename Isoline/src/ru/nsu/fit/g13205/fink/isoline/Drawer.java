@@ -37,7 +37,10 @@ public class Drawer {
                     image.setRGB(j, i, colors[n - 1]);
                     continue;
                 }
-                image.setRGB(j, i, colors[(int) z]);
+                try {
+                    image.setRGB(j, i, colors[(int) z]);
+                } catch (Exception e) {
+                }
             }
         }
     }
@@ -274,8 +277,8 @@ public class Drawer {
         double stepY = Math.abs(b - d) / height;
         minZ = Logic.f(b, a);
         maxZ = Logic.f(b, a);
-        for (double i = 0; i <= height; i+=0.5) {
-            for (double j = 0; j <= width; j+=0.5) {
+        for (double i = 0; i <= height; i += 0.5) {
+            for (double j = 0; j <= width; j += 0.5) {
                 z = Logic.f(i * stepY + b, j * stepX + a);
                 if (z < minZ) {
                     minZ = z;
@@ -286,8 +289,8 @@ public class Drawer {
             }
         }
     }
-    
-    static void fill(BufferedImage image,int color){
+
+    static void fill(BufferedImage image, int color) {
         int width = image.getWidth();
         int height = image.getHeight();
         for (int i = 0; i < width; i++) {

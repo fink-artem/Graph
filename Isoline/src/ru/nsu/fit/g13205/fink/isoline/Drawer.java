@@ -30,7 +30,8 @@ public class Drawer {
         double stepX = Math.abs(a - c) / width;
         double stepY = Math.abs(b - d) / height;
         double stepZ = Math.abs(maxZ - minZ) / n;
-        for (int i = 0; i < height; i++) {
+        height--;
+        for (int i = 0; i <= height; i++) {
             for (int j = 0; j < width; j++) {
                 z = (Logic.f(i * stepY + b, j * stepX + a) - minZ) / stepZ;
                 if (z == n) {
@@ -38,14 +39,14 @@ public class Drawer {
                     continue;
                 }
                 try {
-                    image.setRGB(j, i, colors[(int) z]);
+                    image.setRGB(j, height - i, colors[(int) z]);
                 } catch (Exception e) {
                 }
             }
         }
     }
 
-    static void drawLegend(BufferedImage image, int[] colors, int n) {
+    static void drawLegend(BufferedImage image, int[] colors, int n, int isolineColor) {
         int width = image.getWidth();
         int height = image.getHeight();
         double step = (double) height / n;
@@ -103,6 +104,7 @@ public class Drawer {
         double stepY = Math.abs(b - d) / height;
         double stepM = stepX * width / m;
         double stepK = stepY * height / k;
+        height--;
         double f[] = new double[5];
         double x[] = new double[5];
         double y[] = new double[5];
@@ -160,53 +162,53 @@ public class Drawer {
                 }
                 if (counter == 1) {
                     if (bool[1]) {
-                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
                     } else if (bool[2]) {
-                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
                     } else if (bool[3]) {
-                        g.drawLine(pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                     } else {
-                        g.drawLine(pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
                     }
                 } else if (counter == 2) {
                     if (bool[1]) {
                         if (bool[2]) {
-                            g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
+                            g.drawLine(pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
                         } else if (bool[3]) {
-                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                         } else {
                             if (Logic.f((y[3] - y[1]) / 2, (x[2] - x[1]) / 2) > z) {
-                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                                g.drawLine(pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                             } else {
-                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
-                                g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                             }
                         }
                     } else if (bool[2]) {
                         if (bool[3]) {
                             if (Logic.f((y[3] - y[1]) / 2, (x[2] - x[1]) / 2) > z) {
-                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
-                                g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                             } else {
-                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
-                                g.drawLine(pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
+                                g.drawLine(pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                             }
                         } else {
-                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                            g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                         }
                     } else {
-                        g.drawLine(pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
                     }
                 } else if (counter == 3) {
                     if (!bool[1]) {
-                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b));
                     } else if (!bool[2]) {
-                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[1].x, stepX, a), height - pointToCoordinate(point[1].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
                     } else if (!bool[3]) {
-                        g.drawLine(pointToCoordinate(point[4].x, stepX, a), pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[4].x, stepX, a), height - pointToCoordinate(point[4].y, stepY, b), pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b));
                     } else {
-                        g.drawLine(pointToCoordinate(point[3].x, stepX, a), pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), pointToCoordinate(point[2].y, stepY, b));
+                        g.drawLine(pointToCoordinate(point[3].x, stepX, a), height - pointToCoordinate(point[3].y, stepY, b), pointToCoordinate(point[2].x, stepX, a), height - pointToCoordinate(point[2].y, stepY, b));
                     }
                 }
             }
@@ -217,7 +219,7 @@ public class Drawer {
         return (int) Math.round((point - start) / step);
     }
 
-    static void drawInterpolationLegend(BufferedImage image, int[] colors, int n) {
+    static void drawInterpolationLegend(BufferedImage image, int[] colors, int n, int isolineColor) {
         int width = image.getWidth();
         int height = image.getHeight();
         double step = (double) height / n;
@@ -263,10 +265,11 @@ public class Drawer {
         double z;
         double stepX = Math.abs(a - c) / width;
         double stepY = Math.abs(b - d) / height;
+        height--;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 z = Logic.f(i * stepY + b, j * stepX + a);
-                image.setRGB(j, i, legend.getRGB(0, (int) Math.round((legendHeight - 1) * (maxZ - z) / (maxZ - minZ))));
+                image.setRGB(j, height - i, legend.getRGB(0, (int) Math.round((legendHeight - 1) * (maxZ - z) / (maxZ - minZ))));
             }
         }
     }
@@ -298,5 +301,31 @@ public class Drawer {
                 image.setRGB(i, j, color);
             }
         }
+    }
+
+    static void drawIsolineLegend(BufferedImage legend, int isolineColor, int n) {
+        Graphics g = legend.getGraphics();
+        g.setColor(new Color(isolineColor));
+        int width = legend.getWidth();
+        int height = legend.getHeight();
+        double step = (double) height / n;
+        int z;
+        n--;
+        int saveZ = n;
+        for (int i = 0; i < height; i++) {
+            z = n - (int) (i / step);
+            if (z != saveZ) {
+                saveZ = z;
+                for (int j = 0; j < width; j++) {
+                    legend.setRGB(j, i, isolineColor);
+                }
+            }
+        }
+    }
+
+    static void drawLastIsoline(BufferedImage legend, double z,int isolineColor) {
+        Graphics g = legend.getGraphics();
+        g.setColor(new Color(isolineColor));
+        g.drawLine(0, (int) Math.round((legend.getHeight() - 1) * (maxZ - z) / (maxZ - minZ)), legend.getWidth() - 1, (int) Math.round((legend.getHeight() - 1) * (maxZ - z) / (maxZ - minZ)));
     }
 }

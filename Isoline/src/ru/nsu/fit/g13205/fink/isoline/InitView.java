@@ -47,7 +47,7 @@ public class InitView extends JPanel {
                         double stepX = Math.abs(options.getA() - options.getC()) / width;
                         double stepY = Math.abs(options.getB() - options.getD()) / height;
                         double x = (e.getX() - ViewOptions.MARGIN) * stepX + options.getA();
-                        double y = (e.getY() - ViewOptions.MARGIN) * stepY + options.getB();
+                        double y = options.getD() - (e.getY() - ViewOptions.MARGIN) * stepY;
                         statusBar.setText("X=" + round(x) + " Y=" + round(y) + " F=" + round(Logic.f(y, x)));
                     } else {
                         statusBar.setText("Ready");
@@ -77,7 +77,7 @@ public class InitView extends JPanel {
                         double stepX = Math.abs(options.getA() - options.getC()) / width;
                         double stepY = Math.abs(options.getB() - options.getD()) / height;
                         double x = (e.getX() - ViewOptions.MARGIN) * stepX + options.getA();
-                        double y = (e.getY() - ViewOptions.MARGIN) * stepY + options.getB();
+                        double y = options.getD() - (e.getY() - ViewOptions.MARGIN) * stepY;
                         isolineLevelList.add(Logic.f(y, x));
                         repaint();
                     }
@@ -97,7 +97,7 @@ public class InitView extends JPanel {
             legend = new BufferedImage(ViewOptions.LEGEND_WIDTH, height - ViewOptions.MARGIN * 2, BufferedImage.TYPE_INT_RGB);
             Drawer.updateDomain(image.getHeight(), image.getWidth(), options.getA(), options.getB(), options.getC(), options.getD());
             if (interpolationMode) {
-                Drawer.drawInterpolationLegend(legend, colors, n);
+                Drawer.drawInterpolationLegend(legend, colors, n, isolineColor);
                 if (colorMapMode) {
                     Drawer.drawInterpolationFunction(image, legend, n, options.getA(), options.getB(), options.getC(), options.getD());
                 } else {
@@ -109,8 +109,9 @@ public class InitView extends JPanel {
                 } else {
                     Drawer.fill(image, Color.WHITE.getRGB());
                 }
-                Drawer.drawLegend(legend, colors, n);
+                Drawer.drawLegend(legend, colors, n, isolineColor);
             }
+            Drawer.drawIsolineLegend(legend, isolineColor, n);
             if (gridMode) {
                 Drawer.drawGrid(image, options.getK(), options.getM());
             }
@@ -118,6 +119,7 @@ public class InitView extends JPanel {
                 Drawer.drawIsolineMap(image.getGraphics(), isolineColor, options.getK(), options.getM(), n, options.getA(), options.getB(), options.getC(), options.getD(), image.getHeight(), image.getWidth());
                 if (isolineLevelList != null) {
                     isolineLevelList.forEach(z -> Drawer.drawIsoline(image.getGraphics(), isolineColor, options.getK(), options.getM(), options.getA(), options.getB(), options.getC(), options.getD(), image.getHeight(), image.getWidth(), z));
+                    Drawer.drawLastIsoline(legend,isolineLevelList.get(isolineLevelList.size()-1),isolineColor);
                 }
             }
             g.drawImage(image, ViewOptions.MARGIN, ViewOptions.MARGIN, this);

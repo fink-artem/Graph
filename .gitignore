@@ -27,3 +27,7 @@ hs_err_pid*
 /Isoline/manifest.mf
 /Isoline/nbproject
 /Isoline/dist/
+/Wireframe/build
+/Wireframe/nbproject
+/Wireframe/build.xml
+/Wireframe/manifest.mf

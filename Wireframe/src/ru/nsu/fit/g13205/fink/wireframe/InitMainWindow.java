@@ -24,7 +24,7 @@ public class InitMainWindow extends MainFrame {
 
     public InitMainWindow() {
         super();
-        setTitle("Isoline");
+        setTitle("Wireframe");
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - MIN_WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - MIN_HEIGHT / 2, MIN_WIDTH, MIN_HEIGHT);
         setMinimumSize(new Dimension(MIN_WIDTH, MIN_HEIGHT));
         try {
@@ -47,20 +47,34 @@ public class InitMainWindow extends MainFrame {
 
             add(statusBar, BorderLayout.SOUTH);
             add(initView);
+            onOpen();
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void onOpen() {
-        File file = getOpenFileName("txt", "Text file");
+        model.data.addNewModel();
+        model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(1,1), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(2,0), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(4,0), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(5,1), 0);
+        /*model.data.addNewModel();
+        model.data.addNewCoordinateInModel(new Coordinate(-5,5), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(-3,1), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
+        model.data.addNewCoordinateInModel(new Coordinate(5,5), 0);*/
+        /*File file = getOpenFileName("txt", "Text file");
         try (Scanner reader = new Scanner(new FileInputStream(file))) {
             ((JButton) toolBar.getComponentAtIndex(2)).setEnabled(true);
             getMenuElement("Edit/Options").getComponent().setEnabled(true);
         } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
-        }
+        }*/
     }
 
     public void onOptions() {

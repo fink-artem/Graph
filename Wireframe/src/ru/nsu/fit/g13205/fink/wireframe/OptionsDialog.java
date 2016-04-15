@@ -18,17 +18,17 @@ public final class OptionsDialog extends JDialog {
     private final int SPLAIN_PANEL_WIDTH = DIALOG_WIDTH;
     private final int SPLAIN_PANEL_HEIGHT = 350;
     private final int TEXT_FIELD_SIZE = 5;
-    private final Model model;
+    private final Data data;
     private boolean status = false;
 
-    public OptionsDialog(JFrame frame, final Model model) {
+    public OptionsDialog(JFrame frame, final Data data, InitView initView) {
         super(frame, true);
-        this.model = model;
+        this.data = data;
         setTitle("Options");
         setResizable(false);
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - DIALOG_WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - DIALOG_HEIGHT / 2, DIALOG_WIDTH, DIALOG_HEIGHT);
         setLayout(null);
-        SplainPanel splainPanel = new SplainPanel(model);
+        SplainPanel splainPanel = new SplainPanel(data,initView);
         JPanel optionsPanel = new JPanel();
 
         JButton okButton = new JButton("OK");

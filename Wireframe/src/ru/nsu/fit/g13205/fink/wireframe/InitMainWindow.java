@@ -4,11 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
-import javax.swing.JButton;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import ru.nsu.cg.MainFrame;
@@ -17,9 +14,9 @@ public class InitMainWindow extends MainFrame {
 
     private final int MIN_WIDTH = 800;
     private final int MIN_HEIGHT = 600;
-    private Model model = new Model();
+    private Data data = new Data();
     private JLabel statusBar = new JLabel("Ready");
-    private InitView initView = new InitView(model);
+    private InitView initView;
     private OptionsDialog optionsDialog;
 
     public InitMainWindow() {
@@ -46,40 +43,43 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("Help/About", "Information about author", statusBar);
 
             add(statusBar, BorderLayout.SOUTH);
-            add(initView);
             onOpen();
+            initView = new InitView(data);
+            add(initView);
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void onOpen() {
-        model.data.addNewModel();
-        model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(1,1), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(2,0), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(4,0), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(5,1), 0);
+        data.addNewModel();
+        List<Coordinate2D> pivotsList = new ArrayList<>();
+        pivotsList.add(new Coordinate2D(0, 0));
+        pivotsList.add(new Coordinate2D(100, 100));
+        pivotsList.add(new Coordinate2D(200, 0));
+        pivotsList.add(new Coordinate2D(300, 100));
+        pivotsList.add(new Coordinate2D(400, 0));
+        pivotsList.add(new Coordinate2D(500, 100));
+        data.setPivotsListInModel(0, pivotsList);
         /*model.data.addNewModel();
-        model.data.addNewCoordinateInModel(new Coordinate(-5,5), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(-3,1), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
-        model.data.addNewCoordinateInModel(new Coordinate(5,5), 0);*/
+         model.data.addNewCoordinateInModel(new Coordinate(-5,5), 0);
+         model.data.addNewCoordinateInModel(new Coordinate(-3,1), 0);
+         model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
+         model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
+         model.data.addNewCoordinateInModel(new Coordinate(5,5), 0);*/
         /*File file = getOpenFileName("txt", "Text file");
-        try (Scanner reader = new Scanner(new FileInputStream(file))) {
-            ((JButton) toolBar.getComponentAtIndex(2)).setEnabled(true);
-            getMenuElement("Edit/Options").getComponent().setEnabled(true);
-        } catch (FileNotFoundException | NullPointerException e) {
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
-        }*/
+         try (Scanner reader = new Scanner(new FileInputStream(file))) {
+         ((JButton) toolBar.getComponentAtIndex(2)).setEnabled(true);
+         getMenuElement("Edit/Options").getComponent().setEnabled(true);
+         } catch (FileNotFoundException | NullPointerException e) {
+         } catch (Exception ex) {
+         JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
+         }*/
     }
 
     public void onOptions() {
         if (optionsDialog == null) {
-            optionsDialog = new OptionsDialog(this,model);
+            optionsDialog = new OptionsDialog(this, data, initView);
         }
         optionsDialog.setVisible(true);
         if (optionsDialog.getStatus() == OptionsDialog.SUCCESS) {

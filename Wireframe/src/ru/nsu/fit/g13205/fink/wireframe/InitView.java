@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 
 public class InitView extends JPanel {
 
-    private final Data data;
+    private Data data;
     private BufferedImage image;
     private int width = 500;
 
@@ -21,6 +21,11 @@ public class InitView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         image = new BufferedImage(width, width, BufferedImage.TYPE_INT_RGB);
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < width; j++) {
+                image.setRGB(i, j, data.getBackgroundColor().getRGB());
+            }
+        }
         Graphics g1 = image.getGraphics();
         g1.setColor(Color.WHITE);
         Coordinate3D[][] coordinate = data.getCoordinate(0);
@@ -39,5 +44,10 @@ public class InitView extends JPanel {
             }
         }
         g.drawImage(image, 5, 5, this);
+    }
+
+    void updateData(Data data) {
+        this.data = data;
+        repaint();
     }
 }

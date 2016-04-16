@@ -1,21 +1,44 @@
 package ru.nsu.fit.g13205.fink.wireframe;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Model {
 
     private final double STEP = 0.05;
+    private final Color color;
     private Coordinate3D[][] coordinate;
     private List<Coordinate2D> pivotsList = new ArrayList<>();
+    private double[][] matrixM1 = new double[4][4];
     private int n;
     private int m;
     private int k;
+    private double cx;
+    private double cy;
+    private double cz;
+    private double rx;
+    private double ry;
+    private double rz;
+    private int r;
+    private int g;
+    private int b;
 
-    public Model(int n, int m, int k) {
+    public Model(int n, int m, int k, double cx, double cy, double cz, double rx, double ry, double rz, Color color) {
         this.n = n + 1;
         this.m = m;
-        coordinate = new Coordinate3D[n + 1][m];
+        this.k = k;
+        this.cx = cx;
+        this.cy = cy;
+        this.cz = cz;
+        this.rx = rx * 2 * Math.PI / 360.0;
+        this.ry = ry * 2 * Math.PI / 360.0;
+        this.rz = rz * 2 * Math.PI / 360.0;
+        this.color = color;
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), Matrix.getRotateZMatrix(this.rz));
+        matrixM1 = MatrixOperation.multiply(matrixM1, Matrix.getRotateYMatrix(this.ry));
+        matrixM1 = MatrixOperation.multiply(matrixM1, Matrix.getRotateXMatrix(this.rx));
+        coordinate = new Coordinate3D[this.n][m];
     }
 
     void addPivot(int position, Coordinate2D pivot) {
@@ -146,7 +169,21 @@ public class Model {
         edgeLength = 2 * Math.PI / m;
         for (int i = 0; i < n; i++) {
             for (int j = 1; j < m; j++) {
-                coordinate[i][j] = new Coordinate3D(coordinate[i][0].x / Math.cos(j * edgeLength), coordinate[i][0].x / Math.sin(j * edgeLength), coordinate[i][0].z);
+                coordinate[i][j] = new Coordinate3D(coordinate[i][0].x * Math.cos(j * edgeLength), coordinate[i][0].x * Math.sin(j * edgeLength), coordinate[i][0].z);
+            }
+        }
+        double[][] matrixP = new double[4][1];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                matrixP[0][0] = coordinate[i][j].x;
+                matrixP[1][0] = coordinate[i][j].y;
+                matrixP[2][0] = coordinate[i][j].z;
+                matrixP[3][0] = coordinate[i][j].w;
+                matrixP = MatrixOperation.multiply(matrixM1, matrixP);
+                coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
+                coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
+                coordinate[i][j].z = matrixP[2][0] / matrixP[3][0];
+                coordinate[i][j].w = 1;
             }
         }
     }

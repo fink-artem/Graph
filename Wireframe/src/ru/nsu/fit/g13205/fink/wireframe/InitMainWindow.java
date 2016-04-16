@@ -4,10 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import ru.nsu.cg.FileUtils;
 import ru.nsu.cg.MainFrame;
 
 public class InitMainWindow extends MainFrame {
@@ -31,19 +31,21 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
             addSubMenu("Edit", KeyEvent.VK_F);
             addMenuItem("Edit/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
-            getMenuElement("Edit/Options").getComponent().setEnabled(false);
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
             addToolBarButton("File/Open", "Open an existing document", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Options", "Options", statusBar);
-            //((JButton) toolBar.getComponentAtIndex(2)).setEnabled(false);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
 
             add(statusBar, BorderLayout.SOUTH);
-            onOpen();
+            try {
+                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data.txt"));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
             initView = new InitView(data);
             add(initView);
         } catch (SecurityException | NoSuchMethodException e) {
@@ -52,29 +54,13 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onOpen() {
-        data.addNewModel();
-        List<Coordinate2D> pivotsList = new ArrayList<>();
-        pivotsList.add(new Coordinate2D(0, 0));
-        pivotsList.add(new Coordinate2D(100, 100));
-        pivotsList.add(new Coordinate2D(200, 0));
-        pivotsList.add(new Coordinate2D(300, 100));
-        pivotsList.add(new Coordinate2D(400, 0));
-        pivotsList.add(new Coordinate2D(500, 100));
-        data.setPivotsListInModel(0, pivotsList);
-        /*model.data.addNewModel();
-         model.data.addNewCoordinateInModel(new Coordinate(-5,5), 0);
-         model.data.addNewCoordinateInModel(new Coordinate(-3,1), 0);
-         model.data.addNewCoordinateInModel(new Coordinate(0,0), 0);
-         model.data.addNewCoordinateInModel(new Coordinate(3,1), 0);
-         model.data.addNewCoordinateInModel(new Coordinate(5,5), 0);*/
-        /*File file = getOpenFileName("txt", "Text file");
-         try (Scanner reader = new Scanner(new FileInputStream(file))) {
-         ((JButton) toolBar.getComponentAtIndex(2)).setEnabled(true);
-         getMenuElement("Edit/Options").getComponent().setEnabled(true);
-         } catch (FileNotFoundException | NullPointerException e) {
-         } catch (Exception ex) {
-         JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
-         }*/
+        File file = getOpenFileName("txt", "Text file");
+        try {
+            data = Parser.parse(file);
+            initView.updateData(data);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public void onOptions() {

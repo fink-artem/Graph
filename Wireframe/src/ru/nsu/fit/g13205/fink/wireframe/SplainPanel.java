@@ -25,9 +25,7 @@ public class SplainPanel extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 super.mouseDragged(e);
                 if (taken) {
-                    int x = e.getX();
-                    int y = e.getY();
-                    Coordinate2D coordinate = Drawer.screenToCoordinate(new Point(x, y));
+                    Coordinate2D coordinate = Drawer.screenToCoordinate(e.getPoint());
                     data.setPivotInModel(modelNumber, coordinateNumber, coordinate);
                     repaint();
                     initView.repaint();

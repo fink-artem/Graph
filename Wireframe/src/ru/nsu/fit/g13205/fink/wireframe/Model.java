@@ -17,27 +17,19 @@ public class Model {
     private double cx;
     private double cy;
     private double cz;
-    private double rx;
-    private double ry;
-    private double rz;
     private int r;
     private int g;
     private int b;
 
-    public Model(int n, int m, int k, double cx, double cy, double cz, double rx, double ry, double rz, Color color) {
+    public Model(int n, int m, int k, double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
         this.n = n + 1;
         this.m = m;
         this.k = k;
         this.cx = cx;
         this.cy = cy;
         this.cz = cz;
-        this.rx = rx * 2 * Math.PI / 360.0;
-        this.ry = ry * 2 * Math.PI / 360.0;
-        this.rz = rz * 2 * Math.PI / 360.0;
         this.color = color;
-        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), Matrix.getRotateZMatrix(this.rz));
-        matrixM1 = MatrixOperation.multiply(matrixM1, Matrix.getRotateYMatrix(this.ry));
-        matrixM1 = MatrixOperation.multiply(matrixM1, Matrix.getRotateXMatrix(this.rx));
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
         coordinate = new Coordinate3D[this.n][m];
     }
 
@@ -47,7 +39,7 @@ public class Model {
     }
 
     void deletePivot(int position) {
-        if (pivotsList.size() > 2) {
+        if (pivotsList.size() > 4) {
             pivotsList.remove(position);
             updateCoordinate();
         }
@@ -128,7 +120,7 @@ public class Model {
         matrixT[0][1] = 0;
         matrixT[0][2] = 0;
         matrixT[0][3] = 1;
-        coordinate[0][0] = Convert2Dto3D(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
+        coordinate[0][0] = convert2Dto3D(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
         for (int i = 1; i < size; i++) {
             matrixG[0][0] = pivotsList.get(i - 1).x;
             matrixG[1][0] = pivotsList.get(i).x;
@@ -151,7 +143,7 @@ public class Model {
                 length += Operation.distance(c, c2);
                 if (length > edgeLength) {
                     length %= edgeLength;
-                    coordinate[number][0] = Convert2Dto3D(c);
+                    coordinate[number][0] = convert2Dto3D(c);
                     number++;
                 }
             }
@@ -164,7 +156,7 @@ public class Model {
             length += Operation.distance(c, c2);
         }
         if (number != n) {
-            coordinate[number][0] = Convert2Dto3D(c);
+            coordinate[number][0] = convert2Dto3D(c);
         }
         edgeLength = 2 * Math.PI / m;
         for (int i = 0; i < n; i++) {
@@ -188,7 +180,7 @@ public class Model {
         }
     }
 
-    Coordinate3D Convert2Dto3D(Coordinate2D c) {
+    Coordinate3D convert2Dto3D(Coordinate2D c) {
         return new Coordinate3D(c.y, 0, c.x);
     }
 }

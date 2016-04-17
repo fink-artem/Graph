@@ -44,7 +44,6 @@ public class InitMainWindow extends MainFrame {
             try {
                 data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data.txt"));
             } catch (Exception ex) {
-                ex.printStackTrace();
             }
             initView = new InitView(data);
             add(initView);
@@ -64,13 +63,8 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onOptions() {
-        if (optionsDialog == null) {
-            optionsDialog = new OptionsDialog(this, data, initView);
-        }
+        optionsDialog = new OptionsDialog(this, data, initView);
         optionsDialog.setVisible(true);
-        if (optionsDialog.getStatus() == OptionsDialog.SUCCESS) {
-            initView.repaint();
-        }
     }
 
     public void onExit() {

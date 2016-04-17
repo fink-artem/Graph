@@ -2,6 +2,9 @@ package ru.nsu.fit.g13205.fink.wireframe;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
@@ -10,11 +13,46 @@ public class InitView extends JPanel {
 
     private Data data;
     private BufferedImage image;
+    private boolean taken = false;
     private int width = 500;
+    private Point startPoint;
 
     public InitView(Data data) {
         this.data = data;
         setBackground(ViewOptions.BACKGROUND_COLOR);
+        addMouseMotionListener(new MouseAdapter() {
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                if (taken) {
+                    super.mouseDragged(e);
+                    data.rotateZ((e.getX() - startPoint.x)/15.0);
+                    data.rotateX((e.getY() - startPoint.y)/15.0);
+                    startPoint = e.getPoint();
+                    repaint();
+                }
+            }
+
+        });
+
+        addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                if (e.getX() >= 5 && e.getX() < width + 5 && e.getY() >= 5 && e.getY() < width + 5) {
+                    taken = true;
+                    startPoint = e.getPoint();
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                taken = false;
+            }
+
+        });
     }
 
     @Override

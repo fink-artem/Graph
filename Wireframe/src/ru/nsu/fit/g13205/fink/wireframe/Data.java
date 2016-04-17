@@ -7,6 +7,7 @@ import java.util.List;
 public class Data {
 
     private final List<Model> modelList = new ArrayList<>();
+    private double[][] rotateMatrix;
     private int n;
     private int m;
     private int k;
@@ -18,15 +19,12 @@ public class Data {
     private double zf;
     private double sw;
     private double sh;
-    private double ex;
-    private double ey;
-    private double ez;
     private int br;
     private int bg;
     private int bb;
 
-    int addNewModel(double cx, double cy, double cz, double rx, double ry, double rz, Color color) {
-        modelList.add(new Model(n, m, k, cx, cy, cz, rx, ry, rz, color));
+    int addNewModel(double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
+        modelList.add(new Model(n, m, k, cx, cy, cz, rotateMatrix, color));
         return modelList.size() - 1;
     }
 
@@ -51,7 +49,21 @@ public class Data {
     }
 
     Coordinate3D[][] getCoordinate(int modelNumber) {
-        return modelList.get(modelNumber).getCoordinate();
+        Coordinate3D[][] coordinate = modelList.get(modelNumber).getCoordinate();
+        int n = this.n + 1;
+        Coordinate3D[][] newCoordinate = new Coordinate3D[n][m];
+        double[][] matrixP = new double[4][1];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                matrixP[0][0] = coordinate[i][j].x;
+                matrixP[1][0] = coordinate[i][j].y;
+                matrixP[2][0] = coordinate[i][j].z;
+                matrixP[3][0] = coordinate[i][j].w;
+                matrixP = MatrixOperation.multiply(rotateMatrix, matrixP);
+                newCoordinate[i][j] = new Coordinate3D(matrixP[0][0] / matrixP[3][0], matrixP[1][0] / matrixP[3][0], matrixP[2][0] / matrixP[3][0]);
+            }
+        }
+        return newCoordinate;
     }
 
     void setPivotsListInModel(int modelNumber, List<Coordinate2D> pivotsList) {
@@ -110,18 +122,6 @@ public class Data {
         this.sh = sh;
     }
 
-    public void setEx(double ex) {
-        this.ex = ex * 2 * Math.PI / 360.0;
-    }
-
-    public void setEy(double ey) {
-        this.ey = ey * 2 * Math.PI / 360.0;
-    }
-
-    public void setEz(double ez) {
-        this.ez = ez * 2 * Math.PI / 360.0;
-    }
-
     public void setBr(int br) {
         this.br = br;
     }
@@ -144,6 +144,26 @@ public class Data {
 
     public Color getBackgroundColor() {
         return new Color(br, bg, bb);
+    }
+
+    public void setRotateMatrix(double[][] rotateMatrix) {
+        this.rotateMatrix = rotateMatrix;
+    }
+
+    public double[][] getRotateMatrix() {
+        return rotateMatrix;
+    }
+
+    public void rotateX(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateXMatrix(angle), rotateMatrix);
+    }
+
+    public void rotateY(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateYMatrix(angle), rotateMatrix);
+    }
+
+    public void rotateZ(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateZMatrix(angle), rotateMatrix);
     }
 
 }

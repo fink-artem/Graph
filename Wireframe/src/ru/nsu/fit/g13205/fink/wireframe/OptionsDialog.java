@@ -14,8 +14,12 @@ import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public final class OptionsDialog extends JDialog {
 
@@ -43,84 +47,148 @@ public final class OptionsDialog extends JDialog {
 
         JPanel nPanel = new JPanel();
         nPanel.add(new JLabel("n "));
-        JSpinner nSpinner = new JSpinner();
+        JSpinner nSpinner = new JSpinner(new SpinnerNumberModel(data.getN(), 1, 100, 1));
+        nSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setN((int) nSpinner.getValue());
+            initView.repaint();
+        });
         nSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         nPanel.add(nSpinner);
         optionsPanel.add(nPanel);
 
         JPanel mPanel = new JPanel();
         mPanel.add(new JLabel("m "));
-        JSpinner mSpinner = new JSpinner();
+        JSpinner mSpinner = new JSpinner(new SpinnerNumberModel(data.getM(), 1, 100, 1));
+        mSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setM((int) mSpinner.getValue());
+            initView.repaint();
+        });
         mSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         mPanel.add(mSpinner);
         optionsPanel.add(mPanel);
 
         JPanel kPanel = new JPanel();
         kPanel.add(new JLabel("k "));
-        JSpinner kSpinner = new JSpinner();
+        JSpinner kSpinner = new JSpinner(new SpinnerNumberModel(data.getK(), 1, 50, 1));
+        kSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setK((int) kSpinner.getValue());
+            initView.repaint();
+        });
         kSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         kPanel.add(kSpinner);
         optionsPanel.add(kPanel);
 
         JPanel numberPanel = new JPanel();
         numberPanel.add(new JLabel("№"));
-        JSpinner numberSpinner = new JSpinner();
+        JSpinner numberSpinner = new JSpinner(new SpinnerNumberModel(0, 0, data.getModelNumber() - 1, 1));
+        numberSpinner.addChangeListener((ChangeEvent e) -> {
+            splainPanel.setModelNumber((int) numberSpinner.getValue());
+            splainPanel.repaint();
+        });
         numberSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         numberPanel.add(numberSpinner);
         optionsPanel.add(numberPanel);
 
         JPanel aPanel = new JPanel();
         aPanel.add(new JLabel("a "));
-        JSpinner aSpinner = new JSpinner();
+        JSpinner aSpinner = new JSpinner(new SpinnerNumberModel(data.getA(), 0, 1.0, 0.01));
         aSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         aPanel.add(aSpinner);
         optionsPanel.add(aPanel);
 
         JPanel bPanel = new JPanel();
         bPanel.add(new JLabel("b "));
-        JSpinner bSpinner = new JSpinner();
+        JSpinner bSpinner = new JSpinner(new SpinnerNumberModel(data.getB(), 0, 1.0, 0.01));
         bSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
+        aSpinner.addChangeListener((ChangeEvent e) -> {
+            if ((double) aSpinner.getValue() <= (double) bSpinner.getValue()) {
+                data.setA((double) aSpinner.getValue());
+                initView.repaint();
+            } else {
+                aSpinner.setValue(data.getA());
+            }
+        });
+        bSpinner.addChangeListener((ChangeEvent e) -> {
+            if ((double) aSpinner.getValue() <= (double) bSpinner.getValue()) {
+                data.setB((double) bSpinner.getValue());
+                initView.repaint();
+            } else {
+                bSpinner.setValue(data.getB());
+            }
+        });
         bPanel.add(bSpinner);
         optionsPanel.add(bPanel);
 
         JPanel cPanel = new JPanel();
         cPanel.add(new JLabel("c  "));
-        JSpinner cSpinner = new JSpinner();
+        JSpinner cSpinner = new JSpinner(new SpinnerNumberModel(data.getC(), 0, 6.28, 0.01));
         cSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         cPanel.add(cSpinner);
         optionsPanel.add(cPanel);
 
         JPanel dPanel = new JPanel();
         dPanel.add(new JLabel("d "));
-        JSpinner dSpinner = new JSpinner();
+        JSpinner dSpinner = new JSpinner(new SpinnerNumberModel(data.getD(), 0, 6.28, 0.01));
+        cSpinner.addChangeListener((ChangeEvent e) -> {
+            if ((double) cSpinner.getValue() <= (double) dSpinner.getValue()) {
+                data.setC((double) cSpinner.getValue());
+                initView.repaint();
+            } else {
+                cSpinner.setValue(data.getC());
+            }
+        });
+        dSpinner.addChangeListener((ChangeEvent e) -> {
+            if ((double) cSpinner.getValue() <= (double) dSpinner.getValue()) {
+                data.setD((double) dSpinner.getValue());
+                initView.repaint();
+            } else {
+                dSpinner.setValue(data.getD());
+            }
+        });
         dSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         dPanel.add(dSpinner);
         optionsPanel.add(dPanel);
 
         JPanel znPanel = new JPanel();
         znPanel.add(new JLabel("zn"));
-        JSpinner znSpinner = new JSpinner();
+        JSpinner znSpinner = new JSpinner(new SpinnerNumberModel(data.getZn(), 0, 100, 1));
+        znSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setZn((double) znSpinner.getValue());
+            initView.repaint();
+        });
         znSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         znPanel.add(znSpinner);
         optionsPanel.add(znPanel);
 
         JPanel zfPanel = new JPanel();
         zfPanel.add(new JLabel("zf"));
-        JSpinner zfSpinner = new JSpinner();
+        JSpinner zfSpinner = new JSpinner(new SpinnerNumberModel(data.getZf(), 0, 100, 1));
+        zfSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setZf((double) zfSpinner.getValue());
+            initView.repaint();
+        });
         zfSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         zfPanel.add(zfSpinner);
         optionsPanel.add(zfPanel);
 
         JPanel swPanel = new JPanel();
         swPanel.add(new JLabel("sw"));
-        JSpinner swSpinner = new JSpinner();
+        JSpinner swSpinner = new JSpinner(new SpinnerNumberModel(data.getSw(), 0, 100, 1));
+        swSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setSw((double) swSpinner.getValue());
+            initView.repaint();
+        });
         swSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         swPanel.add(swSpinner);
         optionsPanel.add(swPanel);
 
         JPanel shPanel = new JPanel();
         shPanel.add(new JLabel("sh"));
-        JSpinner shSpinner = new JSpinner();
+        JSpinner shSpinner = new JSpinner(new SpinnerNumberModel(data.getSh(), 0, 100, 1));
+        shSpinner.addChangeListener((ChangeEvent e) -> {
+            data.setSh((double) shSpinner.getValue());
+            initView.repaint();
+        });
         shSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         shPanel.add(shSpinner);
         optionsPanel.add(shPanel);
@@ -133,38 +201,6 @@ public final class OptionsDialog extends JDialog {
         add(mainPanel);
         optionsPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT - SPLAIN_PANEL_HEIGHT);
         splainPanel.setBounds(0, 0, SPLAIN_PANEL_WIDTH, SPLAIN_PANEL_HEIGHT);
-
-        addWindowListener(new WindowListener() {
-
-            @Override
-            public void windowOpened(WindowEvent we) {
-            }
-
-            @Override
-            public void windowClosing(WindowEvent we) {
-            }
-
-            @Override
-            public void windowClosed(WindowEvent we) {
-            }
-
-            @Override
-            public void windowIconified(WindowEvent we) {
-            }
-
-            @Override
-            public void windowDeiconified(WindowEvent we) {
-            }
-
-            @Override
-            public void windowActivated(WindowEvent we) {
-                //todo
-            }
-
-            @Override
-            public void windowDeactivated(WindowEvent we) {
-            }
-        });
     }
 
 }

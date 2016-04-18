@@ -96,4 +96,8 @@ public class SplainPanel extends JPanel {
         g.drawImage(image, 0, 0, this);
     }
 
+    public void setModelNumber(int modelNumber) {
+        this.modelNumber = modelNumber;
+    }
+
 }

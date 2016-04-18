@@ -6,7 +6,7 @@ import java.util.List;
 
 public class Model {
 
-    private final double STEP = 0.05;
+    private final double STEP = 0.01;
     private final Color color;
     private Coordinate3D[][] coordinate;
     private List<Coordinate2D> pivotsList = new ArrayList<>();
@@ -161,7 +161,10 @@ public class Model {
         edgeLength = 2 * Math.PI / m;
         for (int i = 0; i < n; i++) {
             for (int j = 1; j < m; j++) {
-                coordinate[i][j] = new Coordinate3D(coordinate[i][0].x * Math.cos(j * edgeLength), coordinate[i][0].x * Math.sin(j * edgeLength), coordinate[i][0].z);
+                try {
+                    coordinate[i][j] = new Coordinate3D(coordinate[i][0].x * Math.cos(j * edgeLength), coordinate[i][0].x * Math.sin(j * edgeLength), coordinate[i][0].z);
+                } catch (NullPointerException e) {
+                }
             }
         }
         double[][] matrixP = new double[4][1];
@@ -183,4 +186,22 @@ public class Model {
     Coordinate3D convert2Dto3D(Coordinate2D c) {
         return new Coordinate3D(c.y, 0, c.x);
     }
+
+    public void setN(int n) {
+        this.n = n + 1;
+        coordinate = new Coordinate3D[this.n][m];
+        updateCoordinate();
+    }
+
+    public void setM(int m) {
+        this.m = m;
+        coordinate = new Coordinate3D[n][m];
+        updateCoordinate();
+    }
+
+    public void setK(int k) {
+        this.k = k;
+        updateCoordinate();
+    }
+
 }

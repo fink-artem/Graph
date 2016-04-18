@@ -80,14 +80,23 @@ public class Data {
 
     public void setN(int n) {
         this.n = n;
+        for (Model model : modelList) {
+            model.setN(n);
+        }
     }
 
     public void setM(int m) {
         this.m = m;
+        for (Model model : modelList) {
+            model.setM(m);
+        }
     }
 
     public void setK(int k) {
         this.k = k;
+        for (Model model : modelList) {
+            model.setK(k);
+        }
     }
 
     public void setA(double a) {
@@ -166,4 +175,38 @@ public class Data {
         rotateMatrix = MatrixOperation.multiply(Matrix.getRotateZMatrix(angle), rotateMatrix);
     }
 
+    public int getModelNumber(){
+        return modelList.size();
+    }
+
+    public int getK() {
+        return k;
+    }
+
+    public double getB() {
+        return b;
+    }
+
+    public double getD() {
+        return d;
+    }
+
+    public double getZn() {
+        return zn;
+    }
+
+    public double getZf() {
+        return zf;
+    }
+
+    public double getSw() {
+        return sw;
+    }
+
+    public double getSh() {
+        return sh;
+    }
+    
+    
+    
 }

@@ -14,6 +14,7 @@ public class Parser {
             String s = getNextLine(reader);
             int search = s.indexOf(" ");
             int number;
+            double d;
             if (search != -1) {
                 number = Integer.parseInt(s.substring(0, search));
                 if (number < 1) {
@@ -48,44 +49,43 @@ public class Parser {
             }
             search = s.indexOf(" ");
             if (search != -1) {
-                number = Integer.parseInt(s.substring(0, search));
-                if (number < 0 || number > 1) {
+                d = Double.parseDouble(s.substring(0, search));
+                if (d < 0 || d > 1) {
                     throw new Exception();
                 }
-                data.setA(number);
+                data.setA(d);
                 s = s.substring(search + 1).trim();
             } else {
                 throw new Exception();
             }
             search = s.indexOf(" ");
             if (search != -1) {
-                number = Integer.parseInt(s.substring(0, search));
-                if (number < 0 || number > 1 || number < data.getA()) {
+                d = Double.parseDouble(s.substring(0, search));
+                if (d < 0 || d > 1 || d < data.getA()) {
                     throw new Exception();
                 }
-                data.setB(number);
+                data.setB(d);
                 s = s.substring(search + 1).trim();
             } else {
                 throw new Exception();
             }
             search = s.indexOf(" ");
             if (search != -1) {
-                number = Integer.parseInt(s.substring(0, search));
-                if (number < 0 || number > Math.PI * 2) {
+                d = Double.parseDouble(s.substring(0, search));
+                if (d < 0 || d > Math.PI * 2) {
                     throw new Exception();
                 }
-                data.setC(number);
+                data.setC(d);
                 s = s.substring(search + 1).trim();
             } else {
                 throw new Exception();
             }
-            number = Integer.parseInt(s);
-            if (number < 0 || number > Math.PI * 2 || number < data.getC()) {
+            d = Double.parseDouble(s);
+            if (d < 0 || d > Math.PI * 2 || d < data.getC()) {
                 throw new Exception();
             }
-            data.setD(number);
+            data.setD(d);
 
-            double d;
             s = getNextLine(reader);
             search = s.indexOf(" ");
             if (search != -1) {

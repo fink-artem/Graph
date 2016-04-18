@@ -47,6 +47,10 @@ public class Data {
     List<Coordinate2D> getPivots(int modelNumber) {
         return modelList.get(modelNumber).getPivotsList();
     }
+    
+    Color getModelColor(int modelNumber){
+        return modelList.get(modelNumber).getColor();
+    }
 
     Coordinate3D[][] getCoordinate(int modelNumber) {
         Coordinate3D[][] coordinate = modelList.get(modelNumber).getCoordinate();

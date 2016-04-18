@@ -27,6 +27,7 @@ public class InitMainWindow extends MainFrame {
         try {
             addSubMenu("File", KeyEvent.VK_F);
             addMenuItem("File/Open", "Open an existing document", KeyEvent.VK_X, "Open.png", "onOpen", statusBar);
+            addMenuItem("File/Save", "Save the active document", KeyEvent.VK_X, "Save.png", "onSave", statusBar);
             addMenuSeparator("File");
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
             addSubMenu("Edit", KeyEvent.VK_F);
@@ -35,6 +36,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
             addToolBarButton("File/Open", "Open an existing document", statusBar);
+            addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
             addToolBarButton("Edit/Options", "Options", statusBar);
             addToolBarSeparator();
@@ -60,6 +62,10 @@ public class InitMainWindow extends MainFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+    
+    public void onSave() {
+         
     }
 
     public void onOptions() {

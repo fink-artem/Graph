@@ -204,4 +204,8 @@ public class Model {
         updateCoordinate();
     }
 
+    public Color getColor() {
+        return color;
+    }
+    
 }

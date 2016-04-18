@@ -1,17 +1,15 @@
 package ru.nsu.fit.g13205.fink.wireframe;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JColorChooser;
 import javax.swing.JDialog;
-import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -19,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public final class OptionsDialog extends JDialog {
 
@@ -41,6 +38,8 @@ public final class OptionsDialog extends JDialog {
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - DIALOG_WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - DIALOG_HEIGHT / 2, DIALOG_WIDTH, DIALOG_HEIGHT);
         setLayout(null);
         SplainPanel splainPanel = new SplainPanel(data, initView);
+        splainPanel.setBounds(0, 0, SPLAIN_PANEL_WIDTH, SPLAIN_PANEL_HEIGHT);
+        add(splainPanel);
         JPanel mainPanel = new JPanel();
         mainPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, 100);
         JPanel optionsPanel = new JPanel(new GridLayout(3, 4));
@@ -192,15 +191,49 @@ public final class OptionsDialog extends JDialog {
         shSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         shPanel.add(shSpinner);
         optionsPanel.add(shPanel);
+        optionsPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT - SPLAIN_PANEL_HEIGHT);
+        mainPanel.add(optionsPanel);
 
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+
+        JButton addButton = new JButton(new ImageIcon(getClass().getResource("resources/Add.png")));
+        addButton.addActionListener((ActionEvent ae) -> {
+            double[][] rotateMatrix = new double[4][4];
+            rotateMatrix[0][0] = 1;
+            rotateMatrix[1][1] = 1;
+            rotateMatrix[2][2] = 1;
+            rotateMatrix[3][3] = 1;
+            int numberModel = data.addNewModel(50, 50, 50, rotateMatrix, Color.yellow);
+            List<Coordinate2D> pivotList = new ArrayList<>();
+            pivotList.add(new Coordinate2D(10, 20));
+            pivotList.add(new Coordinate2D(20, 0));
+            pivotList.add(new Coordinate2D(30, 20));
+            pivotList.add(new Coordinate2D(40, 0));
+            data.setPivotsListInModel(numberModel, pivotList);
+            splainPanel.setModelNumber(numberModel);
+            splainPanel.repaint();
+            initView.repaint();
+            numberSpinner.setModel(new SpinnerNumberModel(numberModel, 0, numberModel, 1));
+        });
+        buttonPanel.add(addButton);
+        JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("resources/Delete.png")));
+        deleteButton.addActionListener((ActionEvent ae) -> {
+            if (data.getModelNumber() > 1) {
+                data.deleteModel((int) numberSpinner.getValue());
+                splainPanel.setModelNumber(0);
+                splainPanel.repaint();
+                initView.repaint();
+                numberSpinner.setModel(new SpinnerNumberModel(0, 0, data.getModelNumber() - 1, 1));
+            } else {
+                JOptionPane.showMessageDialog(OptionsDialog.this, "Нельзя удалить все объекты", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+        buttonPanel.add(deleteButton);
         JButton okButton = new JButton("OK");
         okButton.addActionListener((ActionEvent ae) -> dispose());
-        add(splainPanel);
-        mainPanel.add(optionsPanel);
-        mainPanel.add(okButton);
+        buttonPanel.add(okButton);
+        mainPanel.add(buttonPanel);
         add(mainPanel);
-        optionsPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT - SPLAIN_PANEL_HEIGHT);
-        splainPanel.setBounds(0, 0, SPLAIN_PANEL_WIDTH, SPLAIN_PANEL_HEIGHT);
     }
 
 }

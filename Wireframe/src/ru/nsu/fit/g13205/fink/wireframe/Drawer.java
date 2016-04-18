@@ -17,7 +17,7 @@ public class Drawer {
         Graphics g = image.getGraphics();
         centerX = image.getWidth() / 2;
         centerY = image.getHeight() / 2;
-        List<Coordinate2D> coordinate = data.getPivots(0);
+        List<Coordinate2D> coordinate = data.getPivots(modelNumber);
         int length = coordinate.size();
         double maxCoordinateX = 0;
         double maxCoordinateY = 0;

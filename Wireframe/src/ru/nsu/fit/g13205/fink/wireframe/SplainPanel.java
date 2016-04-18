@@ -92,7 +92,7 @@ public class SplainPanel extends JPanel {
         image = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_RGB);
         image.getGraphics().drawLine(size.width / 2, 0, size.width / 2, size.height - 1);
         image.getGraphics().drawLine(0, size.height / 2, size.width - 1, size.height / 2);
-        Drawer.drawSplain(image, data, 0);
+        Drawer.drawSplain(image, data, modelNumber);
         g.drawImage(image, 0, 0, this);
     }
 

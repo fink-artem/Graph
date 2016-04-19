@@ -1,10 +1,14 @@
 package ru.nsu.fit.g13205.fink.wireframe;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import ru.nsu.cg.FileUtils;
@@ -63,9 +67,45 @@ public class InitMainWindow extends MainFrame {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-    
+
     public void onSave() {
-         
+        File file = getSaveFileName("txt", "Text file");
+        try (PrintWriter out = new PrintWriter(file)) {
+            out.println(data.getN() + " " + data.getM() + " " + data.getK() + " " + data.getA() + " " + data.getB() + " " + data.getC() + " " + data.getD());
+            out.println(data.getZn() + " " + data.getZf() + " " + data.getSw() + " " + data.getSh());
+            double[][] matrix = data.getRotateMatrix();
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    out.print(matrix[i][j] + " ");
+                }
+                out.println();
+            }
+            Color color = data.getBackgroundColor();
+            out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+            int k = data.getModelNumber();
+            out.println(k);
+            Model model;
+            List<Coordinate2D> pivotsList;
+            for (int i = 0; i < k; i++) {
+                model = data.getModel(i);
+                color = model.getColor();
+                out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+                out.println(model.getCx() + " " + model.getCy() + " " + model.getCz());
+                matrix = model.getRotateMatrix();
+                for (int l = 0; l < 3; l++) {
+                    for (int j = 0; j < 3; j++) {
+                        out.print(matrix[l][j] + " ");
+                    }
+                    out.println();
+                }
+                pivotsList = model.getPivotsList();
+                out.println(pivotsList.size());
+                for (Coordinate2D coordinate : pivotsList) {
+                    out.println(coordinate.x + " " + coordinate.y);
+                }
+            }
+        } catch (FileNotFoundException | NullPointerException e) {
+        }
     }
 
     public void onOptions() {

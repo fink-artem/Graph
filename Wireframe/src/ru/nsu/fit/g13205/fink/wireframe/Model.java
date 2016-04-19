@@ -6,11 +6,12 @@ import java.util.List;
 
 public class Model {
 
-    private final double STEP = 0.01;
+    private final double STEP = 0.005;
     private final Color color;
     private Coordinate3D[][] coordinate;
     private List<Coordinate2D> pivotsList = new ArrayList<>();
     private double[][] matrixM1 = new double[4][4];
+    private double[][] rotateMatrix;
     private int n;
     private int m;
     private int k;
@@ -29,28 +30,29 @@ public class Model {
         this.cy = cy;
         this.cz = cz;
         this.color = color;
+        this.rotateMatrix = rotateMatrix;
         matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
         coordinate = new Coordinate3D[this.n][m];
     }
 
-    void addPivot(int position, Coordinate2D pivot) {
+    public void addPivot(int position, Coordinate2D pivot) {
         pivotsList.add(position, pivot);
         updateCoordinate();
     }
 
-    void deletePivot(int position) {
+    public void deletePivot(int position) {
         if (pivotsList.size() > 4) {
             pivotsList.remove(position);
             updateCoordinate();
         }
     }
 
-    void setPivot(int position, Coordinate2D pivot) {
+    public void setPivot(int position, Coordinate2D pivot) {
         pivotsList.set(position, pivot);
         updateCoordinate();
     }
 
-    List<Coordinate2D> getPivotsList() {
+    public List<Coordinate2D> getPivotsList() {
         return pivotsList;
     }
 
@@ -207,5 +209,21 @@ public class Model {
     public Color getColor() {
         return color;
     }
-    
+
+    public double[][] getRotateMatrix() {
+        return rotateMatrix;
+    }
+
+    public double getCx() {
+        return cx;
+    }
+
+    public double getCy() {
+        return cy;
+    }
+
+    public double getCz() {
+        return cz;
+    }
+
 }

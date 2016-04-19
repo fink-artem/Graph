@@ -211,6 +211,7 @@ public class Data {
         return sh;
     }
     
-    
-    
+    public Model getModel(int modelNumber){
+        return modelList.get(modelNumber);
+    }
 }

@@ -63,6 +63,7 @@ public class InitMainWindow extends MainFrame {
         try {
             data = Parser.parse(file);
             initView.updateData(data);
+        } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }

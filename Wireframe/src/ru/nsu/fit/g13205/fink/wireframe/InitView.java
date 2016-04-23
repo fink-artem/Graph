@@ -26,8 +26,8 @@ public class InitView extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 if (taken) {
                     super.mouseDragged(e);
-                    data.rotateZ((e.getX() - startPoint.x) / 15.0);
-                    data.rotateX((e.getY() - startPoint.y) / 15.0);
+                    InitView.this.data.rotateZ((e.getX() - startPoint.x) / 15.0);
+                    InitView.this.data.rotateX((e.getY() - startPoint.y) / 15.0);
                     startPoint = e.getPoint();
                     repaint();
                 }
@@ -66,21 +66,30 @@ public class InitView extends JPanel {
         }
         Graphics g1 = image.getGraphics();
         int size = data.getModelNumber();
-        for (int k = 0; k < size; k++) {
-            g1.setColor(data.getModelColor(k));
-            Coordinate3D[][] coordinate = data.getCoordinate(k);
+        int k = data.getK();
+        for (int i = 0; i < size; i++) {
+            g1.setColor(data.getModelColor(i));
+            Coordinate3D[][] coordinate = data.getCoordinate(i);
             int n = coordinate.length;
             int m = coordinate[0].length;
-            g1.drawLine((int) Math.round(coordinate[0][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][0].z), (int) Math.round(coordinate[0][m - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][m - 1].z));
-            for (int i = 1; i < m; i++) {
-                g1.drawLine((int) Math.round(coordinate[0][i].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][i].z), (int) Math.round(coordinate[0][i - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][i - 1].z));
+            for (int l = 1; l < m; l++) {
+                g1.drawLine((int) Math.round(coordinate[0][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][l].z), (int) Math.round(coordinate[0][l - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][l - 1].z));
             }
-            for (int i = 1; i < n; i++) {
-                g1.drawLine((int) Math.round(coordinate[i][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][0].z), (int) Math.round(coordinate[i][m - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][m - 1].z));
-                g1.drawLine((int) Math.round(coordinate[i][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][0].z), (int) Math.round(coordinate[i - 1][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[i - 1][0].z));
-                for (int j = 1; j < m; j++) {
-                    g1.drawLine((int) Math.round(coordinate[i][j].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][j].z), (int) Math.round(coordinate[i][j - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][j - 1].z));
-                    g1.drawLine((int) Math.round(coordinate[i][j].x) + width / 2, (int) Math.round(width / 2 - coordinate[i][j].z), (int) Math.round(coordinate[i - 1][j].x) + width / 2, (int) Math.round(width / 2 - coordinate[i - 1][j].z));
+            for (int j = 1; j < n; j++) {
+                g1.drawLine((int) Math.round(coordinate[j][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][0].z), (int) Math.round(coordinate[j - 1][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][0].z));
+                if (j % k == 0) {
+                    for (int l = 1; l < m; l++) {
+                        g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j][l - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l - 1].z));
+                        if (l % k == 0) {
+                            g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j - 1][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].z));
+                        }
+                    }
+                } else {
+                    for (int l = 1; l < m; l++) {
+                        if (l % k == 0) {
+                            g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j - 1][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].z));
+                        }
+                    }
                 }
             }
         }

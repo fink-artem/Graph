@@ -6,33 +6,25 @@ import java.util.List;
 
 public class Model {
 
-    private final double STEP = 0.005;
+    private final double STEP = 0.001;
     private final Color color;
     private Coordinate3D[][] coordinate;
     private List<Coordinate2D> pivotsList = new ArrayList<>();
     private double[][] matrixM1 = new double[4][4];
     private double[][] rotateMatrix;
-    private int n;
-    private int m;
-    private int k;
+    private Data data;
     private double cx;
     private double cy;
     private double cz;
-    private int r;
-    private int g;
-    private int b;
 
-    public Model(int n, int m, int k, double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
-        this.n = n + 1;
-        this.m = m;
-        this.k = k;
+    public Model(Data data, double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
+        this.data = data;
         this.cx = cx;
         this.cy = cy;
         this.cz = cz;
         this.color = color;
         this.rotateMatrix = rotateMatrix;
         matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
-        coordinate = new Coordinate3D[this.n][m];
     }
 
     public void addPivot(int position, Coordinate2D pivot) {
@@ -66,9 +58,17 @@ public class Model {
     }
 
     void updateCoordinate() {
+        int n = data.getN();
+        int m = data.getM();
+        int k = data.getK();
+        coordinate = new Coordinate3D[n * k + 1][m * k + 1];
+        double a = data.getA();
+        double b = data.getB();
+        double c = data.getC();
+        double d = data.getD();
         double length = 0;
         int size = pivotsList.size() - 2;
-        Coordinate2D c;
+        Coordinate2D c1 = null;
         Coordinate2D c2;
         double[][] matrixG = new double[4][1];
         double[][] matrixT = new double[1][4];
@@ -85,44 +85,31 @@ public class Model {
             matrixG[2][0] = pivotsList.get(i + 1).y;
             matrixG[3][0] = pivotsList.get(i + 2).y;
             matrixY = MatrixOperation.multiply(Matrix.MS, matrixG);
-            c = new Coordinate2D(matrixX[3][0], matrixY[3][0]);
+            c1 = new Coordinate2D(matrixX[3][0], matrixY[3][0]);
             for (double t = 0; t < 1; t += STEP) {
                 matrixT[0][0] = Math.pow(t, 3);
                 matrixT[0][1] = Math.pow(t, 2);
                 matrixT[0][2] = t;
                 matrixT[0][3] = 1;
-                c2 = c;
-                c = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
-                length += Operation.distance(c, c2);
+                c2 = c1;
+                c1 = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
+                length += Operation.distance(c1, c2);
             }
             matrixT[0][0] = 1;
             matrixT[0][1] = 1;
             matrixT[0][2] = 1;
             matrixT[0][3] = 1;
-            c2 = c;
-            c = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
-            length += Operation.distance(c, c2);
+            c2 = c1;
+            c1 = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
+            length += Operation.distance(c1, c2);
         }
-        double edgeLength = length / (n - 1);
-        int number = 1;
+        double edgeLength = length * (b - a) / (n * k);
+        double start = length * a;
+        int number = 0;
         length = 0;
 
-        matrixG[0][0] = pivotsList.get(0).x;
-        matrixG[1][0] = pivotsList.get(1).x;
-        matrixG[2][0] = pivotsList.get(2).x;
-        matrixG[3][0] = pivotsList.get(3).x;
-        matrixX = MatrixOperation.multiply(Matrix.MS, matrixG);
-        matrixG[0][0] = pivotsList.get(0).y;
-        matrixG[1][0] = pivotsList.get(1).y;
-        matrixG[2][0] = pivotsList.get(2).y;
-        matrixG[3][0] = pivotsList.get(3).y;
-        matrixY = MatrixOperation.multiply(Matrix.MS, matrixG);
-        c = new Coordinate2D(matrixX[3][0], matrixY[3][0]);
-        matrixT[0][0] = 0;
-        matrixT[0][1] = 0;
-        matrixT[0][2] = 0;
-        matrixT[0][3] = 1;
-        coordinate[0][0] = convert2Dto3D(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
+        boolean bool = false;
+        one:
         for (int i = 1; i < size; i++) {
             matrixG[0][0] = pivotsList.get(i - 1).x;
             matrixG[1][0] = pivotsList.get(i).x;
@@ -134,48 +121,81 @@ public class Model {
             matrixG[2][0] = pivotsList.get(i + 1).y;
             matrixG[3][0] = pivotsList.get(i + 2).y;
             matrixY = MatrixOperation.multiply(Matrix.MS, matrixG);
-            c = new Coordinate2D(matrixX[3][0], matrixY[3][0]);
+            c1 = new Coordinate2D(matrixX[3][0], matrixY[3][0]);
             for (double t = 0; t < 1; t += STEP) {
                 matrixT[0][0] = Math.pow(t, 3);
                 matrixT[0][1] = Math.pow(t, 2);
                 matrixT[0][2] = t;
                 matrixT[0][3] = 1;
-                c2 = c;
-                c = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
-                length += Operation.distance(c, c2);
-                if (length > edgeLength) {
-                    length %= edgeLength;
-                    coordinate[number][0] = convert2Dto3D(c);
-                    number++;
+                c2 = c1;
+                c1 = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
+                length += Operation.distance(c1, c2);
+                if (length >= start || bool) {
+                    if (!bool) {
+                        coordinate[number][0] = convert2Dto3D(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
+                        number++;
+                    }
+                    bool = true;
+                    if (length >= edgeLength) {
+                        length %= edgeLength;
+                        coordinate[number][0] = convert2Dto3D(c1);
+                        number++;
+                        if (number == coordinate.length) {
+                            break one;
+                        }
+                    }
                 }
             }
             matrixT[0][0] = 1;
             matrixT[0][1] = 1;
             matrixT[0][2] = 1;
             matrixT[0][3] = 1;
-            c2 = c;
-            c = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
-            length += Operation.distance(c, c2);
-        }
-        if (number != n) {
-            coordinate[number][0] = convert2Dto3D(c);
-        }
-        edgeLength = 2 * Math.PI / m;
-        for (int i = 0; i < n; i++) {
-            for (int j = 1; j < m; j++) {
-                try {
-                    coordinate[i][j] = new Coordinate3D(coordinate[i][0].x * Math.cos(j * edgeLength), coordinate[i][0].x * Math.sin(j * edgeLength), coordinate[i][0].z);
-                } catch (NullPointerException e) {
+            c2 = c1;
+            c1 = new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]);
+            length += Operation.distance(c1, c2);
+            if (length >= start || bool) {
+                if (!bool) {
+                    coordinate[number][0] = convert2Dto3D(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
+                    number++;
+                }
+                bool = true;
+                if (length >= edgeLength) {
+                    length %= edgeLength;
+                    coordinate[number][0] = convert2Dto3D(c1);
+                    number++;
                 }
             }
         }
+        if (number != coordinate.length) {
+            coordinate[number][0] = convert2Dto3D(c1);
+        }
+
+        edgeLength = 2 * Math.PI * (d - c) / 6.28 / m / k;
+        start = 2 * Math.PI * c / 6.28;
+        int n2 = n * k + 1;
+        int m2 = m * k + 1;
+        Coordinate3D copy;
+        for (int i = 0; i < n2; i++) {
+            try {
+                copy = new Coordinate3D(coordinate[i][0].x, coordinate[i][0].y, coordinate[i][0].z);
+                for (int j = 0; j < m2; j++) {
+                    coordinate[i][j] = new Coordinate3D(copy.x * Math.cos(start + j * edgeLength), copy.x * Math.sin(start + j * edgeLength), copy.z);
+
+                }
+            } catch (NullPointerException e) {
+            }
+        }
+        System.out.println(start + " " + (start + (m2 - 1) * edgeLength));
         double[][] matrixP = new double[4][1];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
-                matrixP[0][0] = coordinate[i][j].x;
-                matrixP[1][0] = coordinate[i][j].y;
-                matrixP[2][0] = coordinate[i][j].z;
-                matrixP[3][0] = coordinate[i][j].w;
+        for (int i = 0; i < n2; i++) {
+            for (int j = 0; j < m2; j++) {
+                try {
+                    matrixP[0][0] = coordinate[i][j].x;
+                    matrixP[1][0] = coordinate[i][j].y;
+                    matrixP[2][0] = coordinate[i][j].z;
+                    matrixP[3][0] = coordinate[i][j].w;
+                } catch (NullPointerException e) {
+                }
                 matrixP = MatrixOperation.multiply(matrixM1, matrixP);
                 coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
                 coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
@@ -187,23 +207,6 @@ public class Model {
 
     Coordinate3D convert2Dto3D(Coordinate2D c) {
         return new Coordinate3D(c.y, 0, c.x);
-    }
-
-    public void setN(int n) {
-        this.n = n + 1;
-        coordinate = new Coordinate3D[this.n][m];
-        updateCoordinate();
-    }
-
-    public void setM(int m) {
-        this.m = m;
-        coordinate = new Coordinate3D[n][m];
-        updateCoordinate();
-    }
-
-    public void setK(int k) {
-        this.k = k;
-        updateCoordinate();
     }
 
     public Color getColor() {

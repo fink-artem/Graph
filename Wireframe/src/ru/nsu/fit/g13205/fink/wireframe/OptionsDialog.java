@@ -46,7 +46,7 @@ public final class OptionsDialog extends JDialog {
 
         JPanel nPanel = new JPanel();
         nPanel.add(new JLabel("n "));
-        JSpinner nSpinner = new JSpinner(new SpinnerNumberModel(data.getN(), 1, 100, 1));
+        JSpinner nSpinner = new JSpinner(new SpinnerNumberModel(data.getN(), 1, 50, 1));
         nSpinner.addChangeListener((ChangeEvent e) -> {
             data.setN((int) nSpinner.getValue());
             initView.repaint();
@@ -57,7 +57,7 @@ public final class OptionsDialog extends JDialog {
 
         JPanel mPanel = new JPanel();
         mPanel.add(new JLabel("m "));
-        JSpinner mSpinner = new JSpinner(new SpinnerNumberModel(data.getM(), 1, 100, 1));
+        JSpinner mSpinner = new JSpinner(new SpinnerNumberModel(data.getM(), 1, 50, 1));
         mSpinner.addChangeListener((ChangeEvent e) -> {
             data.setM((int) mSpinner.getValue());
             initView.repaint();
@@ -100,7 +100,7 @@ public final class OptionsDialog extends JDialog {
         JSpinner bSpinner = new JSpinner(new SpinnerNumberModel(data.getB(), 0, 1.0, 0.01));
         bSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         aSpinner.addChangeListener((ChangeEvent e) -> {
-            if ((double) aSpinner.getValue() <= (double) bSpinner.getValue()) {
+            if ((double) aSpinner.getValue() < (double) bSpinner.getValue()) {
                 data.setA((double) aSpinner.getValue());
                 initView.repaint();
             } else {
@@ -108,7 +108,7 @@ public final class OptionsDialog extends JDialog {
             }
         });
         bSpinner.addChangeListener((ChangeEvent e) -> {
-            if ((double) aSpinner.getValue() <= (double) bSpinner.getValue()) {
+            if ((double) aSpinner.getValue() < (double) bSpinner.getValue()) {
                 data.setB((double) bSpinner.getValue());
                 initView.repaint();
             } else {
@@ -129,7 +129,7 @@ public final class OptionsDialog extends JDialog {
         dPanel.add(new JLabel("d "));
         JSpinner dSpinner = new JSpinner(new SpinnerNumberModel(data.getD(), 0, 6.28, 0.01));
         cSpinner.addChangeListener((ChangeEvent e) -> {
-            if ((double) cSpinner.getValue() <= (double) dSpinner.getValue()) {
+            if ((double) cSpinner.getValue() < (double) dSpinner.getValue()) {
                 data.setC((double) cSpinner.getValue());
                 initView.repaint();
             } else {
@@ -137,7 +137,7 @@ public final class OptionsDialog extends JDialog {
             }
         });
         dSpinner.addChangeListener((ChangeEvent e) -> {
-            if ((double) cSpinner.getValue() <= (double) dSpinner.getValue()) {
+            if ((double) cSpinner.getValue() < (double) dSpinner.getValue()) {
                 data.setD((double) dSpinner.getValue());
                 initView.repaint();
             } else {

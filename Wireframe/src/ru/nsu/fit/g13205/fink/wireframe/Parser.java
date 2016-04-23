@@ -17,7 +17,7 @@ public class Parser {
             double d;
             if (search != -1) {
                 number = Integer.parseInt(s.substring(0, search));
-                if (number < 1) {
+                if (number < 1 || number > 50) {
                     throw new Exception();
                 }
                 data.setN(number);
@@ -28,7 +28,7 @@ public class Parser {
             search = s.indexOf(" ");
             if (search != -1) {
                 number = Integer.parseInt(s.substring(0, search));
-                if (number < 1) {
+                if (number < 1 || number > 50) {
                     throw new Exception();
                 }
                 data.setM(number);
@@ -39,7 +39,7 @@ public class Parser {
             search = s.indexOf(" ");
             if (search != -1) {
                 number = Integer.parseInt(s.substring(0, search));
-                if (number < 1) {
+                if (number < 1 || number > 50) {
                     throw new Exception();
                 }
                 data.setK(number);
@@ -214,8 +214,7 @@ public class Parser {
                 }
                 data.setPivotsListInModel(i, pivotList);
             }
-        } catch (NullPointerException e) {
-        }
+        } 
         return data;
     }
 
@@ -253,7 +252,7 @@ public class Parser {
         s = getNextLine(reader);
         search = s.indexOf(" ");
         if (search != -1) {
-            matrix[1][1] = Double.parseDouble(s.substring(0, search));
+            matrix[1][0] = Double.parseDouble(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
@@ -270,7 +269,7 @@ public class Parser {
         s = getNextLine(reader);
         search = s.indexOf(" ");
         if (search != -1) {
-            matrix[2][1] = Double.parseDouble(s.substring(0, search));
+            matrix[2][0] = Double.parseDouble(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();

@@ -24,7 +24,7 @@ public class Data {
     private int bb;
 
     int addNewModel(double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
-        modelList.add(new Model(n, m, k, cx, cy, cz, rotateMatrix, color));
+        modelList.add(new Model(this, cx, cy, cz, rotateMatrix, color));
         return modelList.size() - 1;
     }
 
@@ -47,24 +47,29 @@ public class Data {
     List<Coordinate2D> getPivots(int modelNumber) {
         return modelList.get(modelNumber).getPivotsList();
     }
-    
-    Color getModelColor(int modelNumber){
+
+    Color getModelColor(int modelNumber) {
         return modelList.get(modelNumber).getColor();
     }
 
     Coordinate3D[][] getCoordinate(int modelNumber) {
         Coordinate3D[][] coordinate = modelList.get(modelNumber).getCoordinate();
-        int n = this.n + 1;
+        int n = coordinate.length;
+        int m = coordinate[0].length;
         Coordinate3D[][] newCoordinate = new Coordinate3D[n][m];
         double[][] matrixP = new double[4][1];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
-                matrixP[0][0] = coordinate[i][j].x;
-                matrixP[1][0] = coordinate[i][j].y;
-                matrixP[2][0] = coordinate[i][j].z;
-                matrixP[3][0] = coordinate[i][j].w;
+                try {
+                    matrixP[0][0] = coordinate[i][j].x;
+                    matrixP[1][0] = coordinate[i][j].y;
+                    matrixP[2][0] = coordinate[i][j].z;
+                    matrixP[3][0] = coordinate[i][j].w;
+                } catch (NullPointerException e) {
+                }
                 matrixP = MatrixOperation.multiply(rotateMatrix, matrixP);
                 newCoordinate[i][j] = new Coordinate3D(matrixP[0][0] / matrixP[3][0], matrixP[1][0] / matrixP[3][0], matrixP[2][0] / matrixP[3][0]);
+
             }
         }
         return newCoordinate;
@@ -84,39 +89,37 @@ public class Data {
 
     public void setN(int n) {
         this.n = n;
-        for (Model model : modelList) {
-            model.setN(n);
-        }
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setM(int m) {
         this.m = m;
-        for (Model model : modelList) {
-            model.setM(m);
-        }
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setK(int k) {
         this.k = k;
-        for (Model model : modelList) {
-            model.setK(k);
-        }
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setA(double a) {
         this.a = a;
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setB(double b) {
         this.b = b;
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setC(double c) {
         this.c = c;
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setD(double d) {
         this.d = d;
+        modelList.stream().forEach(model -> model.updateCoordinate());
     }
 
     public void setZn(double zn) {
@@ -179,7 +182,7 @@ public class Data {
         rotateMatrix = MatrixOperation.multiply(Matrix.getRotateZMatrix(angle), rotateMatrix);
     }
 
-    public int getModelNumber(){
+    public int getModelNumber() {
         return modelList.size();
     }
 
@@ -210,8 +213,8 @@ public class Data {
     public double getSh() {
         return sh;
     }
-    
-    public Model getModel(int modelNumber){
+
+    public Model getModel(int modelNumber) {
         return modelList.get(modelNumber);
     }
 }

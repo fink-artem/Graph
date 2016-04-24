@@ -8,6 +8,7 @@ public class Data {
 
     private final List<Model> modelList = new ArrayList<>();
     private double[][] rotateMatrix;
+    private int rotatingModelNumber = -1;
     private int n;
     private int m;
     private int k;
@@ -22,6 +23,7 @@ public class Data {
     private int br;
     private int bg;
     private int bb;
+    private double max;
 
     int addNewModel(double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
         modelList.add(new Model(this, cx, cy, cz, rotateMatrix, color));
@@ -57,6 +59,7 @@ public class Data {
         int n = coordinate.length;
         int m = coordinate[0].length;
         Coordinate3D[][] newCoordinate = new Coordinate3D[n][m];
+        double[][] matrix = MatrixOperation.multiply(rotateMatrix, modelList.get(modelNumber).getMatrixM1());
         double[][] matrixP = new double[4][1];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
@@ -67,12 +70,56 @@ public class Data {
                     matrixP[3][0] = coordinate[i][j].w;
                 } catch (NullPointerException e) {
                 }
-                matrixP = MatrixOperation.multiply(rotateMatrix, matrixP);
+                matrixP = MatrixOperation.multiply(matrix, matrixP);
                 newCoordinate[i][j] = new Coordinate3D(matrixP[0][0] / matrixP[3][0], matrixP[1][0] / matrixP[3][0], matrixP[2][0] / matrixP[3][0]);
-
+                if (Math.abs(newCoordinate[i][j].x) > max) {
+                    max = Math.abs(newCoordinate[i][j].x);
+                }
+                if (Math.abs(newCoordinate[i][j].y) > max) {
+                    max = Math.abs(newCoordinate[i][j].y);
+                }
+                if (Math.abs(newCoordinate[i][j].z) > max) {
+                    max = Math.abs(newCoordinate[i][j].z);
+                }
             }
         }
         return newCoordinate;
+    }
+
+    List<Coordinate3D[][]> getCoordinate() {
+        List<Coordinate3D[][]> list = new ArrayList<>();
+        int size = modelList.size();
+        max = 0;
+        for (int i = 0; i < size; i++) {
+            list.add(getCoordinate(i));
+        }
+        double[][] matrix = Matrix.getScaleMatrix(1.0 / max);
+        Coordinate3D[][] coordinate;
+        double[][] matrixP = new double[4][1];
+        int n;
+        int m;
+        for (int l = 0; l < size; l++) {
+            coordinate = list.get(l);
+            n = coordinate.length;
+            m = coordinate[0].length;
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < m; j++) {
+                    try {
+                        matrixP[0][0] = coordinate[i][j].x;
+                        matrixP[1][0] = coordinate[i][j].y;
+                        matrixP[2][0] = coordinate[i][j].z;
+                        matrixP[3][0] = coordinate[i][j].w;
+                    } catch (NullPointerException e) {
+                    }
+                    matrixP = MatrixOperation.multiply(matrix, matrixP);
+                    coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
+                    coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
+                    coordinate[i][j].z = matrixP[2][0] / matrixP[3][0];
+                    coordinate[i][j].w = 1;
+                }
+            }
+        }
+        return list;
     }
 
     void setPivotsListInModel(int modelNumber, List<Coordinate2D> pivotsList) {
@@ -217,4 +264,13 @@ public class Data {
     public Model getModel(int modelNumber) {
         return modelList.get(modelNumber);
     }
+
+    public int getRotatingModelNumber() {
+        return rotatingModelNumber;
+    }
+
+    public void setRotatingModelNumber(int rotatingModelNumber) {
+        this.rotatingModelNumber = rotatingModelNumber;
+    }
+
 }

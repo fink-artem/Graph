@@ -110,7 +110,10 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onOptions() {
-        optionsDialog = new OptionsDialog(this, data, initView);
+        if (optionsDialog == null || !optionsDialog.isVisible()) {
+            data.setRotatingModelNumber(0);
+            optionsDialog = new OptionsDialog(this, data, initView);
+        }
         optionsDialog.setVisible(true);
     }
 

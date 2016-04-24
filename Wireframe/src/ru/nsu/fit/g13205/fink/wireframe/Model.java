@@ -6,13 +6,13 @@ import java.util.List;
 
 public class Model {
 
-    private final double STEP = 0.001;
-    private final Color color;
+    private static final double STEP = 0.001;
+    private Color color;
     private Coordinate3D[][] coordinate;
     private List<Coordinate2D> pivotsList = new ArrayList<>();
     private double[][] matrixM1 = new double[4][4];
     private double[][] rotateMatrix;
-    private Data data;
+    private final Data data;
     private double cx;
     private double cy;
     private double cz;
@@ -180,27 +180,8 @@ public class Model {
                 copy = new Coordinate3D(coordinate[i][0].x, coordinate[i][0].y, coordinate[i][0].z);
                 for (int j = 0; j < m2; j++) {
                     coordinate[i][j] = new Coordinate3D(copy.x * Math.cos(start + j * edgeLength), copy.x * Math.sin(start + j * edgeLength), copy.z);
-
                 }
             } catch (NullPointerException e) {
-            }
-        }
-        System.out.println(start + " " + (start + (m2 - 1) * edgeLength));
-        double[][] matrixP = new double[4][1];
-        for (int i = 0; i < n2; i++) {
-            for (int j = 0; j < m2; j++) {
-                try {
-                    matrixP[0][0] = coordinate[i][j].x;
-                    matrixP[1][0] = coordinate[i][j].y;
-                    matrixP[2][0] = coordinate[i][j].z;
-                    matrixP[3][0] = coordinate[i][j].w;
-                } catch (NullPointerException e) {
-                }
-                matrixP = MatrixOperation.multiply(matrixM1, matrixP);
-                coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
-                coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
-                coordinate[i][j].z = matrixP[2][0] / matrixP[3][0];
-                coordinate[i][j].w = 1;
             }
         }
     }
@@ -227,6 +208,44 @@ public class Model {
 
     public double getCz() {
         return cz;
+    }
+
+    public void setCx(double cx) {
+        this.cx = cx;
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public void setCy(double cy) {
+        this.cy = cy;
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public void setCz(double cz) {
+        this.cz = cz;
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public void rotateX(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateXMatrix(angle), rotateMatrix);
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public void rotateY(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateYMatrix(angle), rotateMatrix);
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public void rotateZ(double angle) {
+        rotateMatrix = MatrixOperation.multiply(Matrix.getRotateZMatrix(angle), rotateMatrix);
+        matrixM1 = MatrixOperation.multiply(Matrix.getTranslateMatrix(cx, cy, cz), rotateMatrix);
+    }
+
+    public double[][] getMatrixM1() {
+        return matrixM1;
     }
 
 }

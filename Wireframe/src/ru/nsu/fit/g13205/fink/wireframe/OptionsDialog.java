@@ -5,10 +5,13 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,19 +23,15 @@ import javax.swing.event.ChangeEvent;
 
 public final class OptionsDialog extends JDialog {
 
-    public static final boolean SUCCESS = true;
-    public static final boolean FAILED = false;
     private final int DIALOG_WIDTH = 550;
-    private final int DIALOG_HEIGHT = 500;
+    private final int DIALOG_HEIGHT = 550;
     private final int SPLAIN_PANEL_WIDTH = DIALOG_WIDTH;
     private final int SPLAIN_PANEL_HEIGHT = 350;
     private final int SPINNER_WIDTH = 80;
     private final int SPINNER_HEIGHT = 20;
-    private final Data data;
 
     public OptionsDialog(JFrame frame, final Data data, InitView initView) {
-        super(frame, true);
-        this.data = data;
+        super(frame, false);
         setTitle("Options");
         setResizable(false);
         setBounds(Toolkit.getDefaultToolkit().getScreenSize().width / 2 - DIALOG_WIDTH / 2, Toolkit.getDefaultToolkit().getScreenSize().height / 2 - DIALOG_HEIGHT / 2, DIALOG_WIDTH, DIALOG_HEIGHT);
@@ -42,7 +41,7 @@ public final class OptionsDialog extends JDialog {
         add(splainPanel);
         JPanel mainPanel = new JPanel();
         mainPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, 100);
-        JPanel optionsPanel = new JPanel(new GridLayout(3, 4));
+        JPanel optionsPanel = new JPanel(new GridLayout(4, 4));
 
         JPanel nPanel = new JPanel();
         nPanel.add(new JLabel("n "));
@@ -80,10 +79,6 @@ public final class OptionsDialog extends JDialog {
         JPanel numberPanel = new JPanel();
         numberPanel.add(new JLabel("№"));
         JSpinner numberSpinner = new JSpinner(new SpinnerNumberModel(0, 0, data.getModelNumber() - 1, 1));
-        numberSpinner.addChangeListener((ChangeEvent e) -> {
-            splainPanel.setModelNumber((int) numberSpinner.getValue());
-            splainPanel.repaint();
-        });
         numberSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         numberPanel.add(numberSpinner);
         optionsPanel.add(numberPanel);
@@ -191,10 +186,73 @@ public final class OptionsDialog extends JDialog {
         shSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
         shPanel.add(shSpinner);
         optionsPanel.add(shPanel);
-        optionsPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT - SPLAIN_PANEL_HEIGHT);
+
+        JPanel xPanel = new JPanel();
+        xPanel.add(new JLabel("x "));
+        JSpinner xSpinner = new JSpinner(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCx(), -1000, 1000, 1));
+        xSpinner.addChangeListener((ChangeEvent e) -> {
+            data.getModel((int) numberSpinner.getValue()).setCx((double) xSpinner.getValue());
+            initView.repaint();
+        });
+        xSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
+        xPanel.add(xSpinner);
+        optionsPanel.add(xPanel);
+
+        JPanel yPanel = new JPanel();
+        yPanel.add(new JLabel("y "));
+        JSpinner ySpinner = new JSpinner(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCy(), -1000, 1000, 1));
+        ySpinner.addChangeListener((ChangeEvent e) -> {
+            data.getModel((int) numberSpinner.getValue()).setCy((double) ySpinner.getValue());
+            initView.repaint();
+        });
+        ySpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
+        yPanel.add(ySpinner);
+        optionsPanel.add(yPanel);
+
+        JPanel zPanel = new JPanel();
+        zPanel.add(new JLabel("z "));
+        JSpinner zSpinner = new JSpinner(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCz(), -1000, 1000, 1));
+        zSpinner.addChangeListener((ChangeEvent e) -> {
+            data.getModel((int) numberSpinner.getValue()).setCz((double) zSpinner.getValue());
+            initView.repaint();
+        });
+        zSpinner.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
+        zPanel.add(zSpinner);
+        optionsPanel.add(zPanel);
+
+        JPanel colorPanel = new JPanel();
+        JButton colorButton = new JButton();
+        colorButton.setPreferredSize(new Dimension(SPINNER_WIDTH, SPINNER_HEIGHT));
+        colorButton.setBackground(data.getModel((int) numberSpinner.getValue()).getColor());
+        colorButton.setContentAreaFilled(false);
+        colorButton.setOpaque(true);
+        colorButton.addActionListener((ActionEvent actionEvent) -> {
+            Color initialBackground = colorButton.getBackground();
+            Color background = JColorChooser.showDialog(null, "Change color", initialBackground);
+            if (background != null) {
+                colorButton.setBackground(background);
+                data.getModel((int) numberSpinner.getValue()).setColor(background);
+                initView.repaint();
+            }
+        });
+        colorPanel.add(colorButton);
+        optionsPanel.add(colorPanel);
+
+        numberSpinner.addChangeListener((ChangeEvent e) -> {
+            int number = (int) numberSpinner.getValue();
+            splainPanel.setModelNumber(number);
+            xSpinner.setModel(new SpinnerNumberModel(data.getModel(number).getCx(), -1000, 1000, 1));
+            ySpinner.setModel(new SpinnerNumberModel(data.getModel(number).getCy(), -1000, 1000, 1));
+            zSpinner.setModel(new SpinnerNumberModel(data.getModel(number).getCz(), -1000, 1000, 1));
+            colorButton.setBackground(data.getModel(number).getColor());
+            data.setRotatingModelNumber(number);
+            splainPanel.repaint();
+        });
+
+        mainPanel.setBounds(0, SPLAIN_PANEL_HEIGHT, DIALOG_WIDTH, DIALOG_HEIGHT - SPLAIN_PANEL_HEIGHT);
         mainPanel.add(optionsPanel);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1, 5, 15));
 
         JButton addButton = new JButton(new ImageIcon(getClass().getResource("resources/Add.png")));
         addButton.addActionListener((ActionEvent ae) -> {
@@ -214,6 +272,10 @@ public final class OptionsDialog extends JDialog {
             splainPanel.repaint();
             initView.repaint();
             numberSpinner.setModel(new SpinnerNumberModel(numberModel, 0, numberModel, 1));
+            xSpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCx(), -1000, 1000, 1));
+            ySpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCy(), -1000, 1000, 1));
+            zSpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCz(), -1000, 1000, 1));
+            colorButton.setBackground(data.getModel((int) numberSpinner.getValue()).getColor());
         });
         buttonPanel.add(addButton);
         JButton deleteButton = new JButton(new ImageIcon(getClass().getResource("resources/Delete.png")));
@@ -230,10 +292,44 @@ public final class OptionsDialog extends JDialog {
         });
         buttonPanel.add(deleteButton);
         JButton okButton = new JButton("OK");
-        okButton.addActionListener((ActionEvent ae) -> dispose());
+        okButton.addActionListener((ActionEvent ae) -> {
+            data.setRotatingModelNumber(-1);
+            dispose();
+        });
         buttonPanel.add(okButton);
         mainPanel.add(buttonPanel);
         add(mainPanel);
+        addWindowListener(new WindowListener() {
+
+            @Override
+            public void windowOpened(WindowEvent e) {
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                data.setRotatingModelNumber(-1);
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+            }
+        });
     }
 
 }

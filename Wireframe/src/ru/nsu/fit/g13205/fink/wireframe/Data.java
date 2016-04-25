@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Data {
 
+    private final Coordinate3D eyeMatrix = new Coordinate3D(0, 0, -10);
+    private final Coordinate3D refMatrix = new Coordinate3D(0, 0, 10);
+    private final Coordinate3D upMatrix = new Coordinate3D(0, 1, 0);
     private final List<Model> modelList = new ArrayList<>();
     private double[][] rotateMatrix;
     private int rotatingModelNumber = -1;
@@ -24,6 +27,7 @@ public class Data {
     private int bg;
     private int bb;
     private double max;
+    private double min;
 
     int addNewModel(double cx, double cy, double cz, double[][] rotateMatrix, Color color) {
         modelList.add(new Model(this, cx, cy, cz, rotateMatrix, color));
@@ -72,14 +76,23 @@ public class Data {
                 }
                 matrixP = MatrixOperation.multiply(matrix, matrixP);
                 newCoordinate[i][j] = new Coordinate3D(matrixP[0][0] / matrixP[3][0], matrixP[1][0] / matrixP[3][0], matrixP[2][0] / matrixP[3][0]);
-                if (Math.abs(newCoordinate[i][j].x) > max) {
-                    max = Math.abs(newCoordinate[i][j].x);
+                if (newCoordinate[i][j].x > max) {
+                    max = newCoordinate[i][j].x;
                 }
-                if (Math.abs(newCoordinate[i][j].y) > max) {
-                    max = Math.abs(newCoordinate[i][j].y);
+                if (newCoordinate[i][j].y > max) {
+                    max = newCoordinate[i][j].y;
                 }
-                if (Math.abs(newCoordinate[i][j].z) > max) {
-                    max = Math.abs(newCoordinate[i][j].z);
+                if (newCoordinate[i][j].z > max) {
+                    max = newCoordinate[i][j].z;
+                }
+                if (newCoordinate[i][j].x < min) {
+                    min = newCoordinate[i][j].x;
+                }
+                if (newCoordinate[i][j].y < min) {
+                    min = newCoordinate[i][j].y;
+                }
+                if (newCoordinate[i][j].z < min) {
+                    min = newCoordinate[i][j].z;
                 }
             }
         }
@@ -89,15 +102,17 @@ public class Data {
     List<Coordinate3D[][]> getCoordinate() {
         List<Coordinate3D[][]> list = new ArrayList<>();
         int size = modelList.size();
-        max = 0;
+        max = Integer.MIN_VALUE;
+        min = Integer.MAX_VALUE;
         for (int i = 0; i < size; i++) {
             list.add(getCoordinate(i));
         }
-        double[][] matrix = Matrix.getScaleMatrix(1.0 / max);
+        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(sw, sh, zn, zf), MatrixOperation.multiply(Matrix.getMcamMatrix(eyeMatrix, refMatrix, upMatrix), Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min)))));
         Coordinate3D[][] coordinate;
         double[][] matrixP = new double[4][1];
         int n;
         int m;
+        double zoom = 50000.0;
         for (int l = 0; l < size; l++) {
             coordinate = list.get(l);
             n = coordinate.length;
@@ -112,9 +127,9 @@ public class Data {
                     } catch (NullPointerException e) {
                     }
                     matrixP = MatrixOperation.multiply(matrix, matrixP);
-                    coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
-                    coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
-                    coordinate[i][j].z = matrixP[2][0] / matrixP[3][0];
+                    coordinate[i][j].x = matrixP[0][0] / matrixP[3][0] * zoom;
+                    coordinate[i][j].y = matrixP[1][0] / matrixP[3][0] * zoom;
+                    coordinate[i][j].z = matrixP[2][0] / matrixP[3][0] * zoom;
                     coordinate[i][j].w = 1;
                 }
             }
@@ -170,7 +185,9 @@ public class Data {
     }
 
     public void setZn(double zn) {
-        this.zn = zn;
+        if (zn >= 0 && zn <= 100) {
+            this.zn = zn;
+        }
     }
 
     public void setZf(double zf) {
@@ -271,6 +288,18 @@ public class Data {
 
     public void setRotatingModelNumber(int rotatingModelNumber) {
         this.rotatingModelNumber = rotatingModelNumber;
+    }
+
+    public void clearRotate() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i == j) {
+                    rotateMatrix[i][j] = 1;
+                } else {
+                    rotateMatrix[i][j] = 0;
+                }
+            }
+        }
     }
 
 }

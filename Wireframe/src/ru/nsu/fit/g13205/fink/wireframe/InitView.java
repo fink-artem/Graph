@@ -4,6 +4,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -29,13 +31,13 @@ public class InitView extends JPanel {
                 if (taken) {
                     int number = data.getRotatingModelNumber();
                     if (number == -1) {
-                        InitView.this.data.rotateZ((e.getX() - startPoint.x) / SPEED);
-                        InitView.this.data.rotateY((e.getY() - startPoint.y) / SPEED);
+                        InitView.this.data.rotateY((e.getX() - startPoint.x) / SPEED);
+                        InitView.this.data.rotateX(-(e.getY() - startPoint.y) / SPEED);
                         startPoint = e.getPoint();
                         repaint();
                     } else {
-                        InitView.this.data.getModel(number).rotateZ((e.getX() - startPoint.x) / SPEED);
-                        InitView.this.data.getModel(number).rotateY((e.getY() - startPoint.y) / SPEED);
+                        InitView.this.data.getModel(number).rotateY((e.getX() - startPoint.x) / SPEED);
+                        InitView.this.data.getModel(number).rotateX(-(e.getY() - startPoint.y) / SPEED);
                         startPoint = e.getPoint();
                         repaint();
                     }
@@ -62,6 +64,15 @@ public class InitView extends JPanel {
             }
 
         });
+
+        addMouseWheelListener(new MouseWheelListener() {
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent e) {
+                data.setZn(data.getZn() - e.getPreciseWheelRotation());
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -83,21 +94,30 @@ public class InitView extends JPanel {
             int n = coordinate.length;
             int m = coordinate[0].length;
             for (int l = 1; l < m; l++) {
-                g1.drawLine((int) Math.round(coordinate[0][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[0][l].z), (int) Math.round(coordinate[0][l - 1].y) + width / 2, (int) Math.round(width / 2 - coordinate[0][l - 1].z));
+                if (coordinate[0][l].x <= 100.0 && coordinate[0][l].x >= -100.0 && coordinate[0][l].y <= 100.0 && coordinate[0][l].y >= -100.0) {
+                    g1.drawLine((int) Math.round(coordinate[0][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][l].y), (int) Math.round(coordinate[0][l - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[0][l - 1].y));
+                }
             }
             for (int j = 1; j < n; j++) {
-                g1.drawLine((int) Math.round(coordinate[j][0].y) + width / 2, (int) Math.round(width / 2 - coordinate[j][0].z), (int) Math.round(coordinate[j - 1][0].y) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][0].z));
+                if (coordinate[j][0].x <= 100.0 && coordinate[j][0].x >= -100.0 && coordinate[j][0].y <= 100.0 && coordinate[j][0].y >= -100.0) {
+                    g1.drawLine((int) Math.round(coordinate[j][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][0].y), (int) Math.round(coordinate[j - 1][0].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][0].y));
+                }
                 if (j % k == 0) {
                     for (int l = 1; l < m; l++) {
-                        g1.drawLine((int) Math.round(coordinate[j][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j][l - 1].y) + width / 2, (int) Math.round(width / 2 - coordinate[j][l - 1].z));
-                        if (l % k == 0) {
-                            g1.drawLine((int) Math.round(coordinate[j][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j - 1][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].z));
+                        System.out.println(coordinate[j][l].x);
+                        if (coordinate[j][l].x <= 100.0 && coordinate[j][l].x >= -100.0 && coordinate[j][l].y <= 100.0 && coordinate[j][l].y >= -100.0) {
+                            g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].y), (int) Math.round(coordinate[j][l - 1].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l - 1].y));
+                            if (l % k == 0) {
+                                g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].y), (int) Math.round(coordinate[j - 1][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].y));
+                            }
                         }
                     }
                 } else {
                     for (int l = 1; l < m; l++) {
-                        if (l % k == 0) {
-                            g1.drawLine((int) Math.round(coordinate[j][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].z), (int) Math.round(coordinate[j - 1][l].y) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].z));
+                        if (coordinate[j][l].x <= 100.0 && coordinate[j][l].x >= -100.0 && coordinate[j][l].y <= 100.0 && coordinate[j][l].y >= -100.0) {
+                            if (l % k == 0) {
+                                g1.drawLine((int) Math.round(coordinate[j][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j][l].y), (int) Math.round(coordinate[j - 1][l].x) + width / 2, (int) Math.round(width / 2 - coordinate[j - 1][l].y));
+                            }
                         }
                     }
                 }

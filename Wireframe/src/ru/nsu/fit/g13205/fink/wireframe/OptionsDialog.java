@@ -167,7 +167,7 @@ public final class OptionsDialog extends JDialog {
 
         JPanel swPanel = new JPanel();
         swPanel.add(new JLabel("sw"));
-        JSpinner swSpinner = new JSpinner(new SpinnerNumberModel(data.getSw(), 0, 100, 1));
+        JSpinner swSpinner = new JSpinner(new SpinnerNumberModel(data.getSw(), 0, 1000, 1));
         swSpinner.addChangeListener((ChangeEvent e) -> {
             data.setSw((double) swSpinner.getValue());
             initView.repaint();
@@ -178,7 +178,7 @@ public final class OptionsDialog extends JDialog {
 
         JPanel shPanel = new JPanel();
         shPanel.add(new JLabel("sh"));
-        JSpinner shSpinner = new JSpinner(new SpinnerNumberModel(data.getSh(), 0, 100, 1));
+        JSpinner shSpinner = new JSpinner(new SpinnerNumberModel(data.getSh(), 0, 1000, 1));
         shSpinner.addChangeListener((ChangeEvent e) -> {
             data.setSh((double) shSpinner.getValue());
             initView.repaint();

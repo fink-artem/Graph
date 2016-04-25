@@ -56,4 +56,30 @@ public class Matrix {
         return T;
     }
 
+    public static double[][] getMcamMatrix(Coordinate3D eye, Coordinate3D ref, Coordinate3D up) {
+        Coordinate3D k = eye.minus(ref).divide(ref.minus(eye).getNorm());
+        Coordinate3D i = up.multiply(k).divide(up.multiply(k).getNorm());
+        Coordinate3D j = k.multiply(i);
+        double[][] T = {
+            {i.x, i.y, i.z, 0},
+            {j.x, j.y, j.z, 0},
+            {k.x, k.y, k.z, 0},
+            {0, 0, 0, 1}};
+        double[][] T2 = {
+            {1, 0, 0, -eye.x},
+            {0, 1, 0, -eye.y},
+            {0, 0, 1, -eye.z},
+            {0, 0, 0, 1}};
+        return MatrixOperation.multiply(T, T2);
+    }
+
+    public static double[][] getProjMatrix(double sw, double sh, double zn, double zf) {
+        double[][] T = {
+            {2.0 * zn / sw, 0, 0, 0},
+            {0, 2.0 * zn / sh, 0, 0},
+            {0, 0, zf / (zf - zn), -zn * zf / (zf - zn)},
+            {0, 0, 1, 0}};
+        return T;
+    }
+
 }

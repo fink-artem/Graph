@@ -35,6 +35,7 @@ public class InitMainWindow extends MainFrame {
             addMenuSeparator("File");
             addMenuItem("File/Exit", "Exit", KeyEvent.VK_X, "Exit.png", "onExit", statusBar);
             addSubMenu("Edit", KeyEvent.VK_F);
+            addMenuItem("Edit/Init", "Init", KeyEvent.VK_X, "Init.png", "onInit", statusBar);
             addMenuItem("Edit/Options", "Options", KeyEvent.VK_X, "Options.png", "onOptions", statusBar);
             addSubMenu("Help", KeyEvent.VK_H);
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
@@ -42,6 +43,7 @@ public class InitMainWindow extends MainFrame {
             addToolBarButton("File/Open", "Open an existing document", statusBar);
             addToolBarButton("File/Save", "Save the active document", statusBar);
             addToolBarSeparator();
+            addToolBarButton("Edit/Init", "Init", statusBar);
             addToolBarButton("Edit/Options", "Options", statusBar);
             addToolBarSeparator();
             addToolBarButton("Help/About", "Information about author", statusBar);
@@ -115,6 +117,11 @@ public class InitMainWindow extends MainFrame {
             optionsDialog = new OptionsDialog(this, data, initView);
         }
         optionsDialog.setVisible(true);
+    }
+    
+    public void onInit(){
+        data.clearRotate();
+        initView.repaint();
     }
 
     public void onExit() {

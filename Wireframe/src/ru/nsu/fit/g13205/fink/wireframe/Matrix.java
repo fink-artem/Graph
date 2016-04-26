@@ -73,12 +73,20 @@ public class Matrix {
         return MatrixOperation.multiply(T, T2);
     }
 
+    /*public static double[][] getProjMatrix(double sw, double sh, double zn, double zf) {
+     double[][] T = {
+     {2.0 * zn / sw, 0, 0, 0},
+     {0, 2.0 * zn / sh, 0, 0},
+     {0, 0, zf / (zf - zn), -zn * zf / (zf - zn)},
+     {0, 0, 1, 0}};
+     return T;
+     }*/
     public static double[][] getProjMatrix(double sw, double sh, double zn, double zf) {
         double[][] T = {
-            {2.0 * zn / sw, 0, 0, 0},
-            {0, 2.0 * zn / sh, 0, 0},
-            {0, 0, zf / (zf - zn), -zn * zf / (zf - zn)},
-            {0, 0, 1, 0}};
+            {1, 0, 0, 0},
+            {0, 1, 0, 0},
+            {0, 0, 1, 0},
+            {0, 0, 1.0 / zn, 0}};
         return T;
     }
 

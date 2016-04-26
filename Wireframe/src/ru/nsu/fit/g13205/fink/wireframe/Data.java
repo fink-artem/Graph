@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Data {
 
-    private final Coordinate3D eyeMatrix = new Coordinate3D(0, 0, -10);
-    private final Coordinate3D refMatrix = new Coordinate3D(0, 0, 10);
-    private final Coordinate3D upMatrix = new Coordinate3D(0, 1, 0);
+    public static final Coordinate3D eyeMatrix = new Coordinate3D(-10, 0, 0);
+    public static final Coordinate3D refMatrix = new Coordinate3D(10, 0, 0);
+    public static final Coordinate3D upMatrix = new Coordinate3D(-10, 0, 1);
     private final List<Model> modelList = new ArrayList<>();
     private double[][] rotateMatrix;
     private int rotatingModelNumber = -1;
@@ -112,7 +112,6 @@ public class Data {
         double[][] matrixP = new double[4][1];
         int n;
         int m;
-        double zoom = 50000.0;
         for (int l = 0; l < size; l++) {
             coordinate = list.get(l);
             n = coordinate.length;
@@ -127,9 +126,9 @@ public class Data {
                     } catch (NullPointerException e) {
                     }
                     matrixP = MatrixOperation.multiply(matrix, matrixP);
-                    coordinate[i][j].x = matrixP[0][0] / matrixP[3][0] * zoom;
-                    coordinate[i][j].y = matrixP[1][0] / matrixP[3][0] * zoom;
-                    coordinate[i][j].z = matrixP[2][0] / matrixP[3][0] * zoom;
+                    coordinate[i][j].x = matrixP[0][0] / matrixP[3][0];
+                    coordinate[i][j].y = matrixP[1][0] / matrixP[3][0];
+                    coordinate[i][j].z = matrixP[2][0] / -1;
                     coordinate[i][j].w = 1;
                 }
             }
@@ -300,6 +299,10 @@ public class Data {
                 }
             }
         }
+    }
+    
+    public double[][] getScaleMatrix(){
+        return Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min)));
     }
 
 }

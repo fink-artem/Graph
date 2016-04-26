@@ -1,5 +1,6 @@
 package ru.nsu.fit.g13205.fink.wireframe;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
@@ -84,6 +85,15 @@ public class Drawer {
             c = coordinateToScreen(new Coordinate2D(MatrixOperation.multiply(matrixT, matrixX)[0][0], MatrixOperation.multiply(matrixT, matrixY)[0][0]));
             g.drawLine(c.x, c.y, c2.x, c2.y);
         }
+        g.setColor(Color.WHITE);
+        for (int j = (int) -maxCoordinateX; j < maxCoordinateX; j++) {
+            c = coordinateToScreen(new Coordinate2D(j, 0));
+            g.drawLine(c.x, c.y - 2, c.x, c.y + 2);
+        }
+        for (int j = (int) -maxCoordinateY; j < maxCoordinateY; j++) {
+            c = coordinateToScreen(new Coordinate2D(0, j));
+            g.drawLine(c.x - 2, c.y, c.x + 2, c.y);
+        }
     }
 
     static Point coordinateToScreen(Coordinate2D coordinate) {
@@ -93,5 +103,5 @@ public class Drawer {
     static Coordinate2D screenToCoordinate(Point point) {
         return new Coordinate2D((point.x - centerX) / relation, (centerY - point.y) / relation);
     }
-    
+
 }

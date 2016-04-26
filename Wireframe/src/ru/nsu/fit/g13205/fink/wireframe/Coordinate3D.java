@@ -28,4 +28,10 @@ public class Coordinate3D {
     Coordinate3D multiply(Coordinate3D c) {
         return new Coordinate3D(y * c.z - z * c.y, z * c.x - x * c.z, x * c.y - y * c.x);
     }
+
+    @Override
+    public String toString() {
+        return x + " " + y + " " + z;
+    }
+
 }

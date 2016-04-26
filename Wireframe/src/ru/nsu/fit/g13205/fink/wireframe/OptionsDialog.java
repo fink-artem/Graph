@@ -286,6 +286,10 @@ public final class OptionsDialog extends JDialog {
                 splainPanel.repaint();
                 initView.repaint();
                 numberSpinner.setModel(new SpinnerNumberModel(0, 0, data.getModelNumber() - 1, 1));
+                xSpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCx(), -1000, 1000, 1));
+                ySpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCy(), -1000, 1000, 1));
+                zSpinner.setModel(new SpinnerNumberModel(data.getModel((int) numberSpinner.getValue()).getCz(), -1000, 1000, 1));
+                colorButton.setBackground(data.getModel((int) numberSpinner.getValue()).getColor());
             } else {
                 JOptionPane.showMessageDialog(OptionsDialog.this, "Нельзя удалить все объекты", "Error", JOptionPane.ERROR_MESSAGE);
             }

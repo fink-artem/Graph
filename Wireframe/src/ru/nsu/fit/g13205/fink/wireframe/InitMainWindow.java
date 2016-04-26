@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import ru.nsu.cg.FileUtils;
 import ru.nsu.cg.MainFrame;
 
@@ -22,6 +23,7 @@ public class InitMainWindow extends MainFrame {
     private JLabel statusBar = new JLabel("Ready");
     private InitView initView;
     private OptionsDialog optionsDialog;
+    private JScrollPane scrollPane;
 
     public InitMainWindow() {
         super();
@@ -54,7 +56,8 @@ public class InitMainWindow extends MainFrame {
             } catch (Exception ex) {
             }
             initView = new InitView(data);
-            add(initView);
+            scrollPane = new JScrollPane(initView);
+            add(scrollPane);
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -118,8 +121,8 @@ public class InitMainWindow extends MainFrame {
         }
         optionsDialog.setVisible(true);
     }
-    
-    public void onInit(){
+
+    public void onInit() {
         data.clearRotate();
         initView.repaint();
     }

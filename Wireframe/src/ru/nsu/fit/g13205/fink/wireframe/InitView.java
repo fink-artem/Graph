@@ -154,7 +154,7 @@ public class InitView extends JPanel {
     }
 
     private Point coordinateToScreen(Coordinate3D c) {
-        return new Point((int) Math.round(c.x * 100.0) + width / 2, (int) Math.round(height / 2 - c.y * 100.));
+        return new Point((int) Math.round(c.x * 1000.0 / data.getSw()) + width / 2, (int) Math.round(height / 2 - c.y * 1000.0 / data.getSh()));
     }
 
     void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {

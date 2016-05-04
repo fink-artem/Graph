@@ -35,12 +35,12 @@ public class InitView extends JPanel {
                     int number = data.getRotatingModelNumber();
                     if (number == -1) {
                         InitView.this.data.rotateZ((e.getX() - startPoint.x) / SPEED);
-                        InitView.this.data.rotateY(-(e.getY() - startPoint.y) / SPEED);
+                        InitView.this.data.rotateY((e.getY() - startPoint.y) / SPEED);
                         startPoint = e.getPoint();
                         repaint();
                     } else {
                         InitView.this.data.getModel(number).rotateZ((e.getX() - startPoint.x) / SPEED);
-                        InitView.this.data.getModel(number).rotateY(-(e.getY() - startPoint.y) / SPEED);
+                        InitView.this.data.getModel(number).rotateY((e.getY() - startPoint.y) / SPEED);
                         startPoint = e.getPoint();
                         repaint();
                     }
@@ -154,7 +154,8 @@ public class InitView extends JPanel {
     }
 
     private Point coordinateToScreen(Coordinate3D c) {
-        return new Point((int) Math.round(c.x * 1000.0 / data.getSw()) + width / 2, (int) Math.round(height / 2 - c.y * 1000.0 / data.getSh()));
+        double s = Math.min(data.getSh(),data.getSw());
+        return new Point((int) Math.round(c.x * 1000.0 / s) + width / 2, (int) Math.round(height / 2 - c.y * 1000.0 / s));
     }
 
     void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {

@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Data {
 
-    public static final Coordinate3D eyeMatrix = new Coordinate3D(-10, 0, 0);
-    public static final Coordinate3D refMatrix = new Coordinate3D(10, 0, 0);
-    public static final Coordinate3D upMatrix = new Coordinate3D(-10, 0, 1);
+    public static final Coordinate3D eyeMatrix = new Coordinate3D(10, 0, 0);
+    public static final Coordinate3D refMatrix = new Coordinate3D(-10, 0, 0);
+    public static final Coordinate3D upMatrix = new Coordinate3D(10, 0, 1);
     private final List<Model> modelList = new ArrayList<>();
     private double[][] rotateMatrix;
     private int rotatingModelNumber = -1;

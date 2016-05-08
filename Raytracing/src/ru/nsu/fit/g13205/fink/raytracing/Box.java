@@ -43,18 +43,18 @@ public class Box extends Shape {
     @Override
     public List<Segment> getCoordinate() {
         List<Segment> segmentList = new ArrayList<>();
-        segmentList.add(new Segment(minPoint, new Coordinate3D(minPoint.x, minPoint.y, maxPoint.z)));
-        segmentList.add(new Segment(minPoint, new Coordinate3D(minPoint.x, maxPoint.y, minPoint.z)));
-        segmentList.add(new Segment(minPoint, new Coordinate3D(maxPoint.x, minPoint.y, minPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(minPoint.x, minPoint.y, minPoint.z), new Coordinate3D(minPoint.x, minPoint.y, maxPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(minPoint.x, minPoint.y, minPoint.z), new Coordinate3D(minPoint.x, maxPoint.y, minPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(minPoint.x, minPoint.y, minPoint.z), new Coordinate3D(maxPoint.x, minPoint.y, minPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(minPoint.x, minPoint.y, maxPoint.z), new Coordinate3D(maxPoint.x, minPoint.y, maxPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(minPoint.x, minPoint.y, maxPoint.z), new Coordinate3D(minPoint.x, maxPoint.y, maxPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(minPoint.x, maxPoint.y, minPoint.z), new Coordinate3D(minPoint.x, maxPoint.y, maxPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(minPoint.x, maxPoint.y, minPoint.z), new Coordinate3D(maxPoint.x, maxPoint.y, minPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(maxPoint.x, minPoint.y, minPoint.z), new Coordinate3D(maxPoint.x, maxPoint.y, minPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(maxPoint.x, minPoint.y, minPoint.z), new Coordinate3D(maxPoint.x, minPoint.y, maxPoint.z)));
-        segmentList.add(new Segment(maxPoint, new Coordinate3D(minPoint.x, maxPoint.y, maxPoint.z)));
-        segmentList.add(new Segment(maxPoint, new Coordinate3D(maxPoint.x, maxPoint.y, minPoint.z)));
-        segmentList.add(new Segment(maxPoint, new Coordinate3D(maxPoint.x, minPoint.y, maxPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(maxPoint.x, maxPoint.y, maxPoint.z), new Coordinate3D(minPoint.x, maxPoint.y, maxPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(maxPoint.x, maxPoint.y, maxPoint.z), new Coordinate3D(maxPoint.x, maxPoint.y, minPoint.z)));
+        segmentList.add(new Segment(new Coordinate3D(maxPoint.x, maxPoint.y, maxPoint.z), new Coordinate3D(maxPoint.x, minPoint.y, maxPoint.z)));
         return segmentList;
     }
 }

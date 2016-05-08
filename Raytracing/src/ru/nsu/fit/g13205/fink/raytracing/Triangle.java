@@ -53,9 +53,9 @@ public class Triangle extends Shape {
     @Override
     public List<Segment> getCoordinate() {
         List<Segment> segmentList = new ArrayList<>();
-        segmentList.add(new Segment(point1, point2));
-        segmentList.add(new Segment(point2, point3));
-        segmentList.add(new Segment(point3, point1));
+        segmentList.add(new Segment(new Coordinate3D(point1.x, point1.y, point1.z), new Coordinate3D(point2.x, point2.y, point2.z)));
+        segmentList.add(new Segment(new Coordinate3D(point2.x, point2.y, point2.z), new Coordinate3D(point3.x, point3.y, point3.z)));
+        segmentList.add(new Segment(new Coordinate3D(point3.x, point3.y, point3.z), new Coordinate3D(point1.x, point1.y, point1.z)));
         return segmentList;
     }
 }

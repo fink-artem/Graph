@@ -14,8 +14,8 @@ public class Data {
     private double[][] rotateMatrix = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
     private double zn = 8;
     private double zf = 15;
-    private double sw = 1;
-    private double sh = 1;
+    private double sw = 5;
+    private double sh = 5;
     private double max;
     private double min;
     private Color aRGB;

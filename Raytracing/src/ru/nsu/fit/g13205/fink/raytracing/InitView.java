@@ -110,7 +110,7 @@ public class InitView extends JPanel {
 
     private Point coordinateToScreen(Coordinate3D c) {
         double s = Math.min(data.getSh(), data.getSw());
-        return new Point((int) Math.round(c.x * 1000.0 / s) + width / 2, (int) Math.round(height / 2 - c.y * 1000.0 / s));
+        return new Point((int) Math.round(c.x * 1000.0 / s + width / 2.0), (int) Math.round(height / 2.0 - c.y * 1000.0 / s));
     }
 
     void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {

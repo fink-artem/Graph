@@ -10,4 +10,9 @@ public class Segment {
         this.point2 = point2;
     }
 
+    @Override
+    public String toString() {
+        return point1 + " " + point2;
+    }
+
 }

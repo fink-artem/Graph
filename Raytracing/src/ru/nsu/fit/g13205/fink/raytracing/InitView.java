@@ -21,11 +21,13 @@ public class InitView extends JPanel {
     private int width = 500;
     private int height = 500;
     private Point startPoint;
+    private boolean renderMode = false;
 
     public InitView(Data data) {
         this.data = data;
         setBackground(ViewOptions.BACKGROUND_COLOR);
         setPreferredSize(new Dimension(width + 2 * ViewOptions.MARGIN, height + 2 * ViewOptions.MARGIN));
+        draw();
         addMouseMotionListener(new MouseAdapter() {
 
             @Override
@@ -35,7 +37,7 @@ public class InitView extends JPanel {
                     InitView.this.data.rotateZ((e.getX() - startPoint.x) / SPEED);
                     InitView.this.data.rotateY((e.getY() - startPoint.y) / SPEED);
                     startPoint = e.getPoint();
-                    repaint();
+                    draw();
                 }
             }
 
@@ -62,13 +64,20 @@ public class InitView extends JPanel {
 
         addMouseWheelListener((MouseWheelEvent e) -> {
             InitView.this.data.setZn(InitView.this.data.getZn() - e.getPreciseWheelRotation() / 10);
-            repaint();
+            draw();
         });
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawImage(image, ViewOptions.MARGIN, ViewOptions.MARGIN, this);
+    }
+
+    public final void draw() {
+        if (renderMode) {
+            return;
+        }
         height = (int) Math.round(width * data.getSh() / data.getSw());
         image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         setPreferredSize(new Dimension(width + 2 * ViewOptions.MARGIN, height + 2 * ViewOptions.MARGIN));
@@ -77,14 +86,15 @@ public class InitView extends JPanel {
                 image.setRGB(i, j, Color.BLACK.getRGB());
             }
         }
-        double[][] rotateMatrix = MatrixOperation.multiply(Matrix.getMcamMatrix(Data.eyeMatrix, Data.refMatrix, Data.upMatrix), data.getRotateMatrix());
+        double[][] rotateMatrix = MatrixOperation.multiply(Matrix.getMcamMatrix(data.getEyeVector(), data.getRefVector(), data.getUpVector()), data.getRotateMatrix());
         Graphics g1 = image.getGraphics();
         List<List<Segment>> list = data.getCoordinate();
-        g1.setColor(Color.WHITE);
+        List<Shape> shapeList = data.getShapeList();
         int size = list.size();
         int length;
         for (int i = 0; i < size; i++) {
             List<Segment> segmentList = list.get(i);
+            g1.setColor(new Color(shapeList.get(i).kdr, shapeList.get(i).kdg, shapeList.get(i).kdb));
             length = segmentList.size();
             for (int l = 0; l < length; l++) {
                 drawLine(g1, segmentList.get(l).point1, segmentList.get(l).point2, true);
@@ -105,12 +115,28 @@ public class InitView extends JPanel {
         vector[2][0] = length;
         result = MatrixOperation.multiply(rotateMatrix, vector);
         drawLine(g1, new Coordinate3D(0, 0, 0), new Coordinate3D(-result[0][0] / result[3][0], -result[1][0] / result[3][0], -result[2][0] / result[3][0]), true);
-        g.drawImage(image, ViewOptions.MARGIN, ViewOptions.MARGIN, this);
+        repaint();
+    }
+
+    public void render() {
+        if (!renderMode) {
+            return;
+        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+
+            }
+        }
     }
 
     private Point coordinateToScreen(Coordinate3D c) {
         double s = Math.min(data.getSh(), data.getSw());
         return new Point((int) Math.round(c.x * 1000.0 / s + width / 2.0), (int) Math.round(height / 2.0 - c.y * 1000.0 / s));
+    }
+
+    private Coordinate3D screenToCoordinate(Point p) {
+        double s = Math.min(data.getSh(), data.getSw());
+        return new Coordinate3D((int) Math.round((p.x - width / 2.0) * s / 1000.0), (int) Math.round(-(p.y - height / 2.0) * s / 1000.0), data.getEyeVector().z);
     }
 
     void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {
@@ -129,6 +155,15 @@ public class InitView extends JPanel {
 
     void updateData(Data data) {
         this.data = data;
-        repaint();
+        draw();
     }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public void setRenderMode(boolean renderMode) {
+        this.renderMode = renderMode;
+    }
+
 }

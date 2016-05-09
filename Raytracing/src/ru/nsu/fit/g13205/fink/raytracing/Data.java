@@ -6,9 +6,9 @@ import java.util.List;
 
 public class Data {
 
-    public static final Coordinate3D eyeMatrix = new Coordinate3D(10, 0, 0);
-    public static final Coordinate3D refMatrix = new Coordinate3D(-10, 0, 0);
-    public static final Coordinate3D upMatrix = new Coordinate3D(10, 0, 1);
+    private Coordinate3D eyeVector = new Coordinate3D(10, 0, 0);
+    private Coordinate3D refVector = new Coordinate3D(-10, 0, 0);
+    private Coordinate3D upVector = new Coordinate3D(10, 0, 1);
     private List<Source> sourceList = new ArrayList<>();
     private List<Shape> shapeList = new ArrayList<>();
     private double[][] rotateMatrix = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
@@ -16,15 +16,17 @@ public class Data {
     private double zf = 15;
     private double sw = 5;
     private double sh = 5;
-    private double max;
-    private double min;
+    private double gamma = 0;
+    private int depth = 1;
+    private Quality quality = Quality.NORMAL;
     private Color aRGB;
+    private Color background = Color.WHITE;
 
     List<List<Segment>> getCoordinate() {
         List<List<Segment>> list = new ArrayList<>();
         int size = shapeList.size();
-        max = Integer.MIN_VALUE;
-        min = Integer.MAX_VALUE;
+        double max = Integer.MIN_VALUE;
+        double min = Integer.MAX_VALUE;
         Shape shape;
         for (int i = 0; i < size; i++) {
             shape = shapeList.get(i);
@@ -32,7 +34,7 @@ public class Data {
             min = Math.min(min, shape.getMin());
             list.add(shape.getCoordinate());
         }
-        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(sw, sh, zn, zf), MatrixOperation.multiply(Matrix.getMcamMatrix(eyeMatrix, refMatrix, upMatrix), MatrixOperation.multiply(Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min))), rotateMatrix)));
+        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(sw, sh, zn, zf), MatrixOperation.multiply(Matrix.getMcamMatrix(eyeVector, refVector, upVector), MatrixOperation.multiply(Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min))), rotateMatrix)));
         double[][] matrixP = new double[4][1];
         List<Segment> segmentList;
         Segment segment;
@@ -131,10 +133,6 @@ public class Data {
         }
     }
 
-    public double[][] getScaleMatrix() {
-        return Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min)));
-    }
-
     public Color getaRGB() {
         return aRGB;
     }
@@ -157,6 +155,62 @@ public class Data {
 
     public void setShapeList(List<Shape> shapeList) {
         this.shapeList = shapeList;
+    }
+
+    public double getGamma() {
+        return gamma;
+    }
+
+    public void setGamma(double gamma) {
+        this.gamma = gamma;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public Quality getQuality() {
+        return quality;
+    }
+
+    public void setQuality(Quality quality) {
+        this.quality = quality;
+    }
+
+    public Coordinate3D getEyeVector() {
+        return eyeVector;
+    }
+
+    public void setEyeVector(Coordinate3D eyeMatrix) {
+        this.eyeVector = eyeMatrix;
+    }
+
+    public Coordinate3D getRefVector() {
+        return refVector;
+    }
+
+    public void setRefVector(Coordinate3D refVector) {
+        this.refVector = refVector;
+    }
+
+    public Coordinate3D getUpVector() {
+        return upVector;
+    }
+
+    public void setUpVector(Coordinate3D upVector) {
+        this.upVector = upVector;
+    }
+
+    public Color getBackground() {
+        return background;
+    }
+
+    public void setBackground(Color background) {
+        this.background = background;
     }
 
 }

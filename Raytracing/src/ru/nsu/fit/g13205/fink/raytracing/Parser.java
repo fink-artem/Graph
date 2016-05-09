@@ -2,6 +2,7 @@ package ru.nsu.fit.g13205.fink.raytracing;
 
 import java.awt.Color;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -59,6 +60,7 @@ public class Parser {
                 }
             }
             data.setShapeList(shapeList);
+        } catch (FileNotFoundException | NullPointerException e) {
         }
         return data;
     }
@@ -66,7 +68,7 @@ public class Parser {
     private static String getNextLine(Scanner reader) {
         String s;
         do {
-            if(!reader.hasNext()){
+            if (!reader.hasNext()) {
                 return null;
             }
             s = reader.nextLine();
@@ -151,46 +153,47 @@ public class Parser {
         Coordinate3D center = readCoordinate(s);
         s = getNextLine(reader);
         double radius = Double.parseDouble(s);
-        double kdr, kdg, kdb, ksr, ksg, ksb, power;
+        int kdr, kdg, kdb, ksr, ksg, ksb;
+        double power;
         s = getNextLine(reader);
         int search = s.indexOf(" ");
         if (search != -1) {
-            kdr = Double.parseDouble(s.substring(0, search));
+            kdr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdg = Double.parseDouble(s.substring(0, search));
+            kdg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdb = Double.parseDouble(s.substring(0, search));
+            kdb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksr = Double.parseDouble(s.substring(0, search));
+            ksr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksg = Double.parseDouble(s.substring(0, search));
+            ksg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksb = Double.parseDouble(s.substring(0, search));
+            ksb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
@@ -204,46 +207,47 @@ public class Parser {
         Coordinate3D min = readCoordinate(s);
         s = getNextLine(reader);
         Coordinate3D max = readCoordinate(s);
-        double kdr, kdg, kdb, ksr, ksg, ksb, power;
+        int kdr, kdg, kdb, ksr, ksg, ksb;
+        double power;
         s = getNextLine(reader);
         int search = s.indexOf(" ");
         if (search != -1) {
-            kdr = Double.parseDouble(s.substring(0, search));
+            kdr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdg = Double.parseDouble(s.substring(0, search));
+            kdg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdb = Double.parseDouble(s.substring(0, search));
+            kdb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksr = Double.parseDouble(s.substring(0, search));
+            ksr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksg = Double.parseDouble(s.substring(0, search));
+            ksg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksb = Double.parseDouble(s.substring(0, search));
+            ksb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
@@ -259,46 +263,47 @@ public class Parser {
         Coordinate3D point2 = readCoordinate(s);
         s = getNextLine(reader);
         Coordinate3D point3 = readCoordinate(s);
-        double kdr, kdg, kdb, ksr, ksg, ksb, power;
+        int kdr, kdg, kdb, ksr, ksg, ksb;
+        double power;
         s = getNextLine(reader);
         int search = s.indexOf(" ");
         if (search != -1) {
-            kdr = Double.parseDouble(s.substring(0, search));
+            kdr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdg = Double.parseDouble(s.substring(0, search));
+            kdg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdb = Double.parseDouble(s.substring(0, search));
+            kdb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksr = Double.parseDouble(s.substring(0, search));
+            ksr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksg = Double.parseDouble(s.substring(0, search));
+            ksg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksb = Double.parseDouble(s.substring(0, search));
+            ksb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
@@ -316,46 +321,47 @@ public class Parser {
         Coordinate3D point3 = readCoordinate(s);
         s = getNextLine(reader);
         Coordinate3D point4 = readCoordinate(s);
-        double kdr, kdg, kdb, ksr, ksg, ksb, power;
+        int kdr, kdg, kdb, ksr, ksg, ksb;
+        double power;
         s = getNextLine(reader);
         int search = s.indexOf(" ");
         if (search != -1) {
-            kdr = Double.parseDouble(s.substring(0, search));
+            kdr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdg = Double.parseDouble(s.substring(0, search));
+            kdg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            kdb = Double.parseDouble(s.substring(0, search));
+            kdb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksr = Double.parseDouble(s.substring(0, search));
+            ksr = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksg = Double.parseDouble(s.substring(0, search));
+            ksg = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();
         }
         search = s.indexOf(" ");
         if (search != -1) {
-            ksb = Double.parseDouble(s.substring(0, search));
+            ksb = Integer.parseInt(s.substring(0, search));
             s = s.substring(search + 1).trim();
         } else {
             throw new Exception();

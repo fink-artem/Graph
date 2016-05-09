@@ -29,6 +29,10 @@ public class Coordinate3D {
         return new Coordinate3D(y * c.z - z * c.y, z * c.x - x * c.z, x * c.y - y * c.x);
     }
 
+    double scalarMultiply(Coordinate3D c) {
+        return x * c.x + y * c.y + z * c.z;
+    }
+
     @Override
     public String toString() {
         return x + " " + y + " " + z;

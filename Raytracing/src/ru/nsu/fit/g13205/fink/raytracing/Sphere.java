@@ -11,7 +11,7 @@ public class Sphere extends Shape {
     private Coordinate3D center;
     private double radius;
 
-    public Sphere(Coordinate3D center, double radius, double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power) {
+    public Sphere(Coordinate3D center, double radius, int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power) {
         super(kdr, kdg, kdb, ksr, ksg, ksb, power, ShapeType.SPHERE);
         this.center = center;
         this.radius = radius;
@@ -80,6 +80,11 @@ public class Sphere extends Shape {
             }
         }
         return segmentList;
+    }
+
+    @Override
+    public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

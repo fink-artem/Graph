@@ -4,16 +4,16 @@ import java.util.List;
 
 public abstract class Shape {
 
-    protected double kdr;
-    protected double kdg;
-    protected double kdb;
-    protected double ksr;
-    protected double ksg;
-    protected double ksb;
+    protected int kdr;
+    protected int kdg;
+    protected int kdb;
+    protected int ksr;
+    protected int ksg;
+    protected int ksb;
     protected double power;
     protected final ShapeType shapeType;
 
-    public Shape(double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power, ShapeType shapeType) {
+    public Shape(int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power, ShapeType shapeType) {
         this.kdr = kdr;
         this.kdg = kdg;
         this.kdb = kdb;
@@ -24,51 +24,51 @@ public abstract class Shape {
         this.shapeType = shapeType;
     }
 
-    public double getKdr() {
+    public int getKdr() {
         return kdr;
     }
 
-    public void setKdr(double kdr) {
+    public void setKdr(int kdr) {
         this.kdr = kdr;
     }
 
-    public double getKdg() {
+    public int getKdg() {
         return kdg;
     }
 
-    public void setKdg(double kdg) {
+    public void setKdg(int kdg) {
         this.kdg = kdg;
     }
 
-    public double getKdb() {
+    public int getKdb() {
         return kdb;
     }
 
-    public void setKdb(double kdb) {
+    public void setKdb(int kdb) {
         this.kdb = kdb;
     }
 
-    public double getKsr() {
+    public int getKsr() {
         return ksr;
     }
 
-    public void setKsr(double ksr) {
+    public void setKsr(int ksr) {
         this.ksr = ksr;
     }
 
-    public double getKsg() {
+    public int getKsg() {
         return ksg;
     }
 
-    public void setKsg(double ksg) {
+    public void setKsg(int ksg) {
         this.ksg = ksg;
     }
 
-    public double getKsb() {
+    public int getKsb() {
         return ksb;
     }
 
-    public void setKsb(double ksb) {
+    public void setKsb(int ksb) {
         this.ksb = ksb;
     }
 
@@ -83,10 +83,12 @@ public abstract class Shape {
     public ShapeType getShapeType() {
         return shapeType;
     }
-    
+
     public abstract double getMin();
 
     public abstract double getMax();
-    
+
     public abstract List<Segment> getCoordinate();
+
+    public abstract Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end);
 }

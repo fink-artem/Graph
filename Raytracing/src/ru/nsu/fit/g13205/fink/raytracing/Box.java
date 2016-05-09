@@ -8,7 +8,7 @@ public class Box extends Shape {
     private Coordinate3D minPoint;
     private Coordinate3D maxPoint;
 
-    public Box(Coordinate3D minPoint, Coordinate3D maxPoint, double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power) {
+    public Box(Coordinate3D minPoint, Coordinate3D maxPoint, int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power) {
         super(kdr, kdg, kdb, ksr, ksg, ksb, power, ShapeType.BOX);
         this.maxPoint = maxPoint;
         this.minPoint = minPoint;
@@ -56,5 +56,10 @@ public class Box extends Shape {
         segmentList.add(new Segment(new Coordinate3D(maxPoint.x, maxPoint.y, maxPoint.z), new Coordinate3D(maxPoint.x, maxPoint.y, minPoint.z)));
         segmentList.add(new Segment(new Coordinate3D(maxPoint.x, maxPoint.y, maxPoint.z), new Coordinate3D(maxPoint.x, minPoint.y, maxPoint.z)));
         return segmentList;
+    }
+
+    @Override
+    public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

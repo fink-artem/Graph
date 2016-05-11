@@ -61,6 +61,7 @@ public class Triangle extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
+        visible = true;
         end = end.divide(end.getNorm());
         double a = (point2.y - point1.y) * (point3.z - point1.z) - (point3.y - point1.y) * (point2.z - point1.z);
         double b = (point3.x - point1.x) * (point2.z - point1.z) - (point2.x - point1.x) * (point3.z - point1.z);
@@ -71,12 +72,44 @@ public class Triangle extends Shape {
         if (scalar == 0) {
             return null;
         }
+        if (scalar > 0) {
+            visible = false;
+            return null;
+        }
         double t = -(pn.scalarMultiply(start) + d) / pn.scalarMultiply(end);
         if (t < 0) {
             return null;
         }
         Coordinate3D intersection = new Coordinate3D(start.x + end.x * t, start.y + end.y * t, start.z + end.z * t);
-        return null;
+        double deltaX = Math.max(Math.max(point1.x, point2.x), point3.x) - Math.min(Math.min(point1.x, point2.x), point3.x);
+        double deltaY = Math.max(Math.max(point1.y, point2.y), point3.y) - Math.min(Math.min(point1.y, point2.y), point3.y);
+        double deltaZ = Math.max(Math.max(point1.z, point2.z), point3.z) - Math.min(Math.min(point1.z, point2.z), point3.z);
+        double s, s1, s2, s3;
+        if (deltaZ <= deltaX && deltaZ <= deltaY) {
+            s = getArea(point1.x, point1.y, point2.x, point2.y, point3.x, point3.y);
+            s1 = getArea(point1.x, point1.y, point2.x, point2.y, intersection.x, intersection.y);
+            s2 = getArea(point1.x, point1.y, intersection.x, intersection.y, point3.x, point3.y);
+            s3 = getArea(intersection.x, intersection.y, point2.x, point2.y, point3.x, point3.y);
+        } else if (deltaY <= deltaX && deltaY <= deltaZ) {
+            s = getArea(point1.x, point1.z, point2.x, point2.z, point3.x, point3.z);
+            s1 = getArea(point1.x, point1.z, point2.x, point2.z, intersection.x, intersection.z);
+            s2 = getArea(point1.x, point1.z, intersection.x, intersection.z, point3.x, point3.z);
+            s3 = getArea(intersection.x, intersection.z, point2.x, point2.z, point3.x, point3.z);
+        } else {
+            s = getArea(point1.z, point1.y, point2.z, point2.y, point3.z, point3.y);
+            s1 = getArea(point1.z, point1.y, point2.z, point2.y, intersection.z, intersection.y);
+            s2 = getArea(point1.z, point1.y, intersection.z, intersection.y, point3.z, point3.y);
+            s3 = getArea(intersection.z, intersection.y, point2.z, point2.y, point3.z, point3.y);
+        }
+        if (Math.abs(s - s1 - s2 - s3) < EXP) {
+            return intersection;
+        } else {
+            return null;
+        }
+    }
+
+    private double getArea(double x1, double y1, double x2, double y2, double x3, double y3) {
+        return (x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1);
     }
 
 }

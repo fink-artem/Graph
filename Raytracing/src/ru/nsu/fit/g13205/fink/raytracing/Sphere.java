@@ -84,7 +84,22 @@ public class Sphere extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        visible = true;
+        Coordinate3D os = center.minus(start);
+        if (os.getNorm() < radius) {
+            visible = false;
+            return null;
+        }
+        double tca = os.scalarMultiply(end);
+        if (tca < 0) {
+            return null;
+        }
+        double thc = radius * radius - Math.pow(os.getNorm(), 2) + tca * tca;
+        if (thc < 0) {
+            return null;
+        }
+        double t = tca - Math.sqrt(thc);
+        return new Coordinate3D(start.x + end.x * t, start.y + end.y * t, start.z + end.z * t);
     }
 
 }

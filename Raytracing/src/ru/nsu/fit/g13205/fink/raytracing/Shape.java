@@ -4,6 +4,7 @@ import java.util.List;
 
 public abstract class Shape {
 
+    protected static final double EXP = 0.00000001;
     protected int kdr;
     protected int kdg;
     protected int kdb;
@@ -12,6 +13,7 @@ public abstract class Shape {
     protected int ksb;
     protected double power;
     protected final ShapeType shapeType;
+    protected boolean visible = true;
 
     public Shape(int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power, ShapeType shapeType) {
         this.kdr = kdr;
@@ -22,62 +24,6 @@ public abstract class Shape {
         this.ksb = ksb;
         this.power = power;
         this.shapeType = shapeType;
-    }
-
-    public int getKdr() {
-        return kdr;
-    }
-
-    public void setKdr(int kdr) {
-        this.kdr = kdr;
-    }
-
-    public int getKdg() {
-        return kdg;
-    }
-
-    public void setKdg(int kdg) {
-        this.kdg = kdg;
-    }
-
-    public int getKdb() {
-        return kdb;
-    }
-
-    public void setKdb(int kdb) {
-        this.kdb = kdb;
-    }
-
-    public int getKsr() {
-        return ksr;
-    }
-
-    public void setKsr(int ksr) {
-        this.ksr = ksr;
-    }
-
-    public int getKsg() {
-        return ksg;
-    }
-
-    public void setKsg(int ksg) {
-        this.ksg = ksg;
-    }
-
-    public int getKsb() {
-        return ksb;
-    }
-
-    public void setKsb(int ksb) {
-        this.ksb = ksb;
-    }
-
-    public double getPower() {
-        return power;
-    }
-
-    public void setPower(double power) {
-        this.power = power;
     }
 
     public ShapeType getShapeType() {

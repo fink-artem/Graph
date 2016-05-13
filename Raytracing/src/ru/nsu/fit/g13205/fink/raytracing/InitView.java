@@ -122,9 +122,17 @@ public class InitView extends JPanel {
         if (!renderMode) {
             return;
         }
+        Coordinate3D normal = data.getRefVector().minus(data.getEyeVector());
+        Coordinate3D znPoint = normal.divide(normal.getNorm()).multiply(data.getZn()).plus(data.getEyeVector());
+        Coordinate3D right = normal.vectorMultiply(data.getUpVector());
+        Coordinate3D up = right.vectorMultiply(normal);
+        up = up.divide(up.getNorm());
+        right = right.divide(right.getNorm());
+        Coordinate3D min = znPoint.plus(up.multiply(data.getSh()/2)).minus(right.multiply(data.getSw()/2));
+        Coordinate3D max = znPoint.minus(up.multiply(data.getSh()/2)).plus(right.multiply(data.getSw()/2));
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-
+                
             }
         }
     }
@@ -132,11 +140,6 @@ public class InitView extends JPanel {
     private Point coordinateToScreen(Coordinate3D c) {
         double s = Math.min(data.getSh(), data.getSw());
         return new Point((int) Math.round(c.x * 1000.0 / s + width / 2.0), (int) Math.round(height / 2.0 - c.y * 1000.0 / s));
-    }
-
-    private Coordinate3D screenToCoordinate(Point p) {
-        double s = Math.min(data.getSh(), data.getSw());
-        return new Coordinate3D((int) Math.round((p.x - width / 2.0) * s / 1000.0), (int) Math.round(-(p.y - height / 2.0) * s / 1000.0), data.getEyeVector().z);
     }
 
     void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {

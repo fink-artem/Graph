@@ -88,7 +88,6 @@ public class Sphere extends Shape {
         Coordinate3D os = center.minus(start);
         if (os.getNorm() < radius) {
             visible = false;
-            return null;
         }
         double tca = os.scalarMultiply(end);
         if (tca < 0) {

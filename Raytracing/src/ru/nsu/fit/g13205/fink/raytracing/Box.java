@@ -60,6 +60,97 @@ public class Box extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        visible = true;
+        end = end.divide(end.getNorm());
+        double tNear = Double.NEGATIVE_INFINITY;
+        double tFar = Double.POSITIVE_INFINITY;
+        if (end.x == 0) {
+            if (start.x < minPoint.x || start.x > maxPoint.x) {
+                return null;
+            }
+        } else {
+            double t1 = (minPoint.x - start.x) / end.x;
+            double t2 = (maxPoint.x - start.x) / end.x;
+            if (t2 < t1) {
+                double prom = t1;
+                t1 = t2;
+                t2 = prom;
+            }
+            if (t1 > tNear) {
+                tNear = t1;
+            }
+            if (t2 < tFar) {
+                tFar = t2;
+            }
+            if (tNear > tFar) {
+                return null;
+            }
+            if (tFar < 0) {
+                return null;
+            }
+            if(tNear<0){
+                visible = false;
+                return null;
+            }
+        }
+        if (end.y == 0) {
+            if (start.y < minPoint.y || start.y > maxPoint.y) {
+                return null;
+            }
+        } else {
+            double t1 = (minPoint.y - start.y) / end.y;
+            double t2 = (maxPoint.y - start.y) / end.y;
+            if (t2 < t1) {
+                double prom = t1;
+                t1 = t2;
+                t2 = prom;
+            }
+            if (t1 > tNear) {
+                tNear = t1;
+            }
+            if (t2 < tFar) {
+                tFar = t2;
+            }
+            if (tNear > tFar) {
+                return null;
+            }
+            if (tFar < 0) {
+                return null;
+            }
+            if(tNear<0){
+                visible = false;
+                return null;
+            }
+        }
+        if (end.z == 0) {
+            if (start.z < minPoint.z || start.z > maxPoint.z) {
+                return null;
+            }
+        } else {
+            double t1 = (minPoint.z - start.z) / end.z;
+            double t2 = (maxPoint.z - start.z) / end.z;
+            if (t2 < t1) {
+                double prom = t1;
+                t1 = t2;
+                t2 = prom;
+            }
+            if (t1 > tNear) {
+                tNear = t1;
+            }
+            if (t2 < tFar) {
+                tFar = t2;
+            }
+            if (tNear > tFar) {
+                return null;
+            }
+            if (tFar < 0) {
+                return null;
+            }
+            if(tNear<0){
+                visible = false;
+                return null;
+            }
+        }
+        return new Coordinate3D(EXP, EXP, EXP);
     }
 }

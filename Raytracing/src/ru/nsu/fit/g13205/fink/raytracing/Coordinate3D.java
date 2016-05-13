@@ -17,15 +17,23 @@ public class Coordinate3D {
         return new Coordinate3D(x - c.x, y - c.y, z - c.z);
     }
 
+    Coordinate3D plus(Coordinate3D c) {
+        return new Coordinate3D(x + c.x, y + c.y, z + c.z);
+    }
+
     Coordinate3D divide(double c) {
         return new Coordinate3D(x / c, y / c, z / c);
+    }
+
+    Coordinate3D multiply(double c) {
+        return new Coordinate3D(x * c, y * c, z * c);
     }
 
     double getNorm() {
         return Math.sqrt(x * x + y * y + z * z);
     }
 
-    Coordinate3D multiply(Coordinate3D c) {
+    Coordinate3D vectorMultiply(Coordinate3D c) {
         return new Coordinate3D(y * c.z - z * c.y, z * c.x - x * c.z, x * c.y - y * c.x);
     }
 

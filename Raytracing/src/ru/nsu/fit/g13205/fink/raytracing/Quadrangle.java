@@ -85,7 +85,6 @@ public class Quadrangle extends Shape {
         }
         if (scalar > 0) {
             visible = false;
-            return null;
         }
         double t = -(pn.scalarMultiply(start) + d) / pn.scalarMultiply(end);
         if (t < 0) {

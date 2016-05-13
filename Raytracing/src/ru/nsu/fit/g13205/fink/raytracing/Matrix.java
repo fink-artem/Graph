@@ -58,8 +58,8 @@ public class Matrix {
 
     public static double[][] getMcamMatrix(Coordinate3D eye, Coordinate3D ref, Coordinate3D up) {
         Coordinate3D k = eye.minus(ref).divide(ref.minus(eye).getNorm());
-        Coordinate3D i = up.multiply(k).divide(up.multiply(k).getNorm());
-        Coordinate3D j = k.multiply(i);
+        Coordinate3D i = up.vectorMultiply(k).divide(up.vectorMultiply(k).getNorm());
+        Coordinate3D j = k.vectorMultiply(i);
         double[][] T = {
             {i.x, i.y, i.z, 0},
             {j.x, j.y, j.z, 0},

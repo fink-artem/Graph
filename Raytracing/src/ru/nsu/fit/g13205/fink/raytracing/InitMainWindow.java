@@ -62,7 +62,7 @@ public class InitMainWindow extends MainFrame {
 
             add(statusBar, BorderLayout.SOUTH);
             try {
-                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data.scene"));
+                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data2.scene"));
             } catch (Exception ex) {
             }
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);

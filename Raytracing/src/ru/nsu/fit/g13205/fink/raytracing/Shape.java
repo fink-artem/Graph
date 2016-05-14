@@ -37,4 +37,6 @@ public abstract class Shape {
     public abstract List<Segment> getCoordinate();
 
     public abstract Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end);
+    
+    public abstract Coordinate3D getNormal(Coordinate3D intersectionPoint);
 }

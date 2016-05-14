@@ -5,15 +5,11 @@ import java.awt.Color;
 
 public class Source {
     
-    double lx;
-    double ly;
-    double lz;
+    Coordinate3D coordinate;
     Color l;
 
     public Source(double lx, double ly, double lz, Color l) {
-        this.lx = lx;
-        this.ly = ly;
-        this.lz = lz;
+        coordinate = new Coordinate3D(lx, ly, lz);
         this.l = l;
     }
     

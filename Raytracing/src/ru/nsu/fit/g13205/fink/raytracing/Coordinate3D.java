@@ -41,9 +41,44 @@ public class Coordinate3D {
         return x * c.x + y * c.y + z * c.z;
     }
 
+    double length(Coordinate3D c) {
+        return Math.sqrt(Math.pow(c.x - x, 2) + Math.pow(c.y - y, 2) + Math.pow(c.z - z, 2));
+    }
+
+    Coordinate3D norm() {
+        return divide(getNorm());
+    }
+
     @Override
     public String toString() {
         return x + " " + y + " " + z;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Coordinate3D other = (Coordinate3D) obj;
+        if (Math.abs(x - other.x) > Shape.EXP) {
+            return false;
+        }
+        if (Math.abs(y - other.y) > Shape.EXP) {
+            return false;
+        }
+        if (Math.abs(z - other.z) > Shape.EXP) {
+            return false;
+        }
+        return true;
     }
 
 }

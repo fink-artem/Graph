@@ -60,7 +60,7 @@ public class Sphere extends Shape {
                 last = new Coordinate3D(c.x, c.y, c.z);
             }
             double z = center.z + Math.cos((i + 1) * stepN) * radius;
-            double rad = center.y + Math.sin((i + 1) * stepN) * radius;
+            double rad = Math.sin((i + 1) * stepN) * radius;
             for (int j = 0; j < m; j++) {
                 for (int l = 0; l <= k; l++) {
                     c = new Coordinate3D(center.x + Math.sin(stepMK * l + j * stepM) * rad, center.y + Math.cos(stepMK * l + j * stepM) * rad, z);
@@ -85,6 +85,7 @@ public class Sphere extends Shape {
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
         visible = true;
+        end = end.minus(start).norm();
         Coordinate3D os = center.minus(start);
         if (os.getNorm() < radius) {
             visible = false;
@@ -99,6 +100,11 @@ public class Sphere extends Shape {
         }
         double t = tca - Math.sqrt(thc);
         return new Coordinate3D(start.x + end.x * t, start.y + end.y * t, start.z + end.z * t);
+    }
+
+    @Override
+    public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
+        return intersectionPoint.minus(center).norm();
     }
 
 }

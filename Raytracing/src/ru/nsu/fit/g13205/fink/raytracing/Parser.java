@@ -198,7 +198,7 @@ public class Parser {
         } else {
             throw new Exception();
         }
-        power = Double.parseDouble(s.substring(0, search));
+        power = Double.parseDouble(s);
         return new Sphere(center, radius, kdr, kdg, kdb, ksr, ksg, ksb, power);
     }
 
@@ -252,7 +252,7 @@ public class Parser {
         } else {
             throw new Exception();
         }
-        power = Double.parseDouble(s.substring(0, search));
+        power = Double.parseDouble(s);
         return new Box(min, max, kdr, kdg, kdb, ksr, ksg, ksb, power);
     }
 
@@ -308,7 +308,7 @@ public class Parser {
         } else {
             throw new Exception();
         }
-        power = Double.parseDouble(s.substring(0, search));
+        power = Double.parseDouble(s);
         return new Triangle(point1, point2, point3, kdr, kdg, kdb, ksr, ksg, ksb, power);
     }
 
@@ -366,7 +366,7 @@ public class Parser {
         } else {
             throw new Exception();
         }
-        power = Double.parseDouble(s.substring(0, search));
+        power = Double.parseDouble(s);
         return new Quadrangle(point1, point2, point3, point4, kdr, kdg, kdb, ksr, ksg, ksb, power);
     }
 }

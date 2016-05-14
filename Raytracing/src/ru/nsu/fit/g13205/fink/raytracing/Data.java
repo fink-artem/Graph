@@ -20,7 +20,7 @@ public class Data {
     private int depth = 1;
     private Quality quality = Quality.NORMAL;
     private Color aRGB;
-    private Color background = Color.WHITE;
+    private Color background = new Color(129, 0, 129);
 
     List<List<Segment>> getCoordinate() {
         List<List<Segment>> list = new ArrayList<>();

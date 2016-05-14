@@ -88,7 +88,7 @@ public class Box extends Shape {
             if (tFar < 0) {
                 return null;
             }
-            if(tNear<0){
+            if (tNear < 0) {
                 visible = false;
                 return null;
             }
@@ -117,7 +117,7 @@ public class Box extends Shape {
             if (tFar < 0) {
                 return null;
             }
-            if(tNear<0){
+            if (tNear < 0) {
                 visible = false;
                 return null;
             }
@@ -146,11 +146,16 @@ public class Box extends Shape {
             if (tFar < 0) {
                 return null;
             }
-            if(tNear<0){
+            if (tNear < 0) {
                 visible = false;
                 return null;
             }
         }
         return new Coordinate3D(EXP, EXP, EXP);
+    }
+
+    @Override
+    public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
+        return null;
     }
 }

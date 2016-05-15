@@ -17,9 +17,11 @@ public class Data {
     private double sw = 5;
     private double sh = 5;
     private double gamma = 0;
-    private int depth = 1;
+    private int depth = 2;
     private Quality quality = Quality.NORMAL;
-    private Color aRGB;
+    private double aR;
+    private double aG;
+    private double aB;
     private Color background = new Color(129, 0, 129);
 
     List<List<Segment>> getCoordinate() {
@@ -133,12 +135,22 @@ public class Data {
         }
     }
 
-    public Color getaRGB() {
-        return aRGB;
+    public double getaR() {
+        return aR;
+    }
+
+    public double getaG() {
+        return aG;
+    }
+
+    public double getaB() {
+        return aB;
     }
 
     public void setaRGB(Color aRGB) {
-        this.aRGB = aRGB;
+        aR = aRGB.getRed() / 255.0;
+        aG = aRGB.getGreen()/ 255.0;
+        aB = aRGB.getBlue()/ 255.0;
     }
 
     public List<Source> getSourceList() {

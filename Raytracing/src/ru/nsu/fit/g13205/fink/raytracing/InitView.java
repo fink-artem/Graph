@@ -9,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Stack;
 
 import javax.swing.JPanel;
 
@@ -22,7 +23,6 @@ public class InitView extends JPanel {
     private int height = 500;
     private Point startPoint;
     private boolean renderMode = false;
-    private Shape nearestShape;
 
     public InitView(Data data) {
         this.data = data;
@@ -95,7 +95,7 @@ public class InitView extends JPanel {
         int length;
         for (int i = 0; i < size; i++) {
             List<Segment> segmentList = list.get(i);
-            g1.setColor(new Color(shapeList.get(i).kdr, shapeList.get(i).kdg, shapeList.get(i).kdb));
+            g1.setColor(new Color((float) shapeList.get(i).kdr, (float) shapeList.get(i).kdg, (float) shapeList.get(i).kdb));
             length = segmentList.size();
             for (int l = 0; l < length; l++) {
                 drawLine(g1, segmentList.get(l).point1, segmentList.get(l).point2, true);
@@ -140,34 +140,62 @@ public class InitView extends JPanel {
         double nl, nh;
         Coordinate3D nearestIntersectionPoint;
         Coordinate3D intersectionPoint;
+        ShapeAndCoordinate shapeAndCoordinate;
+        Shape nearestShape;
         double length;
         double ir, ig, ib;
+        double depth = data.getDepth();
+        Coordinate3D startCoordinate, vector;
+        int size;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 now = start.plus(stepX.multiply(j)).minus(stepY.multiply(i));
-                if (now.y == 0 && now.z == 0) {
-                    System.out.println("");
-                }
-                nearestIntersectionPoint = getNearestShape(eye, now, true);
-                if (nearestShape != null) {
-                    ir = data.getaRGB().getRed() / 255.0 * nearestShape.kdr / 255.0;
-                    ig = data.getaRGB().getGreen() / 255.0 * nearestShape.kdg / 255.0;
-                    ib = data.getaRGB().getBlue() / 255.0 * nearestShape.kdb / 255.0;
-                    for (Source source : sourceList) {
-
-                        intersectionPoint = getNearestShape(source.coordinate, nearestIntersectionPoint, false);
-                        if (intersectionPoint.equals(nearestIntersectionPoint)) {
-                            length = fatt(nearestIntersectionPoint.length(source.coordinate));
-                            normal = nearestShape.getNormal(nearestIntersectionPoint);
-                            l = source.coordinate.minus(nearestIntersectionPoint).norm();
-                            nl = normal.scalarMultiply(l);
-                            nh = Math.pow(normal.scalarMultiply(now.minus(eye).multiply(-1).plus(l).norm()), nearestShape.power);
-                            ir += length * (source.l.getRed() / 255.0) * (nearestShape.kdr / 255.0 * nl + nearestShape.ksr / 255.0 * nh);
-                            ig += length * (source.l.getGreen() / 255.0) * (nearestShape.kdg / 255.0 * nl + nearestShape.ksg / 255.0 * nh);
-                            ib += length * (source.l.getBlue() / 255.0) * (nearestShape.kdb / 255.0 * nl + nearestShape.ksb / 255.0 * nh);
-                        } 
+                Stack<ShapeAndCoordinate> stack = new Stack();
+                startCoordinate = eye;
+                vector = now.minus(startCoordinate).norm();
+                for (int k = 0; k < depth; k++) {
+                    shapeAndCoordinate = getNearestShape(startCoordinate, vector);
+                    if (shapeAndCoordinate.shape == null) {
+                        break;
                     }
-                    //System.out.println((int) (ir * 255) + " " + (int) (ig * 255) + " " + (int) (ib * 255));
+                    stack.push(shapeAndCoordinate);
+                    startCoordinate = shapeAndCoordinate.coordinate;
+                    normal = shapeAndCoordinate.shape.getNormal(startCoordinate);
+                    if (normal.multiply(-1).equals(vector)) {
+                        vector = normal;
+                    } else {
+                        vector = normal.plus(vector);
+                    }
+                }
+                if (!stack.empty()) {
+                    size = stack.size();
+                    ir = 0;
+                    ig = 0;
+                    ib = 0;
+                    for (int q = 0; q < size; q++) {
+                        shapeAndCoordinate = stack.pop();
+                        nearestIntersectionPoint = shapeAndCoordinate.coordinate;
+                        nearestShape = shapeAndCoordinate.shape;
+                        ir *= nearestShape.ksr;
+                        ig *= nearestShape.ksg;
+                        ib *= nearestShape.ksb;
+                        ir += data.getaR() * nearestShape.kdr;
+                        ig += data.getaG() * nearestShape.kdg;
+                        ib += data.getaB() * nearestShape.kdb;
+                        for (Source source : sourceList) {
+                            intersectionPoint = getNearestShape(source.coordinate, (nearestIntersectionPoint.minus(source.coordinate)).norm()).coordinate;
+                            if (nearestIntersectionPoint.equals(intersectionPoint)) {
+                                length = fatt(nearestIntersectionPoint.length(source.coordinate));
+                                normal = nearestShape.getNormal(nearestIntersectionPoint);
+                                l = source.coordinate.minus(nearestIntersectionPoint).norm();
+                                nl = normal.scalarMultiply(l);
+                                nh = Math.pow(normal.scalarMultiply(now.minus(eye).multiply(-1).plus(l).norm()), nearestShape.power);
+                                ir += length * (source.l.getRed() / 255.0) * (nearestShape.kdr * nl + nearestShape.ksr * nh);
+                                ig += length * (source.l.getGreen() / 255.0) * (nearestShape.kdg * nl + nearestShape.ksg * nh);
+                                ib += length * (source.l.getBlue() / 255.0) * (nearestShape.kdb * nl + nearestShape.ksb * nh);
+                            }
+                        }
+                    }
                     image.setRGB(j, i, (new Color((float) ir, (float) ig, (float) ib)).getRGB());
                 } else {
                     image.setRGB(j, i, backGround);
@@ -177,7 +205,7 @@ public class InitView extends JPanel {
         repaint();
     }
 
-    private Coordinate3D getNearestShape(Coordinate3D start, Coordinate3D end, boolean changeShape) {
+    private ShapeAndCoordinate getNearestShape(Coordinate3D start, Coordinate3D end) {
         List<Shape> shapeList = data.getShapeList();
         Coordinate3D intersectionPoint;
         Coordinate3D nearestIntersectionPoint = null;
@@ -187,7 +215,7 @@ public class InitView extends JPanel {
         for (Shape shape : shapeList) {
             intersectionPoint = shape.getIntersectionPoint(start, end);
             if (intersectionPoint != null) {
-                length = end.length(intersectionPoint);
+                length = start.length(intersectionPoint);
                 if (length < minLength) {
                     minLength = length;
                     nearestShape = shape;
@@ -195,10 +223,7 @@ public class InitView extends JPanel {
                 }
             }
         }
-        if (changeShape) {
-            this.nearestShape = nearestShape;
-        }
-        return nearestIntersectionPoint;
+        return new ShapeAndCoordinate(nearestShape, nearestIntersectionPoint);
     }
 
     private Point coordinateToScreen(Coordinate3D c) {

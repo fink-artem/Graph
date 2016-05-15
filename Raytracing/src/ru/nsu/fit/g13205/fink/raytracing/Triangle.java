@@ -61,8 +61,6 @@ public class Triangle extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        visible = true;
-        end = end.minus(start).norm();
         double a = (point2.y - point1.y) * (point3.z - point1.z) - (point3.y - point1.y) * (point2.z - point1.z);
         double b = (point3.x - point1.x) * (point2.z - point1.z) - (point2.x - point1.x) * (point3.z - point1.z);
         double c = (point2.x - point1.x) * (point3.y - point1.y) - (point3.x - point1.x) * (point2.y - point1.y);
@@ -73,7 +71,7 @@ public class Triangle extends Shape {
             return null;
         }
         if (scalar > 0) {
-            visible = false;
+            return null;
         }
         double t = -(pn.scalarMultiply(start) + d) / pn.scalarMultiply(end);
         if (t < 0) {
@@ -112,8 +110,6 @@ public class Triangle extends Shape {
         return null;
     }
 
-    
-    
     private double getArea(double x1, double y1, double x2, double y2, double x3, double y3) {
         return Math.abs((x2 - x1) * (y3 - y1) - (x3 - x1) * (y2 - y1));
     }

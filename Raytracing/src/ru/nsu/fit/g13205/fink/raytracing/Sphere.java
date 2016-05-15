@@ -84,11 +84,9 @@ public class Sphere extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        visible = true;
-        end = end.minus(start).norm();
         Coordinate3D os = center.minus(start);
         if (os.getNorm() < radius) {
-            visible = false;
+            return null;
         }
         double tca = os.scalarMultiply(end);
         if (tca < 0) {

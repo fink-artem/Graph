@@ -60,8 +60,6 @@ public class Box extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        visible = true;
-        end = end.divide(end.getNorm());
         double tNear = Double.NEGATIVE_INFINITY;
         double tFar = Double.POSITIVE_INFINITY;
         if (end.x == 0) {
@@ -89,7 +87,6 @@ public class Box extends Shape {
                 return null;
             }
             if (tNear < 0) {
-                visible = false;
                 return null;
             }
         }
@@ -118,7 +115,6 @@ public class Box extends Shape {
                 return null;
             }
             if (tNear < 0) {
-                visible = false;
                 return null;
             }
         }
@@ -147,7 +143,6 @@ public class Box extends Shape {
                 return null;
             }
             if (tNear < 0) {
-                visible = false;
                 return null;
             }
         }

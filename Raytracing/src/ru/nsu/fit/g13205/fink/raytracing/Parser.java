@@ -19,7 +19,7 @@ public class Parser {
             data.setaRGB(readColor(s));
             s = getNextLine(reader).trim();
             number = Integer.parseInt(s);
-            if (number <= 0) {
+            if (number < 0) {
                 throw new Exception();
             }
             List<Source> sourceList = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Parser {
                 }
             }
             data.setShapeList(shapeList);
-        } catch (FileNotFoundException | NullPointerException e) {
+        } catch (FileNotFoundException e) {
         }
         return data;
     }

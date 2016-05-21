@@ -9,13 +9,15 @@ public class Quadrangle extends Shape {
     private Coordinate3D point2;
     private Coordinate3D point3;
     private Coordinate3D point4;
+    private final Coordinate3D normal;
 
-    public Quadrangle(Coordinate3D point1, Coordinate3D point2, Coordinate3D point3, Coordinate3D point4, int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power) {
+    public Quadrangle(Coordinate3D point1, Coordinate3D point2, Coordinate3D point3, Coordinate3D point4, double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power) {
         super(kdr, kdg, kdb, ksr, ksg, ksb, power, ShapeType.QUADRANGLE);
         this.point1 = point1;
         this.point2 = point2;
         this.point3 = point3;
         this.point4 = point4;
+        normal = point2.minus(point1).vectorMultiply(point3.minus(point2)).normalize();
     }
 
     public Coordinate3D getPoint1() {
@@ -72,19 +74,15 @@ public class Quadrangle extends Shape {
 
     @Override
     public Coordinate3D getIntersectionPoint(Coordinate3D start, Coordinate3D end) {
-        double a = (point2.y - point1.y) * (point3.z - point1.z) - (point3.y - point1.y) * (point2.z - point1.z);
-        double b = (point3.x - point1.x) * (point2.z - point1.z) - (point2.x - point1.x) * (point3.z - point1.z);
-        double c = (point2.x - point1.x) * (point3.y - point1.y) - (point3.x - point1.x) * (point2.y - point1.y);
-        double d = -(point1.x * a + point1.y * b + point1.z * c);
-        Coordinate3D pn = new Coordinate3D(a, b, c);
-        double scalar = end.scalarMultiply(pn);
+        double d = -point1.scalarMultiply(normal);
+        double scalar = end.scalarMultiply(normal);
         if (scalar == 0) {
             return null;
         }
         if (scalar > 0) {
             return null;
         }
-        double t = -(pn.scalarMultiply(start) + d) / pn.scalarMultiply(end);
+        double t = -(normal.scalarMultiply(start) + d) / normal.scalarMultiply(end);
         if (t < 0) {
             return null;
         }
@@ -141,7 +139,7 @@ public class Quadrangle extends Shape {
 
     @Override
     public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
-        return null;
+        return normal;
     }
 
     private double getArea(double x1, double y1, double x2, double y2, double x3, double y3) {

@@ -45,7 +45,7 @@ public class Coordinate3D {
         return Math.sqrt(Math.pow(c.x - x, 2) + Math.pow(c.y - y, 2) + Math.pow(c.z - z, 2));
     }
 
-    Coordinate3D norm() {
+    Coordinate3D normalize() {
         return divide(getNorm());
     }
 

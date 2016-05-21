@@ -11,7 +11,7 @@ public class Sphere extends Shape {
     private Coordinate3D center;
     private double radius;
 
-    public Sphere(Coordinate3D center, double radius, int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power) {
+    public Sphere(Coordinate3D center, double radius, double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power) {
         super(kdr, kdg, kdb, ksr, ksg, ksb, power, ShapeType.SPHERE);
         this.center = center;
         this.radius = radius;
@@ -102,7 +102,7 @@ public class Sphere extends Shape {
 
     @Override
     public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
-        return intersectionPoint.minus(center).norm();
+        return intersectionPoint.minus(center).normalize();
     }
 
 }

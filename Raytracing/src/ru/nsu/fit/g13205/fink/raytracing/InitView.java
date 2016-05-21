@@ -123,14 +123,16 @@ public class InitView extends JPanel {
         if (!renderMode) {
             return;
         }
-        int backGround = data.getBackground().getRGB();
+        double backGroundRed = data.getBackground().getRed() / 255.0;
+        double backGroundGreen = data.getBackground().getGreen() / 255.0;
+        double backGroundBlue = data.getBackground().getBlue() / 255.0;
         Coordinate3D eye = data.getEyeVector();
         Coordinate3D normal = data.getRefVector().minus(eye);
         Coordinate3D znPoint = normal.divide(normal.getNorm()).multiply(data.getZn()).plus(eye);
         Coordinate3D right = normal.vectorMultiply(data.getUpVector());
         Coordinate3D up = right.vectorMultiply(normal);
-        up = up.norm();
-        right = right.norm();
+        up = up.normalize();
+        right = right.normalize();
         Coordinate3D stepX = znPoint.plus(right.multiply(data.getSw() / 2)).minus(znPoint.minus(right.multiply(data.getSw() / 2))).divide(width);
         Coordinate3D stepY = znPoint.plus(up.multiply(data.getSh() / 2)).minus(znPoint.minus(up.multiply(data.getSh() / 2))).divide(height);
         List<Source> sourceList = data.getSourceList();
@@ -147,12 +149,19 @@ public class InitView extends JPanel {
         double depth = data.getDepth();
         Coordinate3D startCoordinate, vector;
         int size;
+        double red[][] = new double[height][width];
+        double green[][] = new double[height][width];
+        double blue[][] = new double[height][width];
+        double max = 0;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
                 now = start.plus(stepX.multiply(j)).minus(stepY.multiply(i));
+                if (now.z == 0 && now.y > 0) {
+                    System.out.println("");
+                }
                 Stack<ShapeAndCoordinate> stack = new Stack();
                 startCoordinate = eye;
-                vector = now.minus(startCoordinate).norm();
+                vector = now.minus(startCoordinate).normalize();
                 for (int k = 0; k < depth; k++) {
                     shapeAndCoordinate = getNearestShape(startCoordinate, vector);
                     if (shapeAndCoordinate.shape == null) {
@@ -161,11 +170,7 @@ public class InitView extends JPanel {
                     stack.push(shapeAndCoordinate);
                     startCoordinate = shapeAndCoordinate.coordinate;
                     normal = shapeAndCoordinate.shape.getNormal(startCoordinate);
-                    if (normal.multiply(-1).equals(vector)) {
-                        vector = normal;
-                    } else {
-                        vector = normal.plus(vector);
-                    }
+                    vector = vector.minus(normal.multiply(2 * normal.scalarMultiply(vector)));
                 }
                 if (!stack.empty()) {
                     size = stack.size();
@@ -183,23 +188,39 @@ public class InitView extends JPanel {
                         ig += data.getaG() * nearestShape.kdg;
                         ib += data.getaB() * nearestShape.kdb;
                         for (Source source : sourceList) {
-                            intersectionPoint = getNearestShape(source.coordinate, (nearestIntersectionPoint.minus(source.coordinate)).norm()).coordinate;
+                            intersectionPoint = getNearestShape(source.coordinate, (nearestIntersectionPoint.minus(source.coordinate)).normalize()).coordinate;
                             if (nearestIntersectionPoint.equals(intersectionPoint)) {
                                 length = fatt(nearestIntersectionPoint.length(source.coordinate));
                                 normal = nearestShape.getNormal(nearestIntersectionPoint);
-                                l = source.coordinate.minus(nearestIntersectionPoint).norm();
+                                l = source.coordinate.minus(nearestIntersectionPoint).normalize();
                                 nl = normal.scalarMultiply(l);
-                                nh = Math.pow(normal.scalarMultiply(now.minus(eye).multiply(-1).plus(l).norm()), nearestShape.power);
-                                ir += length * (source.l.getRed() / 255.0) * (nearestShape.kdr * nl + nearestShape.ksr * nh);
-                                ig += length * (source.l.getGreen() / 255.0) * (nearestShape.kdg * nl + nearestShape.ksg * nh);
-                                ib += length * (source.l.getBlue() / 255.0) * (nearestShape.kdb * nl + nearestShape.ksb * nh);
+                                nh = Math.pow(normal.scalarMultiply(now.minus(eye).multiply(-1).plus(l).normalize()), nearestShape.power);
+                                ir += length * source.lr * (nearestShape.kdr * nl + nearestShape.ksr * nh);
+                                ig += length * source.lg * (nearestShape.kdg * nl + nearestShape.ksg * nh);
+                                ib += length * source.lb * (nearestShape.kdb * nl + nearestShape.ksb * nh);
                             }
                         }
                     }
-                    image.setRGB(j, i, (new Color((float) ir, (float) ig, (float) ib)).getRGB());
+                    red[i][j] = ir;
+                    green[i][j] = ig;
+                    blue[i][j] = ib;
                 } else {
-                    image.setRGB(j, i, backGround);
+                    red[i][j] = backGroundRed;
+                    green[i][j] = backGroundGreen;
+                    blue[i][j] = backGroundBlue;
                 }
+                max = Math.max(max, Math.max(Math.max(red[i][j], green[i][j]), blue[i][j]));
+            }
+        }
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                red[i][j] /= max;
+                green[i][j] /= max;
+                blue[i][j] /= max;
+                red[i][j] = Math.pow(red[i][j], data.getGamma());
+                green[i][j] = Math.pow(green[i][j], data.getGamma());
+                blue[i][j] = Math.pow(blue[i][j], data.getGamma());
+                image.setRGB(j, i, (new Color((float) red[i][j], (float) green[i][j], (float) blue[i][j])).getRGB());
             }
         }
         repaint();

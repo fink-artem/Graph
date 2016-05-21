@@ -8,7 +8,7 @@ public class Box extends Shape {
     private Coordinate3D minPoint;
     private Coordinate3D maxPoint;
 
-    public Box(Coordinate3D minPoint, Coordinate3D maxPoint, int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power) {
+    public Box(Coordinate3D minPoint, Coordinate3D maxPoint, double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power) {
         super(kdr, kdg, kdb, ksr, ksg, ksb, power, ShapeType.BOX);
         this.maxPoint = maxPoint;
         this.minPoint = minPoint;

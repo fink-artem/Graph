@@ -14,13 +14,13 @@ public abstract class Shape {
     protected double power;
     protected final ShapeType shapeType;
 
-    public Shape(int kdr, int kdg, int kdb, int ksr, int ksg, int ksb, double power, ShapeType shapeType) {
-        this.kdr = kdr / 255.0;
-        this.kdg = kdg / 255.0;
-        this.kdb = kdb / 255.0;
-        this.ksr = ksr / 255.0;
-        this.ksg = ksg / 255.0;
-        this.ksb = ksb / 255.0;
+    public Shape(double kdr, double kdg, double kdb, double ksr, double ksg, double ksb, double power, ShapeType shapeType) {
+        this.kdr = kdr;
+        this.kdg = kdg;
+        this.kdb = kdb;
+        this.ksr = ksr;
+        this.ksg = ksg;
+        this.ksb = ksb;
         this.power = power;
         this.shapeType = shapeType;
     }

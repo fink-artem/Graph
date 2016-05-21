@@ -16,7 +16,7 @@ public class Data {
     private double zf = 15;
     private double sw = 5;
     private double sh = 5;
-    private double gamma = 0;
+    private double gamma = 1;
     private int depth = 3;
     private Quality quality = Quality.NORMAL;
     private double aR;

@@ -19,4 +19,16 @@ public class MatrixOperation {
         }
         return result;
     }
+    
+    static double[][] transporter(double[][] a){
+        int rowNumber = a.length;
+        int columnNumber = a[0].length;
+        double[][] result = new double[columnNumber][rowNumber];
+        for (int i = 0; i < columnNumber; i++) {
+            for (int j = 0; j < rowNumber; j++) {
+                result[i][j] = a[j][i]; 
+            }
+        }
+        return result;
+    }
 }

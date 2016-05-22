@@ -60,7 +60,11 @@ public class Parser {
                 }
             }
             data.setShapeList(shapeList);
-        } catch (FileNotFoundException e) {
+        }
+        try {
+            RenderData renderData = ParserRender.parse(new File(file.toString().substring(0, file.toString().length()-6) + ".render"));
+            data.setRenderData(renderData);
+        } catch (Exception e) {
         }
         return data;
     }

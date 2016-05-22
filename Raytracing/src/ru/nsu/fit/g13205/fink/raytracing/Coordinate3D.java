@@ -12,6 +12,13 @@ public class Coordinate3D {
         this.y = y;
         this.z = z;
     }
+    
+    public Coordinate3D(double a[][]){
+        this.x = a[0][0];
+        this.y = a[1][0];
+        this.z = a[2][0];
+        this.w = a[3][0];
+    }
 
     Coordinate3D minus(Coordinate3D c) {
         return new Coordinate3D(x - c.x, y - c.y, z - c.z);
@@ -79,6 +86,15 @@ public class Coordinate3D {
             return false;
         }
         return true;
+    }
+    
+    double[][] getMatrix(){
+        double[][] a = new double[4][1];
+        a[0][0] = x;
+        a[1][0] = y;
+        a[2][0] = z;
+        a[3][0] = w;
+        return a;
     }
 
 }

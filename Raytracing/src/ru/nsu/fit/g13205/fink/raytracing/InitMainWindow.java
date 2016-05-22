@@ -7,6 +7,7 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -37,6 +38,7 @@ public class InitMainWindow extends MainFrame {
         try {
             addSubMenu("File", KeyEvent.VK_F);
             addMenuItem("File/Open", "Open", KeyEvent.VK_X, "Open.png", "onOpen", statusBar);
+            addMenuItem("File/Load", "Load render settings", KeyEvent.VK_X, "Load.gif", "onLoad", statusBar);
             addMenuItem("File/Save", "Save render settings", KeyEvent.VK_X, "Save.png", "onSave", statusBar);
             addMenuItem("File/Save image", "Save image", KeyEvent.VK_X, "SaveImage.png", "onSaveImage", statusBar);
             addMenuSeparator("File");
@@ -50,6 +52,7 @@ public class InitMainWindow extends MainFrame {
             addMenuItem("Help/About", "About", KeyEvent.VK_A, "About.png", "onAbout", statusBar);
 
             addToolBarButton("File/Open", "Open", statusBar);
+            addToolBarButton("File/Load", "Load render settings", statusBar);
             addToolBarButton("File/Save", "Save render settings", statusBar);
             addToolBarButton("File/Save image", "Save image", statusBar);
             addToolBarSeparator();
@@ -62,12 +65,12 @@ public class InitMainWindow extends MainFrame {
 
             add(statusBar, BorderLayout.SOUTH);
             try {
-                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data2.scene"));
+                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data.scene"));
             } catch (Exception ex) {
             }
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
-            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(!renderMode);
-            initView = new InitView(data);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(!renderMode);
+            initView = new InitView(data, statusBar);
             scrollPane = new JScrollPane(initView);
             add(scrollPane);
         } catch (SecurityException | NoSuchMethodException e) {
@@ -81,11 +84,30 @@ public class InitMainWindow extends MainFrame {
             data = Parser.parse(file);
             renderMode = false;
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
-            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(!renderMode);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(!renderMode);
             getMenuElement("Edit/Render").getComponent().setEnabled(!renderMode);
-            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(renderMode);
+            ((JButton) toolBar.getComponentAtIndex(8)).setSelected(renderMode);
             initView.setRenderMode(renderMode);
             initView.updateData(data);
+        } catch (FileNotFoundException | NullPointerException e) {
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    public void onLoad() {
+        File file = getOpenFileName("render", "Render file");
+        try {
+            RenderData renderData = ParserRender.parse(file);
+            renderMode = false;
+            getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(!renderMode);
+            getMenuElement("Edit/Render").getComponent().setEnabled(!renderMode);
+            ((JButton) toolBar.getComponentAtIndex(8)).setSelected(renderMode);
+            initView.setRenderMode(renderMode);
+            data.setRenderData(renderData);
+            initView.draw();
+        } catch (FileNotFoundException | NullPointerException e) {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Invalid file format", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -94,8 +116,7 @@ public class InitMainWindow extends MainFrame {
     public void onSave() {
         File file = getSaveFileName("render", "Render file");
         try (PrintWriter out = new PrintWriter(file)) {
-            Color background = data.getBackground();
-            out.println(background.getRed() + " " + background.getGreen() + " " + background.getBlue());
+            out.println((int) (data.getBr() * 255) + " " + (int) (data.getBg() * 255) + " " + (int) (data.getBb() * 255));
             out.println(data.getGamma());
             out.println(data.getDepth());
             out.println(data.getQuality());
@@ -186,9 +207,9 @@ public class InitMainWindow extends MainFrame {
         if (renderMode) {
             renderMode = false;
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
-            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(!renderMode);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(!renderMode);
             getMenuElement("Edit/Render").getComponent().setEnabled(!renderMode);
-            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(renderMode);
+            ((JButton) toolBar.getComponentAtIndex(8)).setSelected(renderMode);
             initView.setRenderMode(false);
             initView.draw();
         }
@@ -198,9 +219,9 @@ public class InitMainWindow extends MainFrame {
         if (!renderMode) {
             renderMode = true;
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
-            ((JButton) toolBar.getComponentAtIndex(6)).setSelected(!renderMode);
+            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(!renderMode);
             getMenuElement("Edit/Render").getComponent().setEnabled(!renderMode);
-            ((JButton) toolBar.getComponentAtIndex(7)).setSelected(renderMode);
+            ((JButton) toolBar.getComponentAtIndex(8)).setSelected(renderMode);
             initView.setRenderMode(renderMode);
             initView.render();
         }

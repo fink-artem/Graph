@@ -79,6 +79,7 @@ public final class OptionsDialog extends JDialog {
         qPanel.add(new JLabel("Quality"));
         Quality[] quality = {Quality.ROUGH, Quality.NORMAL, Quality.FINE};
         JComboBox<Quality> qComboBox = new JComboBox<>(quality);
+        qComboBox.setSelectedItem(data.getQuality());
         qComboBox.addActionListener((ActionEvent e) -> {
             data.setQuality((Quality) qComboBox.getSelectedItem());
         });

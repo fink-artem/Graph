@@ -6,23 +6,13 @@ import java.util.List;
 
 public class Data {
 
-    private Coordinate3D eyeVector = new Coordinate3D(10, 0, 0);
-    private Coordinate3D refVector = new Coordinate3D(-10, 0, 0);
-    private Coordinate3D upVector = new Coordinate3D(10, 0, 1);
     private List<Source> sourceList = new ArrayList<>();
     private List<Shape> shapeList = new ArrayList<>();
+    private RenderData renderData = new RenderData();
     private double[][] rotateMatrix = {{1, 0, 0, 0}, {0, 1, 0, 0}, {0, 0, 1, 0}, {0, 0, 0, 1}};
-    private double zn = 8;
-    private double zf = 15;
-    private double sw = 5;
-    private double sh = 5;
-    private double gamma = 1;
-    private int depth = 3;
-    private Quality quality = Quality.NORMAL;
     private double aR;
     private double aG;
     private double aB;
-    private Color background = new Color(129, 0, 129);
 
     List<List<Segment>> getCoordinate() {
         List<List<Segment>> list = new ArrayList<>();
@@ -36,7 +26,7 @@ public class Data {
             min = Math.min(min, shape.getMin());
             list.add(shape.getCoordinate());
         }
-        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(sw, sh, zn, zf), MatrixOperation.multiply(Matrix.getMcamMatrix(eyeVector, refVector, upVector), MatrixOperation.multiply(Matrix.getScaleMatrix(1.0 / Math.max(Math.abs(max), Math.abs(min))), rotateMatrix)));
+        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(renderData.sw, renderData.sh, renderData.zn, renderData.zf), MatrixOperation.multiply(Matrix.getMcamMatrix(renderData.eye, renderData.ref, renderData.upVector), rotateMatrix));
         double[][] matrixP = new double[4][1];
         List<Segment> segmentList;
         Segment segment;
@@ -71,20 +61,20 @@ public class Data {
 
     public void setZn(double zn) {
         if (zn >= 0 && zn <= 100) {
-            this.zn = zn;
+            renderData.zn = zn;
         }
     }
 
     public void setZf(double zf) {
-        this.zf = zf;
+        renderData.zf = zf;
     }
 
     public void setSw(double sw) {
-        this.sw = sw;
+        renderData.sw = sw;
     }
 
     public void setSh(double sh) {
-        this.sh = sh;
+        renderData.sh = sh;
     }
 
     public void setRotateMatrix(double[][] rotateMatrix) {
@@ -108,19 +98,19 @@ public class Data {
     }
 
     public double getZn() {
-        return zn;
+        return renderData.zn;
     }
 
     public double getZf() {
-        return zf;
+        return renderData.zf;
     }
 
     public double getSw() {
-        return sw;
+        return renderData.sw;
     }
 
     public double getSh() {
-        return sh;
+        return renderData.sh;
     }
 
     public void clearRotate() {
@@ -149,8 +139,8 @@ public class Data {
 
     public void setaRGB(Color aRGB) {
         aR = aRGB.getRed() / 255.0;
-        aG = aRGB.getGreen()/ 255.0;
-        aB = aRGB.getBlue()/ 255.0;
+        aG = aRGB.getGreen() / 255.0;
+        aB = aRGB.getBlue() / 255.0;
     }
 
     public List<Source> getSourceList() {
@@ -170,59 +160,75 @@ public class Data {
     }
 
     public double getGamma() {
-        return gamma;
+        return renderData.gamma;
     }
 
     public void setGamma(double gamma) {
-        this.gamma = gamma;
+        renderData.gamma = gamma;
     }
 
     public int getDepth() {
-        return depth;
+        return renderData.depth;
     }
 
     public void setDepth(int depth) {
-        this.depth = depth;
+        renderData.depth = depth;
     }
 
     public Quality getQuality() {
-        return quality;
+        return renderData.quality;
     }
 
     public void setQuality(Quality quality) {
-        this.quality = quality;
+        renderData.quality = quality;
     }
 
     public Coordinate3D getEyeVector() {
-        return eyeVector;
+        return renderData.eye;
     }
 
     public void setEyeVector(Coordinate3D eyeMatrix) {
-        this.eyeVector = eyeMatrix;
+        renderData.eye = eyeMatrix;
     }
 
     public Coordinate3D getRefVector() {
-        return refVector;
+        return renderData.ref;
     }
 
     public void setRefVector(Coordinate3D refVector) {
-        this.refVector = refVector;
+        renderData.ref = refVector;
     }
 
     public Coordinate3D getUpVector() {
-        return upVector;
+        return renderData.upVector;
     }
 
     public void setUpVector(Coordinate3D upVector) {
-        this.upVector = upVector;
+        renderData.upVector = upVector;
     }
 
-    public Color getBackground() {
-        return background;
+    public double getBr() {
+        return renderData.br;
+    }
+
+    public double getBg() {
+        return renderData.bg;
+    }
+
+    public double getBb() {
+        return renderData.bb;
     }
 
     public void setBackground(Color background) {
-        this.background = background;
+        renderData.setBackGround(background);
+    }
+
+    public void setRenderData(RenderData renderData) {
+        this.renderData = renderData;
+    }
+
+    public Color getBackground() {
+        return new Color((float) renderData.br, (float) renderData.bg, (float) renderData.bb);
     }
 
 }

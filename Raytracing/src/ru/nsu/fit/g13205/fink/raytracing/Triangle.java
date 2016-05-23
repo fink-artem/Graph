@@ -43,13 +43,33 @@ public class Triangle extends Shape {
     }
 
     @Override
-    public double getMin() {
-        return Math.min(Math.min(Math.min(Math.min(point1.x, point1.y), point1.z), Math.min(Math.min(point2.x, point2.y), point2.z)), Math.min(Math.min(point3.x, point3.y), point3.z));
+    public double getMinX() {
+        return Math.min(Math.min(point1.x, point2.x), point3.x);
     }
 
     @Override
-    public double getMax() {
-        return Math.max(Math.max(Math.max(Math.max(point1.x, point1.y), point1.z), Math.max(Math.max(point2.x, point2.y), point2.z)), Math.max(Math.max(point3.x, point3.y), point3.z));
+    public double getMaxX() {
+        return Math.max(Math.max(point1.x, point2.x), point3.x);
+    }
+
+    @Override
+    public double getMinY() {
+        return Math.min(Math.min(point1.y, point2.y), point3.y);
+    }
+
+    @Override
+    public double getMaxY() {
+        return Math.max(Math.max(point1.y, point2.y), point3.y);
+    }
+
+    @Override
+    public double getMinZ() {
+        return Math.min(Math.min(point1.z, point2.z), point3.z);
+    }
+
+    @Override
+    public double getMaxZ() {
+        return Math.max(Math.max(point1.z, point2.z), point3.z);
     }
 
     @Override

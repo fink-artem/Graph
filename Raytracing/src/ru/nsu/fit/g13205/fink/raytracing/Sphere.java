@@ -34,13 +34,33 @@ public class Sphere extends Shape {
     }
 
     @Override
-    public double getMin() {
-        return Math.min(Math.min(center.x, center.y), center.z) - radius;
+    public double getMinX() {
+        return center.x - radius;
     }
 
     @Override
-    public double getMax() {
-        return Math.max(Math.max(center.x, center.y), center.z) + radius;
+    public double getMaxX() {
+        return center.x + radius;
+    }
+
+    @Override
+    public double getMinY() {
+        return center.y - radius;
+    }
+
+    @Override
+    public double getMaxY() {
+        return center.y + radius;
+    }
+
+    @Override
+    public double getMinZ() {
+        return center.z - radius;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return center.z + radius;
     }
 
     @Override

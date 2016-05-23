@@ -2,7 +2,6 @@ package ru.nsu.fit.g13205.fink.raytracing;
 
 import java.awt.Color;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -62,9 +61,10 @@ public class Parser {
             data.setShapeList(shapeList);
         }
         try {
-            RenderData renderData = ParserRender.parse(new File(file.toString().substring(0, file.toString().length()-6) + ".render"));
+            RenderData renderData = ParserRender.parse(new File(file.toString().substring(0, file.toString().length() - 6) + ".render"));
             data.setRenderData(renderData);
         } catch (Exception e) {
+            data.clear();
         }
         return data;
     }

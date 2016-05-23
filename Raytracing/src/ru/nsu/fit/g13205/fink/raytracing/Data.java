@@ -17,15 +17,12 @@ public class Data {
     List<List<Segment>> getCoordinate() {
         List<List<Segment>> list = new ArrayList<>();
         int size = shapeList.size();
-        double max = Integer.MIN_VALUE;
-        double min = Integer.MAX_VALUE;
         Shape shape;
         for (int i = 0; i < size; i++) {
             shape = shapeList.get(i);
-            max = Math.max(max, shape.getMax());
-            min = Math.min(min, shape.getMin());
             list.add(shape.getCoordinate());
         }
+        double[][] fullrotateMatrix = MatrixOperation.multiply(Matrix.getTranslateMatrix(renderData.ref.x, renderData.ref.y, renderData.ref.z), MatrixOperation.multiply(rotateMatrix, Matrix.getTranslateMatrix(-renderData.ref.x, -renderData.ref.y, -renderData.ref.z)));
         double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(renderData.sw, renderData.sh, renderData.zn, renderData.zf), MatrixOperation.multiply(Matrix.getMcamMatrix(renderData.eye, renderData.ref, renderData.upVector), rotateMatrix));
         double[][] matrixP = new double[4][1];
         List<Segment> segmentList;
@@ -57,6 +54,39 @@ public class Data {
             }
         }
         return list;
+    }
+
+    public void clear() {
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (i == j) {
+                    rotateMatrix[i][j] = 1;
+                } else {
+                    rotateMatrix[i][j] = 0;
+                }
+            }
+        }
+        renderData.sw = 5;
+        renderData.sh = 5;
+        double minX = Double.POSITIVE_INFINITY, maxX = Double.NEGATIVE_INFINITY;
+        double minY = Double.POSITIVE_INFINITY, maxY = Double.NEGATIVE_INFINITY;
+        double minZ = Double.POSITIVE_INFINITY, maxZ = Double.NEGATIVE_INFINITY;
+        for (Shape shape : shapeList) {
+            minX = Math.min(minX, shape.getMinX());
+            maxX = Math.max(maxX, shape.getMaxX());
+            minY = Math.min(minY, shape.getMinY());
+            maxY = Math.max(maxY, shape.getMaxY());
+            minZ = Math.min(minZ, shape.getMinZ());
+            maxZ = Math.max(maxZ, shape.getMaxZ());
+        }
+        double centerX = (maxX + minX) / 2;
+        double centerY = (maxY + minY) / 2;
+        double centerZ = (maxZ + minZ) / 2;
+        renderData.ref = new Coordinate3D(centerX, centerY, centerZ);
+        renderData.upVector = new Coordinate3D(0, 0, 1);
+        renderData.eye = new Coordinate3D(-maxZ / Math.tan(Math.PI / 6) + minX, centerY, centerZ);
+        renderData.zn = (minX - renderData.eye.x) / 2;
+        renderData.zf = maxX - renderData.eye.x + (maxX - minX) / 2;
     }
 
     public void setZn(double zn) {
@@ -111,18 +141,6 @@ public class Data {
 
     public double getSh() {
         return renderData.sh;
-    }
-
-    public void clearRotate() {
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (i == j) {
-                    rotateMatrix[i][j] = 1;
-                } else {
-                    rotateMatrix[i][j] = 0;
-                }
-            }
-        }
     }
 
     public double getaR() {

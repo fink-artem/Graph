@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -65,7 +66,7 @@ public class InitMainWindow extends MainFrame {
 
             add(statusBar, BorderLayout.SOUTH);
             try {
-                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\data.scene"));
+                data = Parser.parse(new File(FileUtils.getDataDirectory().getAbsolutePath() + "\\StandfordBunny.scene"));
             } catch (Exception ex) {
             }
             getMenuElement("Edit/Select").getComponent().setEnabled(renderMode);
@@ -73,6 +74,19 @@ public class InitMainWindow extends MainFrame {
             initView = new InitView(data, statusBar);
             scrollPane = new JScrollPane(initView);
             add(scrollPane);
+            
+            addKeyListener(new KeyAdapter() {
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("sdff");
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    System.out.println("sd");
+                }
+            }
+
+        });
+            
         } catch (SecurityException | NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
@@ -120,9 +134,9 @@ public class InitMainWindow extends MainFrame {
             out.println(data.getGamma());
             out.println(data.getDepth());
             out.println(data.getQuality());
-            out.println(data.getEyeVector());
-            out.println(data.getRefVector());
-            out.println(data.getUpVector());
+            out.println(new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getEyeVector().getMatrix())));
+            out.println(new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getRefVector().getMatrix())));
+            out.println(new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getUpVector().getMatrix())));
             out.println(data.getZn() + " " + data.getZf());
             out.println(data.getSw() + " " + data.getSh());
         } catch (Exception e) {
@@ -199,7 +213,7 @@ public class InitMainWindow extends MainFrame {
     }
 
     public void onInit() {
-        data.clearRotate();
+        data.clear();
         initView.draw();
     }
 

@@ -29,9 +29,17 @@ public abstract class Shape {
         return shapeType;
     }
 
-    public abstract double getMin();
+    public abstract double getMinX();
 
-    public abstract double getMax();
+    public abstract double getMaxX();
+
+    public abstract double getMinY();
+
+    public abstract double getMaxY();
+
+    public abstract double getMinZ();
+
+    public abstract double getMaxZ();
 
     public abstract List<Segment> getCoordinate();
 

@@ -31,13 +31,33 @@ public class Box extends Shape {
     }
 
     @Override
-    public double getMin() {
-        return Math.min(Math.min(minPoint.x, minPoint.y), minPoint.z);
+    public double getMinX() {
+        return minPoint.x;
     }
 
     @Override
-    public double getMax() {
-        return Math.max(Math.max(maxPoint.x, maxPoint.y), maxPoint.z);
+    public double getMaxX() {
+        return maxPoint.x;
+    }
+
+    @Override
+    public double getMinY() {
+        return minPoint.y;
+    }
+
+    @Override
+    public double getMaxY() {
+        return maxPoint.y;
+    }
+
+    @Override
+    public double getMinZ() {
+        return minPoint.z;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return maxPoint.z;
     }
 
     @Override
@@ -83,9 +103,6 @@ public class Box extends Shape {
             if (tNear > tFar) {
                 return null;
             }
-            if (tFar < 0) {
-                return null;
-            }
             if (tNear < 0) {
                 return null;
             }
@@ -109,9 +126,6 @@ public class Box extends Shape {
                 tFar = t2;
             }
             if (tNear > tFar) {
-                return null;
-            }
-            if (tFar < 0) {
                 return null;
             }
             if (tNear < 0) {
@@ -139,18 +153,27 @@ public class Box extends Shape {
             if (tNear > tFar) {
                 return null;
             }
-            if (tFar < 0) {
-                return null;
-            }
             if (tNear < 0) {
                 return null;
             }
         }
-        return new Coordinate3D(EXP, EXP, EXP);
+        return new Coordinate3D(start.x + end.x * tNear, start.y + end.y * tNear, start.z + end.z * tNear);
     }
 
     @Override
     public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
-        return null;
+        if (intersectionPoint.z == minPoint.z) {
+            return new Coordinate3D(0, 0, -1);
+        } else if (intersectionPoint.z == maxPoint.z) {
+            return new Coordinate3D(0, 0, 1);
+        } else if (intersectionPoint.y == minPoint.y) {
+            return new Coordinate3D(0, -1, 0);
+        } else if (intersectionPoint.y == maxPoint.y) {
+            return new Coordinate3D(0, 1, 0);
+        } else if (intersectionPoint.x == minPoint.x) {
+            return new Coordinate3D(-1, 0, 0);
+        } else {
+            return new Coordinate3D(1, 0, 0);
+        }
     }
 }

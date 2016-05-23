@@ -1,9 +1,13 @@
 package ru.nsu.fit.g13205.fink.raytracing;
 
+import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -17,14 +21,15 @@ import javax.swing.JPanel;
 public class InitView extends JPanel {
 
     private static final double SPEED = 20.0;
+    private final JLabel statusBar;
+    private Point startPoint;
     private Data data;
     private BufferedImage image;
     private boolean taken = false;
+    private boolean ctrl = false;
+    private boolean renderMode = false;
     private int width = 500;
     private int height = 500;
-    private Point startPoint;
-    private boolean renderMode = false;
-    private JLabel statusBar;
 
     public InitView(Data data, JLabel statusBar) {
         this.data = data;
@@ -52,7 +57,7 @@ public class InitView extends JPanel {
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
-                if (e.getX() >= ViewOptions.MARGIN && e.getX() < width + ViewOptions.MARGIN && e.getY() >= ViewOptions.MARGIN && e.getY() < height + ViewOptions.MARGIN) {
+                if (e.getX() >= ViewOptions.MARGIN && e.getX() < width + ViewOptions.MARGIN && e.getY() >= ViewOptions.MARGIN && e.getY() < height + ViewOptions.MARGIN && !renderMode) {
                     taken = true;
                     startPoint = e.getPoint();
                 }
@@ -67,9 +72,58 @@ public class InitView extends JPanel {
         });
 
         addMouseWheelListener((MouseWheelEvent e) -> {
-            InitView.this.data.setZn(InitView.this.data.getZn() - e.getPreciseWheelRotation() / 10);
+            if (!ctrl) {
+                InitView.this.data.setZn(InitView.this.data.getZn() - e.getPreciseWheelRotation() / 10);
+            } else {
+                Coordinate3D eye = InitView.this.data.getEyeVector();
+                InitView.this.data.setEyeVector(eye.plus(eye.minus(InitView.this.data.getRefVector()).normalize().multiply(e.getPreciseWheelRotation() / 10)));
+            }
             draw();
         });
+
+        Toolkit.getDefaultToolkit().addAWTEventListener((AWTEvent event) -> {
+            KeyEvent keyEvent = (KeyEvent) event;
+            if (keyEvent.getID() == KeyEvent.KEY_PRESSED) {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+                    Coordinate3D eye = InitView.this.data.getEyeVector();
+                    Coordinate3D normal = (InitView.this.data.getRefVector()).minus(eye);
+                    Coordinate3D right = normal.vectorMultiply(InitView.this.data.getUpVector());
+                    Coordinate3D up = right.vectorMultiply(normal).normalize();
+                    InitView.this.data.setEyeVector(eye.minus(up));
+                    InitView.this.data.setRefVector(InitView.this.data.getRefVector().minus(up));
+                    draw();
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+                    Coordinate3D eye = InitView.this.data.getEyeVector();
+                    Coordinate3D normal = (InitView.this.data.getRefVector()).minus(eye);
+                    Coordinate3D right = normal.vectorMultiply(InitView.this.data.getUpVector());
+                    Coordinate3D up = right.vectorMultiply(normal).normalize();
+                    InitView.this.data.setEyeVector(eye.plus(up));
+                    InitView.this.data.setRefVector(InitView.this.data.getRefVector().plus(up));
+                    draw();
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+                    Coordinate3D eye = InitView.this.data.getEyeVector();
+                    Coordinate3D normal = (InitView.this.data.getRefVector()).minus(eye);
+                    Coordinate3D right = normal.vectorMultiply(InitView.this.data.getUpVector()).normalize();
+                    InitView.this.data.setEyeVector(eye.plus(right));
+                    InitView.this.data.setRefVector(InitView.this.data.getRefVector().plus(right));
+                    draw();
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    Coordinate3D eye = InitView.this.data.getEyeVector();
+                    Coordinate3D normal = (InitView.this.data.getRefVector()).minus(eye);
+                    Coordinate3D right = normal.vectorMultiply(InitView.this.data.getUpVector()).normalize();
+                    InitView.this.data.setEyeVector(eye.minus(right));
+                    InitView.this.data.setRefVector(InitView.this.data.getRefVector().minus(right));
+                    draw();
+                } else if (keyEvent.getKeyCode() == KeyEvent.VK_CONTROL) {
+                    ctrl = true;
+                }
+            } else {
+                if (keyEvent.getKeyCode() == KeyEvent.VK_CONTROL) {
+                    ctrl = false;
+                }
+            }
+        }, AWTEvent.KEY_EVENT_MASK);
+
     }
 
     @Override
@@ -145,8 +199,6 @@ public class InitView extends JPanel {
             float green[][] = new float[heightArea][widthArea];
             float blue[][] = new float[heightArea][widthArea];
             float max = 0;
-            int allPixels = heightArea * widthArea;
-
             for (int i = 0; i < heightArea; i++) {
                 for (int j = 0; j < widthArea; j++) {
                     now = start.plus(stepX.multiply(j)).minus(stepY.multiply(i));
@@ -183,14 +235,14 @@ public class InitView extends JPanel {
                             ir += data.getaR() * nearestShape.kdr;
                             ig += data.getaG() * nearestShape.kdg;
                             ib += data.getaB() * nearestShape.kdb;
+                            normal = nearestShape.getNormal(nearestIntersectionPoint);
                             for (Source source : sourceList) {
                                 intersectionPoint = getNearestShape(source.coordinate, (nearestIntersectionPoint.minus(source.coordinate)).normalize()).coordinate;
                                 if (nearestIntersectionPoint.equals(intersectionPoint)) {
                                     length = fatt(nearestIntersectionPoint.length(source.coordinate));
-                                    normal = nearestShape.getNormal(nearestIntersectionPoint);
                                     l = source.coordinate.minus(nearestIntersectionPoint).normalize();
                                     nl = normal.scalarMultiply(l);
-                                    nh = Math.pow(normal.scalarMultiply(peekCoordinate.minus(shapeAndCoordinate.coordinate).plus(l).normalize()), nearestShape.power);
+                                    nh = Math.pow(normal.scalarMultiply(peekCoordinate.minus(shapeAndCoordinate.coordinate).normalize().plus(l).normalize()), nearestShape.power);
                                     ir += length * source.lr * (nearestShape.kdr * nl + nearestShape.ksr * nh);
                                     ig += length * source.lg * (nearestShape.kdg * nl + nearestShape.ksg * nh);
                                     ib += length * source.lb * (nearestShape.kdb * nl + nearestShape.ksb * nh);
@@ -206,8 +258,8 @@ public class InitView extends JPanel {
                         blue[i][j] = backGroundBlue;
                     }
                     max = Math.max(max, Math.max(Math.max(red[i][j], green[i][j]), blue[i][j]));
-                    statusBar.setText("Progress: " + (int) ((i * widthArea + j) * 100.0 / allPixels));
                 }
+                statusBar.setText("Progress: " + (int) (i * 100.0 / widthArea) + "%");
             }
             double gamma = data.getGamma();
             float resultRed;

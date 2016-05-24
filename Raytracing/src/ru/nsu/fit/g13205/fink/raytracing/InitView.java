@@ -44,7 +44,7 @@ public class InitView extends JPanel {
                 super.mouseDragged(e);
                 if (taken) {
                     InitView.this.data.rotateZ((e.getX() - startPoint.x) / SPEED);
-                    InitView.this.data.rotateY((e.getY() - startPoint.y) / SPEED);
+                    InitView.this.data.rotateY(-(e.getY() - startPoint.y) / SPEED);
                     startPoint = e.getPoint();
                     draw();
                 }
@@ -171,10 +171,12 @@ public class InitView extends JPanel {
             float backGroundRed = (float) data.getBr();
             float backGroundGreen = (float) data.getBg();
             float backGroundBlue = (float) data.getBb();
-            Coordinate3D eye = new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getEyeVector().getMatrix()));
-            Coordinate3D normal = (new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getRefVector().getMatrix()))).minus(eye);
+            //double[][] fullrotateMatrix = MatrixOperation.multiply(Matrix.getTranslateMatrix(data.getRefVector().x, data.getRefVector().y, data.getRefVector().z), MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), Matrix.getTranslateMatrix(-data.getRefVector().x, -data.getRefVector().y, -data.getRefVector().z)));
+            double[][] fullrotateMatrix = MatrixOperation.transporter(data.getRotateMatrix());
+            Coordinate3D eye = new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getEyeVector().getMatrix()));
+            Coordinate3D normal = (new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getRefVector().getMatrix()))).minus(eye);
             Coordinate3D znPoint = normal.divide(normal.getNorm()).multiply(data.getZn()).plus(eye);
-            Coordinate3D right = normal.vectorMultiply(new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getUpVector().getMatrix())));
+            Coordinate3D right = normal.vectorMultiply(new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getUpVector().getMatrix())));
             Coordinate3D up = right.vectorMultiply(normal);
             up = up.normalize();
             right = right.normalize();
@@ -201,6 +203,9 @@ public class InitView extends JPanel {
             float max = 0;
             for (int i = 0; i < heightArea; i++) {
                 for (int j = 0; j < widthArea; j++) {
+                    if(i == 125 && j == 375){
+                        System.out.println("");
+                    }
                     now = start.plus(stepX.multiply(j)).minus(stepY.multiply(i));
                     Stack<ShapeAndCoordinate> stack = new Stack();
                     startCoordinate = eye;
@@ -242,6 +247,7 @@ public class InitView extends JPanel {
                                     length = fatt(nearestIntersectionPoint.length(source.coordinate));
                                     l = source.coordinate.minus(nearestIntersectionPoint).normalize();
                                     nl = normal.scalarMultiply(l);
+                                    double n = normal.scalarMultiply(peekCoordinate.minus(shapeAndCoordinate.coordinate).normalize().plus(l).normalize());
                                     nh = Math.pow(normal.scalarMultiply(peekCoordinate.minus(shapeAndCoordinate.coordinate).normalize().plus(l).normalize()), nearestShape.power);
                                     ir += length * source.lr * (nearestShape.kdr * nl + nearestShape.ksr * nh);
                                     ig += length * source.lg * (nearestShape.kdg * nl + nearestShape.ksg * nh);

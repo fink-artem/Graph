@@ -103,7 +103,7 @@ public class Box extends Shape {
             if (tNear > tFar) {
                 return null;
             }
-            if (tNear < 0) {
+            if (tNear <= 0) {
                 return null;
             }
         }
@@ -128,7 +128,7 @@ public class Box extends Shape {
             if (tNear > tFar) {
                 return null;
             }
-            if (tNear < 0) {
+            if (tNear <= 0) {
                 return null;
             }
         }
@@ -153,7 +153,7 @@ public class Box extends Shape {
             if (tNear > tFar) {
                 return null;
             }
-            if (tNear < 0) {
+            if (tNear <= 0) {
                 return null;
             }
         }
@@ -162,15 +162,15 @@ public class Box extends Shape {
 
     @Override
     public Coordinate3D getNormal(Coordinate3D intersectionPoint) {
-        if (intersectionPoint.z == minPoint.z) {
+        if (Math.abs(intersectionPoint.z - minPoint.z) < EXP) {
             return new Coordinate3D(0, 0, -1);
-        } else if (intersectionPoint.z == maxPoint.z) {
+        } else if (Math.abs(intersectionPoint.z - maxPoint.z) < EXP) {
             return new Coordinate3D(0, 0, 1);
-        } else if (intersectionPoint.y == minPoint.y) {
+        } else if (Math.abs(intersectionPoint.y - minPoint.y) < EXP) {
             return new Coordinate3D(0, -1, 0);
-        } else if (intersectionPoint.y == maxPoint.y) {
+        } else if (Math.abs(intersectionPoint.y - maxPoint.y) < EXP) {
             return new Coordinate3D(0, 1, 0);
-        } else if (intersectionPoint.x == minPoint.x) {
+        } else if (Math.abs(intersectionPoint.x - minPoint.x) < EXP) {
             return new Coordinate3D(-1, 0, 0);
         } else {
             return new Coordinate3D(1, 0, 0);

@@ -23,7 +23,7 @@ public class Data {
             list.add(shape.getCoordinate());
         }
         double[][] fullrotateMatrix = MatrixOperation.multiply(Matrix.getTranslateMatrix(renderData.ref.x, renderData.ref.y, renderData.ref.z), MatrixOperation.multiply(rotateMatrix, Matrix.getTranslateMatrix(-renderData.ref.x, -renderData.ref.y, -renderData.ref.z)));
-        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(renderData.sw, renderData.sh, renderData.zn, renderData.zf), MatrixOperation.multiply(Matrix.getMcamMatrix(renderData.eye, renderData.ref, renderData.upVector), rotateMatrix));
+        double[][] matrix = MatrixOperation.multiply(Matrix.getProjMatrix(renderData.sw, renderData.sh, renderData.zn, renderData.zf), MatrixOperation.multiply(Matrix.getMcamMatrix(renderData.eye, renderData.ref, renderData.upVector), fullrotateMatrix));
         double[][] matrixP = new double[4][1];
         List<Segment> segmentList;
         Segment segment;

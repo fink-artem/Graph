@@ -171,12 +171,11 @@ public class InitView extends JPanel {
             float backGroundRed = (float) data.getBr();
             float backGroundGreen = (float) data.getBg();
             float backGroundBlue = (float) data.getBb();
-            //double[][] fullrotateMatrix = MatrixOperation.multiply(Matrix.getTranslateMatrix(data.getRefVector().x, data.getRefVector().y, data.getRefVector().z), MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), Matrix.getTranslateMatrix(-data.getRefVector().x, -data.getRefVector().y, -data.getRefVector().z)));
-            double[][] fullrotateMatrix = MatrixOperation.transporter(data.getRotateMatrix());
+            double[][] fullrotateMatrix = MatrixOperation.multiply(Matrix.getTranslateMatrix(data.getRefVector().x, data.getRefVector().y, data.getRefVector().z), MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), Matrix.getTranslateMatrix(-data.getRefVector().x, -data.getRefVector().y, -data.getRefVector().z)));
             Coordinate3D eye = new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getEyeVector().getMatrix()));
             Coordinate3D normal = (new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getRefVector().getMatrix()))).minus(eye);
             Coordinate3D znPoint = normal.divide(normal.getNorm()).multiply(data.getZn()).plus(eye);
-            Coordinate3D right = normal.vectorMultiply(new Coordinate3D(MatrixOperation.multiply(fullrotateMatrix, data.getUpVector().getMatrix())));
+            Coordinate3D right = normal.vectorMultiply(new Coordinate3D(MatrixOperation.multiply(MatrixOperation.transporter(data.getRotateMatrix()), data.getUpVector().getMatrix())));
             Coordinate3D up = right.vectorMultiply(normal);
             up = up.normalize();
             right = right.normalize();

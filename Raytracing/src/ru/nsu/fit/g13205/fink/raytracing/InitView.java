@@ -202,9 +202,6 @@ public class InitView extends JPanel {
             float max = 0;
             for (int i = 0; i < heightArea; i++) {
                 for (int j = 0; j < widthArea; j++) {
-                    if(i == 125 && j == 375){
-                        System.out.println("");
-                    }
                     now = start.plus(stepX.multiply(j)).minus(stepY.multiply(i));
                     Stack<ShapeAndCoordinate> stack = new Stack();
                     startCoordinate = eye;
@@ -326,7 +323,8 @@ public class InitView extends JPanel {
 
     private Point coordinateToScreen(Coordinate3D c) {
         double s = Math.min(data.getSh(), data.getSw());
-        return new Point((int) Math.round(width / 2.0 - c.x / s * width), (int) Math.round(c.y / s * height + height / 2.0));
+        int wh = Math.min(width, height);
+        return new Point((int) Math.round(width / 2.0 - c.x / s * wh), (int) Math.round(c.y / s * wh + height / 2.0));
     }
 
     private void drawLine(Graphics g, Coordinate3D c1, Coordinate3D c2, boolean check) {
